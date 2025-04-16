@@ -59,9 +59,7 @@ class UbuntexIndex {
 
         this.currentIndex = 0;
         this.userAnswers = [];
-        this.quizResults = {
-            responses: []
-        };
+        this.quizResults = {responses: []};
         this.checkTestCompletion();
     }
 
@@ -86,32 +84,18 @@ class UbuntexIndex {
 
     async fetchScoreFromOpenAI(userResponse, expectedAnswers) {
         try {
-            // Changed from localhost to relative path
-            const prompt = `Rate this response: "${userResponse}" against these answers: ${expectedAnswers.map(a => `${a.text} (Score: ${a.score})`).join(", ")}. Return only the score.`;
-
             const response = await fetch("/api/openai-proxy", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                model: "gpt-3.5-turbo",
-                messages: [{ role: "user", content: prompt }],
-                temperature: 0.7
-            })
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userResponse, expectedAnswers })
             });
-    
-            if (!response.ok) throw new Error(`API error: ${response.status}`);
-            
-            const data = await response.json();
-            console.log("Full API Response:", data);
-            
-            // Updated to match OpenAI's response format
-            if (!data.choices || !data.choices[0]) {
-                throw new Error("Invalid response format: choices missing");
+
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
             }
+
+            const { score } = await response.json(); // Simplified response handling
             
-            const score = parseFloat(data.choices[0]?.message?.content?.trim()) || 0;
-            
-            // Store the question response for results table
             this.quizResults.responses.push({
                 type: "Open-ended",
                 userAnswer: userResponse,
@@ -120,11 +104,12 @@ class UbuntexIndex {
             
             return score;
         } catch (error) {
-            console.error("Detailed Error:", error);
-            return 0;
+            console.error("Scoring error:", error);
+            alert("Scoring service unavailable. Using default score.");
+            return 3; // Fallback score
         }
     }
-    
+
     startQuiz() {
         this.showQuestion();
     }
@@ -175,17 +160,18 @@ class UbuntexIndex {
             }
             
             nextBtn.disabled = true;
+            nextBtn.textContent = "Scoring...";
             
             try {
-                const score = await this.fetchScoreFromOpenAI(userResponse, question.expectedAnswers);
+                const score = await this.fetchScoreFromOpenAI(userResponse, 
+                    this.questions[this.currentIndex].expectedAnswers);
                 this.userAnswers.push(score);
                 this.currentIndex++;
-                
                 this.showQuestion();
-                
-            } catch (error) {
-                console.error("API Error:", error);
-                nextBtn.disabled = false;
+            } finally {
+                nextBtn.textContent = this.currentIndex === this.questions.length - 1 
+                    ? "Submit and See Results" 
+                    : "Next";
             }
             window.scrollTo({
                 top: 0,

@@ -1,70 +1,66 @@
 const axios = require('axios');
 
 exports.handler = async (event) => {
-  // 1. Input Validation
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method Not Allowed' })
-    };
-  }
-
-  try {
-    // 2. Parse and validate request
-    const { userResponse, expectedAnswers } = JSON.parse(event.body);
-    
-    if (!userResponse || !expectedAnswers) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Missing required fields' })
-      };
+    // 1. Validate HTTP method
+    if (event.httpMethod !== 'POST') {
+        return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    // 3. Construct prompt
-    const prompt = `Rate the similarity of this response to the reference answers. 
-    Return ONLY a number between 0-5.\n\nResponse: "${userResponse}"\n\nReferences:\n${
-      expectedAnswers.map(a => `- "${a.text}" (target score: ${a.score})`).join('\n')
-    }`;
+    try {
+        // 2. Parse and validate input
+        const { userResponse, expectedAnswers } = JSON.parse(event.body);
+        if (!userResponse || !expectedAnswers?.length) {
+            return { statusCode: 400, body: 'Missing/invalid parameters' };
+        }
 
-    // 4. Call OpenAI API
-    const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-      model: "gpt-3.5-turbo",
-      messages: [{
-        role: "system",
-        content: "You are a scoring assistant. Return ONLY a number between 0-5."
-      }, {
-        role: "user", 
-        content: prompt
-      }],
-      temperature: 0.2,  // Lower for more consistent scoring
-      max_tokens: 3      // Limit to number-only response
-    }, {
-      headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      timeout: 5000      // 5-second timeout
-    });
+        // 3. Generate precise prompt
+        const prompt = `STRICTLY RETURN ONLY A NUMBER BETWEEN 0-5. 
+        Rate how well this response matches the ideals:\n\n"${userResponse}"\n\n` +
+        `Scoring Rubric:\n${
+            expectedAnswers.map(a => `• ${a.score}: ${a.text}`).join('\n')
+        }`;
 
-    // 5. Validate and format response
-    const scoreText = response.data.choices[0]?.message?.content?.trim();
-    const score = Math.min(5, Math.max(0, parseFloat(scoreText) || 0)); // Clamp to 0-5
+        // 4. Call OpenAI API
+        const response = await axios.post(
+            'https://api.openai.com/v1/chat/completions',
+            {
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are a precise scoring tool. Return ONLY a number from 0-5."
+                    },
+                    { role: "user", content: prompt }
+                ],
+                temperature: 0.1,
+                max_tokens: 2
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                timeout: 3000
+            }
+        );
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ score })  // Simplified response
-    };
+        // 5. Extract and validate score
+        const scoreText = response.data.choices[0]?.message?.content?.trim();
+        const score = Math.min(5, Math.max(0, parseFloat(scoreText) || 0));
 
-  } catch (error) {
-    // 6. Enhanced error handling
-    console.error('Proxy Error:', error);
-    
-    return {
-      statusCode: error.response?.status || 500,
-      body: JSON.stringify({ 
-        error: error.message,
-        details: error.response?.data 
-      })
-    };
-  }
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ score })
+        };
+
+    } catch (error) {
+        console.error('Proxy Error:', error);
+        return {
+            statusCode: error.response?.status || 500,
+            body: JSON.stringify({
+                error: error.message,
+                details: error.response?.data
+            })
+        };
+    }
 };
