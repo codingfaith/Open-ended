@@ -97,7 +97,6 @@ class UbuntexIndex {
             const { score } = await response.json(); // Simplified response handling
             
             this.quizResults.responses.push({
-                type: "Open-ended",
                 userAnswer: userResponse,
                 gptScore: score
             });
@@ -216,7 +215,6 @@ class UbuntexIndex {
             <thead>
                 <tr>
                     <th>Question</th>
-                    <th>Type</th>
                     <th>Your Answer</th>
                     <th>Score</th>
                 </tr>
@@ -225,7 +223,6 @@ class UbuntexIndex {
                 ${this.quizResults.responses.map((r, i) => `
                     <tr>
                         <td>${this.questions[i].text}</td>
-                        <td>${r.type}</td>
                         <td>${r.userAnswer}</td>
                         <td>${r.gptScore.toFixed(1)}</td>
                     </tr>
