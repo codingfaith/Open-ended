@@ -127,18 +127,18 @@ class UbuntexIndex {
         
         const question = this.questions[this.currentIndex];
         questionContainer.textContent = `Question ${this.currentIndex + 1}: ${question.text}`;
-        optionsContainer.innerHTML = '<textarea id="user-response" placeholder="Type your answer..." maxlength="50"></textarea>';
+        optionsContainer.innerHTML = '<textarea id="user-response" placeholder="Type your answer..." maxlength="150"></textarea>';
         
-        charCounter.textContent = `0/50 characters`;
+        charCounter.textContent = `0/150 characters`;
         // Add input event listener for character counting
         const textarea = document.getElementById("user-response");
         textarea.addEventListener('input', (e) => {
         const currentLength = e.target.value.length;
-        charCounter.textContent = `${currentLength}/50 characters`;
+        charCounter.textContent = `${currentLength}/150 characters`;
         
         // Change color when approaching limit
-        if (currentLength >= 45) {
-            charCounter.style.color = currentLength === 50 ? '#d32f2f' : '#ff9800';
+        if (currentLength >= 145) {
+            charCounter.style.color = currentLength === 150 ? '#d32f2f' : '#ff9800';
         } else {
             charCounter.style.color = '#666';
         }
