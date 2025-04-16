@@ -180,6 +180,10 @@ class UbuntexIndex {
                 console.error("API Error:", error);
                 nextBtn.disabled = false;
             }
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth' // Adds smooth scrolling animation
+            })
         };
     }
 
