@@ -105,7 +105,14 @@ class UbuntexIndex {
             }
             
             const score = parseFloat(data.choices[0]?.message?.content?.trim()) || 0;
-            // ... rest of your code
+             // Store the question response for results table
+             this.quizResults.responses.push({
+                type: "Open-ended",
+                userAnswer: userResponse,
+                gptScore: score
+            });
+            
+            return score;
         } catch (error) {
             console.error("Detailed Error:", error);
             return 0;
@@ -228,7 +235,7 @@ class UbuntexIndex {
                 `).join('')}
                 <tr class="total-row">
                     <td colspan="3"><strong>Total Score</strong></td>
-                    <td><strong>${this.userAnswers.reduce((a, b) => a + b, 0).toFixed(1)} /25</strong></td>
+                    <td><strong>${this.userAnswers.reduce((a, b) => a + b, 0).toFixed()} /25</strong></td>
                 </tr>
             </tbody>
         `;
