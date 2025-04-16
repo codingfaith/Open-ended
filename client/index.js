@@ -228,7 +228,7 @@ class UbuntexIndex {
                     </tr>
                 `).join('')}
                 <tr class="total-row">
-                    <td colspan="3"><strong>Total Score</strong></td>
+                    <td colspan="2"><strong>Total Score</strong></td>
                     <td><strong>${this.userAnswers.reduce((a, b) => a + b, 0).toFixed()} /25</strong></td>
                 </tr>
             </tbody>
