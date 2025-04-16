@@ -85,28 +85,36 @@ class UbuntexIndex {
     }
 
     async fetchScoreFromOpenAI(userResponse, expectedAnswers) {
-        const prompt = `Rate the similarity of the following response to the given answer set. Assign a score between 0 and 5.\n\nUser Response: \"${userResponse}\"\nReference Answers: ${expectedAnswers.map(a => `\"${a.text}\" (Score: ${a.score})`).join(", ")}\n\nReturn only the score.`;
+        // const prompt = `Rate the similarity of the following response to the given answer set. Assign a score between 0 and 5.\n\nUser Response: \"${userResponse}\"\nReference Answers: ${expectedAnswers.map(a => `\"${a.text}\" (Score: ${a.score})`).join(", ")}\n\nReturn only the score.`;
         
         try {
-            const response = await fetch("http://localhost:3001/api/openai-proxy", {
+            // Changed from localhost to relative path
+            const response = await fetch("/api/openai-proxy", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ prompt })
+                body: JSON.stringify({ userResponse, expectedAnswers })
+                // body: JSON.stringify({ 
+                //     messages: [{
+                //         role: "user",
+                //         content: prompt
+                //     }] 
+                // })
             });
     
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            if (!response.ok) throw new Error(`API error: ${response.status}`);
             
             const data = await response.json();
-            console.log("Full API Response:", data); // 👈 Add this line
+            console.log("Full API Response:", data);
             
-            // Debugging: Check if choices exists
+            // Updated to match OpenAI's response format
             if (!data.choices || !data.choices[0]) {
                 throw new Error("Invalid response format: choices missing");
             }
             
             const score = parseFloat(data.choices[0]?.message?.content?.trim()) || 0;
-             // Store the question response for results table
-             this.quizResults.responses.push({
+            
+            // Store the question response for results table
+            this.quizResults.responses.push({
                 type: "Open-ended",
                 userAnswer: userResponse,
                 gptScore: score
@@ -118,6 +126,7 @@ class UbuntexIndex {
             return 0;
         }
     }
+    
     startQuiz() {
         this.showQuestion();
     }
