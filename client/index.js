@@ -85,20 +85,18 @@ class UbuntexIndex {
     }
 
     async fetchScoreFromOpenAI(userResponse, expectedAnswers) {
-        // const prompt = `Rate the similarity of the following response to the given answer set. Assign a score between 0 and 5.\n\nUser Response: \"${userResponse}\"\nReference Answers: ${expectedAnswers.map(a => `\"${a.text}\" (Score: ${a.score})`).join(", ")}\n\nReturn only the score.`;
-        
         try {
             // Changed from localhost to relative path
+            const prompt = `Rate this response: "${userResponse}" against these answers: ${expectedAnswers.map(a => `${a.text} (Score: ${a.score})`).join(", ")}. Return only the score.`;
+
             const response = await fetch("/api/openai-proxy", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userResponse, expectedAnswers })
-                // body: JSON.stringify({ 
-                //     messages: [{
-                //         role: "user",
-                //         content: prompt
-                //     }] 
-                // })
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                model: "gpt-3.5-turbo",
+                messages: [{ role: "user", content: prompt }],
+                temperature: 0.7
+            })
             });
     
             if (!response.ok) throw new Error(`API error: ${response.status}`);
