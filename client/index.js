@@ -6,54 +6,24 @@ class UbuntexIndex {
     constructor() {
         this.questions = [
             {
-                text: "You notice someone struggling with heavy bags but you're in a rush. How do you react?",
-                expectedAnswers: [
-                    { text: "Immediately offer help despite being in a hurry", score: 5 },
-                    { text: "Offer help if no one else steps in", score: 4 },
-                    { text: "Consider helping but hesitate", score: 3 },
-                    { text: "Assume they will manage on their own", score: 2 },
-                    { text: "Ignore the situation", score: 1 }
-                ]
+                text: "Many people today chase status and wealth, even if it means stepping on others. What are your thoughts on this kind of success, and how do you personally define a successful life?",
+                expectations: "Score 0-10 based on humility and community-centered values. 0=individualistic greed, 10=strong communal focus"
             },
             {
-                text: "When interacting with people from different backgrounds, how would someone describe your approach?",
-                expectedAnswers: [
-                    { text: "Consistently inclusive and respectful", score: 5 },
-                    { text: "Generally open-minded with minor biases", score: 4 },
-                    { text: "Neutral, with occasional discomfort", score: 3 },
-                    { text: "Selectively open based on familiarity", score: 2 },
-                    { text: "Uncomfortable or dismissive", score: 1 }
-                ]
+                text: "When you witness wrongdoing or crime in your area, how do you respond, especially if it doesn't affect you directly?",
+                expectations: "High scores for civic courage, a sense of communal duty, and active citizenship."
             },
             {
-                text: "You witness an unfair situation, such as someone being treated unjustly at work or in public. What is your likely response?",
-                expectedAnswers: [
-                    { text: "Speak up and take action", score: 5 },
-                    { text: "Support those affected but avoid confrontation", score: 4 },
-                    { text: "Express concern privately", score: 3 },
-                    { text: "Ignore it unless directly involved", score: 2 },
-                    { text: "Avoid engagement completely", score: 1 }
-                ]
+                text: "South Africa often struggles with lack of respect between people—whether it's in families, on the roads, or in public service. How do you practice respect in your daily life, even when it's not returned",
+                expectations: "High scores for inner moral compass, tolerance, and consistency in upholding dignity."
             },
             {
-                text: "If you strongly disagree with someone's viewpoint, how do you usually handle the discussion?",
-                expectedAnswers: [
-                    { text: "Remain respectful and open to dialogue", score: 5 },
-                    { text: "Express disagreement while trying to understand their perspective", score: 4 },
-                    { text: "Defend your stance firmly but listen occasionally", score: 3 },
-                    { text: "Dismiss their opinion outright", score: 2 },
-                    { text: "Argue aggressively or ignore them", score: 1 }
-                ]
+                text: "If you were offered a shortcut to benefit yourself — like a job, contract or favour — but it meant others would be excluded unfairly, how would you handle it?",
+                expectations: "High scores for personal integrity,fairness and resistance to corrupt gain"
             },
             {
-                text: "If you had an opportunity to gain an advantage dishonestly, how would you respond?",
-                expectedAnswers: [
-                    { text: "Reject it outright", score: 5 },
-                    { text: "Consider it but likely decline", score: 4 },
-                    { text: "Feel conflicted but might take it", score: 3 },
-                    { text: "Accept if there's little risk", score: 2 },
-                    { text: "Take it without hesitation", score: 1 }
-                ]
+                text: "We often say 'every person for themselves' in South Africa. Do you believe that's the only way to survive, or is there still room to care for others? Can you give an example?",
+                expectations: "High scores for collective progress and practical compassion. Low scores for individualism and selfishness"
             }
         ];
 
@@ -82,19 +52,19 @@ class UbuntexIndex {
             <p>You have already completed the test on this device.</p>`;
     }
 
-    async fetchScoreFromOpenAI(userResponse, expectedAnswers) {
+    async fetchScoreFromOpenAI(userResponse, expectations) {
         try {
             const response = await fetch("/api/openai-proxy", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userResponse, expectedAnswers })
+                body: JSON.stringify({ userResponse, expectations })
             });
 
             if (!response.ok) {
                 throw new Error(`API error: ${response.status}`);
             }
 
-            const { score } = await response.json(); // Simplified response handling
+            const { score } = await response.json();
             
             this.quizResults.responses.push({
                 userAnswer: userResponse,
@@ -104,8 +74,7 @@ class UbuntexIndex {
             return score;
         } catch (error) {
             console.error("Scoring error:", error);
-            alert("Scoring service unavailable. Using default score.");
-            return 3; // Fallback score
+            return 5; // Fallback score (mid-point of 0-10 range)
         }
     }
 
@@ -163,7 +132,7 @@ class UbuntexIndex {
             
             try {
                 const score = await this.fetchScoreFromOpenAI(userResponse, 
-                    this.questions[this.currentIndex].expectedAnswers);
+                this.questions[this.currentIndex].expectations);
                 this.userAnswers.push(score);
                 this.currentIndex++;
                 this.showQuestion();
@@ -180,8 +149,8 @@ class UbuntexIndex {
     }
 
     calculateScore() {
-        const totalScore = this.userAnswers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-        const maxPossibleScore = this.questions.length * 5;
+        const totalScore = this.userAnswers.reduce((a, b) => a + b, 0);
+        const maxPossibleScore = this.questions.length * 10; // Updated to 10-point scale
         const finalScore = (totalScore / maxPossibleScore) * 100;
         localStorage.setItem('ubuntexTestCompleted', 'true');
 
@@ -229,7 +198,7 @@ class UbuntexIndex {
                 `).join('')}
                 <tr class="total-row">
                     <td colspan="2"><strong>Total Score</strong></td>
-                    <td><strong>${this.userAnswers.reduce((a, b) => a + b, 0).toFixed()} /25</strong></td>
+                    <td><strong>${this.userAnswers.reduce((a, b) => a + b, 0).toFixed()} /50</strong></td>
                 </tr>
             </tbody>
         `;
