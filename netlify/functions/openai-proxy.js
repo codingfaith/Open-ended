@@ -14,7 +14,7 @@ exports.handler = async (event) => {
         }
 
         // 3. Generate precise prompt
-        const prompt = `Evaluate this response on a 0-10 scale for Ubuntu principles:
+        const prompt = `Evaluate this response on a 0-10 scale for Ubuntu principles and relevance:
         Expectations: ${expectations}
         Response: "${userResponse}"
         
