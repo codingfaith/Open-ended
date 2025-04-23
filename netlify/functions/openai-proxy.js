@@ -14,22 +14,15 @@ exports.handler = async (event) => {
         }
 
         // 3. Generate precise prompt
-        const prompt = `You are a scoring tool. Evaluate the following response on a 0-10 scale,Expectations: ${expectations}
-            Response: "${userResponse} based on:
-
-            Alignment with Ubuntu principles (such as compassion, community, dignity, respect, and interconnectedness), and
-
-            Relevance and directness in answering the specific question asked (i.e., does it respond meaningfully and specifically to what was asked?).
-
-            A perfect score (10) should only be given if the response clearly reflects Ubuntu values and directly answers the question with specific, relevant content.
-
-            Positive tone or good intentions alone should not increase the score if the response is off-topic or vague.
-
-            Assign a 0 if the response is nonsensical, entirely irrelevant, or does not address the question at all.
-
-            Also use the expectations to determine high score answers.
-
-            RETURN ONLY A NUMBER BETWEEN 0 AND 10`
+        const prompt = `You are a scoring tool. Evaluate the following response on a 0-10 scale, Expectations: ${expectations}  Response: "${userResponse}
+        based on:
+        •	Alignment with Ubuntu principles (such as compassion, community, dignity, respect, and interconnectedness), and
+        •	Relevance and directness in answering the specific question asked (i.e., does it respond meaningfully and specifically to what was asked?).
+        •	A perfect score (10) should only be given if the response clearly reflects Ubuntu values and directly answers the question with specific, relevant content.
+        •	Positive tone or good intentions alone should not increase the score if the response is off-topic or vague.
+        •	Assign a 0 if the response is nonsensical, entirely irrelevant, or does not address the question at all.
+        Also use the expectations to determine high score answers.
+        RETURN ONLY A NUMBER BETWEEN 0 AND 10`
 
         // 4. Call OpenAI API
         const response = await axios.post(
