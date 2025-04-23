@@ -1,4 +1,4 @@
-const totalQuestions = 5;
+const totalQuestions = 10;
 const progress = document.getElementById("progress");
 const progressText = document.getElementById("progress-text");
 
@@ -24,7 +24,27 @@ class UbuntexIndex {
             {
                 text: "We often say 'every person for themselves' in South Africa. Do you believe that's the only way to survive, or is there still room to care for others? Can you give an example?",
                 expectations: "High scores for collective progress and practical compassion. Low scores for individualism and selfishness"
-            }
+            },
+            {
+                text: "Tell me about a decision you made recently that was important to you, but others around you didn't agree with or didn't understand. What made you go ahead with it anyway?",
+                expectations: "High scores for courage of conviction and internal reference points. Low scores for external validation"
+            },
+            {
+                text: "If you could design a school or workplace from scratch, what would it look like—and how would it be different from the ones you know?",
+                expectations: "High scores for capacity to think beyond inherited structures or social benchmarks"
+            },
+            {
+                text: "Imagine you are in a community where everyone earns the same and drives the same car. What would you do or pursue to express your identity or success?",
+                expectations: "High scores for intrinsic values or self-driven aspirations. Low scores material and comparative cues"
+            },
+            {
+                text: "When you look at South Africa today, what is something that most people accept as normal, but that you believe needs to be challenged or changed?",
+                expectations: "High scores for comfort with questioning social norms and forming their own views and clear independent thinking. Low scores if user adopts inherited views and lacks originality"
+            },
+            {
+                text: "Can you describe a time when you chose to follow your own path, even if it meant being alone or misunderstood? What motivated you?",
+                expectations: "High scores for internal moral compass and resistance to groupthink or peer conformity. Low scores if reliant on what others think/do, no evidence of personal reasoning"
+            },
         ];
 
         this.currentIndex = 0;
@@ -172,7 +192,7 @@ class UbuntexIndex {
         resultContainer.innerHTML = `
             <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
             <p>Classification: ${classification}</p>
-            <div id="results-table"></div>
+            // <div id="results-table"></div>
         `;
         this.renderResultsTable();
     }

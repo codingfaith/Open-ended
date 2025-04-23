@@ -25,6 +25,8 @@ exports.handler = async (event) => {
         8-9 = Strong Ubuntu values
         10 = Perfect embodiment
         
+        Do not penalise bad spellings or bad grammar, focus on meaning.
+
         RETURN ONLY THE NUMBER BETWEEN 0-10:`;
         // 4. Call OpenAI API
         const response = await axios.post(
