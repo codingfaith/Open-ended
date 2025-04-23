@@ -14,20 +14,14 @@ exports.handler = async (event) => {
         }
 
         // 3. Generate precise prompt
-        const prompt = `Evaluate this response on a 0-10 scale for Ubuntu principles and relevance:
+        const prompt = `Evaluate this response on a 0-10 scale for Ubuntu principles and relevance of response to the question asked using the expectation as a guide:
         Expectations: ${expectations}
         Response: "${userResponse}"
-        
-        Scoring Guide:
-        0-2 = Completely misses Ubuntu values
-        3-5 = Shows limited Ubuntu awareness
-        6-7 = Moderate alignment
-        8-9 = Strong Ubuntu values
-        10 = Perfect embodiment
 
-        Do not penalise bad spellings or bad grammar, focus on meaning. Give 0 for off topic responses, what does not make sense and irrelevent answers to the question asked.
+        Do not penalise bad spellings or bad grammar, focus on meaning. Give 0 for off topic responses, what does not make sense and irrelevant answers to the question asked.
 
         RETURN ONLY THE NUMBER BETWEEN 0-10:`;
+        
         // 4. Call OpenAI API
         const response = await axios.post(
             'https://api.openai.com/v1/chat/completions',
