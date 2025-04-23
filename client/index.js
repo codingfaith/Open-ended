@@ -192,7 +192,7 @@ class UbuntexIndex {
         resultContainer.innerHTML = `
             <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
             <p>Classification: ${classification}</p>
-            // <div id="results-table"></div>
+            <div id="results-table"></div>
         `;
         this.renderResultsTable();
     }
@@ -218,7 +218,7 @@ class UbuntexIndex {
                 `).join('')}
                 <tr class="total-row">
                     <td colspan="2"><strong>Total Score</strong></td>
-                    <td><strong>${this.userAnswers.reduce((a, b) => a + b, 0).toFixed()} /50</strong></td>
+                    <td><strong>${this.userAnswers.reduce((a, b) => a + b, 0).toFixed()} /100</strong></td>
                 </tr>
             </tbody>
         `;
