@@ -13,14 +13,25 @@ exports.handler = async (event) => {
             return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields' }) };
         }
 
+        // Expectations: ${expectations}
+        // Response: "${userResponse}"
         // 3. Generate precise prompt
-        const prompt = `Evaluate this response on a 0-10 scale for Ubuntu principles and relevance of response to the question asked, using the expectation as a guide:
-        Expectations: ${expectations}
-        Response: "${userResponse}"
+        const prompt = `You are an Ubuntu values scoring tool. Evaluate the following response on a 0-10 scale,Expectations: ${expectations}
+            Response: "${userResponse} based on:
 
-        Do not penalise bad spellings or bad grammar, focus on meaning. It is important to give 0 for off topic responses, what does not make sense and irrelevant answers to the question asked.
+            Alignment with Ubuntu principles (such as compassion, community, dignity, respect, and interconnectedness), and
 
-        RETURN ONLY THE NUMBER BETWEEN 0-10:`;
+            Relevance and directness in answering the specific question asked (i.e., does it respond meaningfully and specifically to what was asked?).
+
+            A perfect score (10) should only be given if the response clearly reflects Ubuntu values and directly answers the question with specific, relevant content.
+
+            Positive tone or good intentions alone should not increase the score if the response is off-topic or vague.
+
+            Assign a 0 if the response is nonsensical, entirely irrelevant, or does not address the question at all.
+
+            Also use the expectations to determine high score answers.
+
+            RETURN ONLY A NUMBER BETWEEN 0 AND 10`
 
         // 4. Call OpenAI API
         const response = await axios.post(
@@ -30,7 +41,7 @@ exports.handler = async (event) => {
                 messages: [
                     {
                         role: "system",
-                        content: "You are an Ubuntu values scoring tool. Return ONLY a number from 0-10."
+                        content: "You are a scoring tool. Return ONLY a number from 0-10."
                     },
                     { role: "user", content: prompt }
                 ],
