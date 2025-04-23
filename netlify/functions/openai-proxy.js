@@ -24,8 +24,8 @@ exports.handler = async (event) => {
         6-7 = Moderate alignment
         8-9 = Strong Ubuntu values
         10 = Perfect embodiment
-        
-        Do not penalise bad spellings or bad grammar, focus on meaning.
+
+        Do not penalise bad spellings or bad grammar, focus on meaning. Give 0 for off topic responses, what does not make sense and irrelevent answers to the question asked.
 
         RETURN ONLY THE NUMBER BETWEEN 0-10:`;
         // 4. Call OpenAI API
