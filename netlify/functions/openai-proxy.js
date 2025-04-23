@@ -13,10 +13,8 @@ exports.handler = async (event) => {
             return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields' }) };
         }
 
-        // Expectations: ${expectations}
-        // Response: "${userResponse}"
         // 3. Generate precise prompt
-        const prompt = `You are an Ubuntu values scoring tool. Evaluate the following response on a 0-10 scale,Expectations: ${expectations}
+        const prompt = `You are a scoring tool. Evaluate the following response on a 0-10 scale,Expectations: ${expectations}
             Response: "${userResponse} based on:
 
             Alignment with Ubuntu principles (such as compassion, community, dignity, respect, and interconnectedness), and
