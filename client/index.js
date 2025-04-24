@@ -365,6 +365,7 @@ class UbuntexIndex {
                 
                 nextBtn.disabled = true;
                 nextBtn.textContent = "Scoring...";
+                charCounter.innerText = ""
                 
                 try {
                     const score = await this.fetchScoreFromOpenAI(userResponse, question.expectations);
@@ -379,7 +380,6 @@ class UbuntexIndex {
                 }
                 
             }
-            charCounter.innerHTML = ""
         } else if (question.type === "multiple-choice") {
             // Multiple choice question UI
             Object.entries(question.choices).forEach(([key, value]) => {
