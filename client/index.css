@@ -60,7 +60,6 @@ button {
 .option-button:active{
     outline: none; 
     color: #ffffff;
-    font-size: larger;
     background: #36454F;
 }
 #next-btn {
@@ -149,6 +148,6 @@ th, td {
     outline: none;
 }
 .active {
-    color: red;
-    border: 1px solid red;
+    color: #ffffff;
+    background: #36454F;
 }
