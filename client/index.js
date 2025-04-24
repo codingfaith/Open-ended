@@ -1,4 +1,4 @@
-const totalQuestions = 10;
+const totalQuestions = 42;
 const progress = document.getElementById("progress");
 const progressText = document.getElementById("progress-text");
 
@@ -6,45 +6,259 @@ class UbuntexIndex {
     constructor() {
         this.questions = [
             {
+                // empathy (25%)
+                text: "In general, when is it right to consider the needs of others?", //1
+                type: "multiple-choice",
+                choices: {
+                    A: ["Only after mine are met", 2],
+                    B: ["Before mine are met", 8],
+                    C: ["Together with mine", 5],
+                    D: ["It's not important to consider the needs of others", 1]
+                },
+                type: "multiple-choice"
+            },{
+                text: "Do you feel that others care about your needs in general?", //2
+                type: "multiple-choice",
+                choices: {
+                    A: ["Only after theirs are met", 6],
+                    B: ["Yes, above their own", 4],
+                    C: ["Yes, at the same time as their needs", 3],
+                    D: ["Its not important for them to consider my needs", 5]
+                },
+                type: "multiple-choice"
+            },{
+                text: "Who in your opinion is to blame for the bad things that you face from time to time?", //3
+                choices: {
+                    A: ["Others are usually to blame ", 1],
+                    B: ["I am normally the one to blame ", 6],
+                    C: ["A combination of me and others", 4],
+                    D: ["No one is to blame things just happen", 2],
+                },
+                type: "multiple-choice"
+            },{
+                text: "When comparing your status in life  to that of others around you, where would you like to be?", //4
+                choices: {
+                    A: ["A lot better than others ", 1],
+                    B: ["Better than others", 2],
+                    C: ["Same as others ", 5],
+                    D: ["It does not matter", 7]
+                },
+                type: "multiple-choice"
+            },{ text: "How do you feel about working with others to achieve a common goal?", //5
+                choices: {
+                    A: ["It is not easy to work with others ", 1],
+                    B: ["Its not necessary to work with others ", 3],
+                    C: ["More can be achieved when working with others", 5],
+                    D: ["Working with others is the only way of achieving lasting results ", 7]
+                },
+                type: "multiple-choice"
+            },{        
+            //ratings
+                text: "On a 10 point scale where 1 means very low and 10 means very high, how would you rate your ability to understand yourself?", //6
+                scale: 10,
+                type: "scale" //6
+            },{
+                text: "On a 10 point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in the world?", //7
+                scale: 10,
+                type: "scale" //7
+            },{
+                text: "On a 10 point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in your community?", //8
+                scale: 10,
+                type: "scale" //8
+            },{
+                text: "On a 10 point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in your country?", //9
+                scale: 10,
+                type: "scale" //9
+            },{
+                text: "On a 10 point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in your family?", //10
+                scale: 10,
+                type: "scale" //10
+            },{
                 text: "Many people today chase status and wealth, even if it means stepping on others. What are your thoughts on this kind of success, and how do you personally define a successful life?",
-                expectations: "Score 0-10 based on humility and community-centered values. 0=individualistic greed, 10=strong communal focus"
-            },
-            {
+                expectations: "Score 0-10 based on humility and community-centered values. 0=individualistic greed, 10=strong communal focus",
+                type: "open-ended" //11
+            },{ 
+            // respect (25%)
+                text: "How important is showing respect to  other human beings?", //12
+                choices: {
+                    A: ["It depends on who ", 2],
+                    B: ["Everyone needs to be respected", 5],
+                    C: ["Respect is a luxury", 1]
+                },
+                type: "multiple-choice"
+            },{
+                text: "How do you feel when someone you don't know is being disrespected?", //13
+                choices: {
+                    A: ["It is none of my business, I don't care ", 1],
+                    B: ["I also feel disrespected ", 6],
+                    C: ["I feel bad about our society", 3]
+                },
+                type: "multiple-choice"
+            },{
+                text: "What would you consider to be a true sign of showing respect to others?", //14
+                choices: {
+                    A: ["Acting out your respect ", 7],
+                    B: ["Not having negative thoughts about them", 3]
+                },
+                type: "multiple-choice"
+            },{
+                text: "Rate on a 10 point scale your respect for yourself",
+                scale: 10,
+                type: "scale" //15
+            },{
+                text: "Rate on a 10 point scale your respect for your family members in general",
+                scale: 10,
+                type: "scale" //16
+            },{
+                text: "Rate on a 10 point scale your respect for people around the world",
+                scale: 10,
+                type: "scale" //17
+            },{
+                text: "Rate on a 10 point scale your respect for your community", 
+                scale: 10,
+                type: "scale" //18
+
+            },{
+                text: "Rate on a 10 point scale your respect for the people in your country", //19
+                scale: 10,
+                type: "scale" //20
+            },{
+                text: "Rate on a 10 point scale your respect authorities in general",
+                scale: 10,
+                type: "scale" //21
+            },{
                 text: "When you witness wrongdoing or crime in your area, how do you respond, especially if it doesn't affect you directly?",
-                expectations: "High scores for civic courage, a sense of communal duty, and active citizenship."
-            },
-            {
+                expectations: "Score 0-10 based on civic courage and communal duty. 0=no action, 10=strong intervention",
+                type: "open-ended" //22
+            },{
+            // Dignity
+                text: "What matters the most to you about how you see others in a social setting?", //23
+                choices: {
+                    A: ["Their appearance and presence", 1],
+                    B: ["Their qualifications and skills  ", 3],
+                    C: ["Their dignity and worth as a person ", 6],
+                    D: ["Their priorities and values ", 4]
+                },
+                type: "multiple-choice"
+            },{
                 text: "South Africa often struggles with lack of respect between people—whether it's in families, on the roads, or in public service. How do you practice respect in your daily life, even when it's not returned",
-                expectations: "High scores for inner moral compass, tolerance, and consistency in upholding dignity."
-            },
-            {
+                expectations: "Score 0-10 based on consistency in upholding dignity and inner moral compass. 0=no respect shown, 10=consistent respect",
+                type: "open-ended" //24
+            },{
+                text: "How would you describe how you want others to treat you in social settings?", //25
+                choices: {
+                    A: ["Based on my appearance and presence ", 1],
+                    B: ["Based on my qualifications and skills ", 3],
+                    C: ["With honour simply because I am human ", 6]
+                },
+                type: "multiple-choice"
+            },{
                 text: "If you were offered a shortcut to benefit yourself — like a job, contract or favour — but it meant others would be excluded unfairly, how would you handle it?",
-                expectations: "High scores for personal integrity,fairness and resistance to corrupt gain"
-            },
-            {
+                expectations: "Score 0-10 based on personal integrity,fairness and resistance to corrupt gain. 0=would take shortcut, 10=would refuse unfair advantage",
+                type: "open-ended" //26
+            },{
+                text: "Who in your view in any situation is responsible for doing the right thing?", //27
+                choices: {
+                    A: ["Myself first and foremost ", 7],
+                    B: ["Others", 2],
+                    C: ["Everyone", 3]
+                },
+                type: "multiple-choice"
+            },{
                 text: "We often say 'every person for themselves' in South Africa. Do you believe that's the only way to survive, or is there still room to care for others? Can you give an example?",
-                expectations: "High scores for collective progress and practical compassion. Low scores for individualism and selfishness"
-            },
-            {
+                expectations: "Score 0-10 based on collective progress. 0=extreme individualism, 10=strong communal care",
+                type: "open-ended" //28
+            },{
+                text: "On a 10 point scale how would you rate your importance as a human being, in general?",
+                scale: 10,
+                type: "scale" //29
+            },{
+                text: "On a 10 point scale how would you rate the importance of others?",
+                scale: 10,
+                type: "scale" //30
+            },{
+                text: "On a 10 point scale how would you rate the importance of dignified thoughts that show respect for others?", //25
+                scale: 10,
+                type: "scale" //31
+            },{
+                text: "On a 10 point scale how would you rate the importance of your value system and beliefs?", //26
+                scale: 10,
+                type: "scale" //32
+            },{
+                text: "On a 10 point scale how would you rate the importance of dignified actions that show respect for others?", //27
+                scale: 10,
+                type: "scale" //33
+            },{
                 text: "Tell me about a decision you made recently that was important to you, but others around you didn't agree with or didn't understand. What made you go ahead with it anyway?",
-                expectations: "High scores for courage of conviction and internal reference points. Low scores for external validation"
-            },
-            {
+                expectations: "High scores for courage of conviction and internal reference points. Low scores for external validation",
+                type: "open-ended" //34
+            },{
+            // Communal Responsibility (30%)
+                text: "Do you consider yourself to be a responsible citizen?", //35
+                choices: {
+                    A: ["It depends on the situation ", 2],
+                    B: ["Sometimes", 3],
+                    C: ["Always", 5]
+                },
+                type: "multiple-choice"
+            },{
                 text: "If you could design a school or workplace from scratch, what would it look like—and how would it be different from the ones you know?",
-                expectations: "High scores for capacity to think beyond inherited structures or social benchmarks"
-            },
-            {
+                expectations: "High scores for capacity to think beyond inherited structures or social benchmarks 0=lack of originality and creativity",
+                type: "open-ended" //36
+            },{
+                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out your family?", //37
+                choices: {
+                    A: ["Yes", 4],
+                    B: ["No", 1]
+                },
+                type: "multiple-choice"
+            },{
+                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out your community?", //38
+                choices: {
+                    A: ["Yes", 5],
+                    B: ["No", 1]
+                },
+                type: "multiple-choice"
+            },{
                 text: "Imagine you are in a community where everyone earns the same and drives the same car. What would you do or pursue to express your identity or success?",
-                expectations: "High scores for intrinsic values or self-driven aspirations. Low scores material and comparative cues"
-            },
-            {
+                expectations: "High scores for intrinsic values or self-driven aspirations. Low scores material and comparative cues",
+                type: "open-ended" //39
+            },{
                 text: "When you look at South Africa today, what is something that most people accept as normal, but that you believe needs to be challenged or changed?",
-                expectations: "High scores for comfort with questioning social norms and forming their own views and clear independent thinking. Low scores if user adopts inherited views and lacks originality"
-            },
-            {
+                expectations: "High scores for comfort with questioning social norms and forming their own views and clear independent thinking. Low scores if user adopts inherited views and lacks originality",
+                type: "open-ended" //40
+            },{
+                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out your country?", //41
+                choices: {
+                    A: ["Yes", 6],
+                    B: ["No", 1]
+                },
+                type: "multiple-choice"
+            },{
                 text: "Can you describe a time when you chose to follow your own path, even if it meant being alone or misunderstood? What motivated you?",
-                expectations: "High scores for internal moral compass and resistance to groupthink or peer conformity. Low scores if reliant on what others think/do, no evidence of personal reasoning"
-            },
+                expectations: "High scores for internal moral compass and resistance to groupthink or peer conformity. Low scores if reliant on what others think/do, no evidence of personal reasoning",
+                type: "open-ended" //42
+            },{
+                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out the entire world?", //43
+                choices: {
+                    A: ["Yes", 3],
+                    B: ["No", 1]
+                },
+                type: "multiple-choice"
+            },{
+                text: "What kind of person would you most likely consider to be a role model?", //43
+                choices: {
+                    A: ["A popular and well known person", 1],
+                    B: ["A skilled and talented person", 2],
+                    C: ["Someone that sacrifices for their community ", 6],
+                    D: ["A religious and upright person ", 4]
+                },
+                type: "multiple-choice"
+            },{
+                text: "Can you  rate the importance of service to the community to you personally, on a 10 point scale?",
+                scale: 10,
+                type: "scale"  //44
+            }
         ];
 
         this.currentIndex = 0;
@@ -115,57 +329,149 @@ class UbuntexIndex {
         
         const question = this.questions[this.currentIndex];
         questionContainer.textContent = `Question ${this.currentIndex + 1}: ${question.text}`;
-        optionsContainer.innerHTML = '<textarea id="user-response" placeholder="Type your answer..." maxlength="150"></textarea>';
-        
-        charCounter.textContent = `0/150 characters`;
-        // Add input event listener for character counting
-        const textarea = document.getElementById("user-response");
-        textarea.addEventListener('input', (e) => {
-        const currentLength = e.target.value.length;
-        charCounter.textContent = `${currentLength}/150 characters`;
-        
-        // Change color when approaching limit
-        if (currentLength >= 145) {
-            charCounter.style.color = currentLength === 150 ? '#d32f2f' : '#ff9800';
-        } else {
-            charCounter.style.color = '#666';
-        }
-    });
+        optionsContainer.innerHTML = '';
+       
+        // Clear any previous event listeners
+        nextBtn.onclick = null;
+        this.currentSelectedAnswer = null;
 
-        nextBtn.disabled = false;
-        nextBtn.textContent = this.currentIndex === this.questions.length - 1 ? "Submit and See Results" : "Next";
-        
-        // Update progress bar
-        const progressPercentage = ((this.currentIndex) / totalQuestions) * 100;
-        progress.style.width = progressPercentage + "%";
-        progressText.textContent = `Question ${this.currentIndex + 1} of ${totalQuestions}`;
-        
-        nextBtn.onclick = async () => {
-            const userResponse = document.getElementById("user-response").value.trim();
-            if (!userResponse) {
-                alert("Please enter your response before proceeding.");
-                return;
+        if (question.type === "open-ended") {
+            // Open-ended question UI
+            optionsContainer.innerHTML = `
+                <textarea id="user-response" placeholder="Type your answer..." maxlength="150"></textarea>
+                <div id="char-counter">0/150 characters</div>
+            `;
+            charCounter.textContent = `0/150 characters`;
+            // Add input event listener for character counting
+            const textarea = document.getElementById("user-response");
+            textarea.addEventListener('input', (e) => {
+                const currentLength = e.target.value.length;
+                charCounter.textContent = `${currentLength}/150 characters`;
+                
+                // Change color when approaching limit
+                if (currentLength >= 145) {
+                    charCounter.style.color = currentLength === 150 ? '#d32f2f' : '#ff9800';
+                } else {
+                    charCounter.style.color = '#666';
+                }
+            });
+
+            nextBtn.onclick = async () => {
+                const userResponse = textarea.value.trim();
+                if (!userResponse) {
+                    alert("Please enter your response before proceeding.");
+                    return;
+                }
+                
+                nextBtn.disabled = true;
+                nextBtn.textContent = "Scoring...";
+                
+                try {
+                    const score = await this.fetchScoreFromOpenAI(userResponse, question.expectations);
+                        this.userAnswers.push(score);
+                        this.currentIndex++;
+                        this.showQuestion();
+                    } finally {
+                        nextBtn.textContent = this.currentIndex === this.questions.length - 1 
+                            ? "Submit and See Results" 
+                            : "Next";
+                        nextBtn.disabled = false;
+                }
+                
             }
-            
-            nextBtn.disabled = true;
-            nextBtn.textContent = "Scoring...";
-            
-            try {
-                const score = await this.fetchScoreFromOpenAI(userResponse, 
-                this.questions[this.currentIndex].expectations);
-                this.userAnswers.push(score);
+        } else if (question.type === "multiple-choice") {
+            // Multiple choice question UI
+            Object.entries(question.choices).forEach(([key, value]) => {
+                const button = document.createElement("button");
+                button.textContent = `${key}: ${value[0]}`;
+                button.className = "option-button";
+                button.onclick = () => {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.option-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    this.currentSelectedAnswer = value[1];
+                    nextBtn.disabled = false;
+                };
+                optionsContainer.appendChild(button);
+            });
+
+            nextBtn.onclick = () => {
+                if (this.currentSelectedAnswer === null) {
+                    alert("Please select an option before proceeding.");
+                    return;
+                }
+                this.userAnswers.push(this.currentSelectedAnswer);
+                this.quizResults.responses.push({
+                    question: question.text,
+                    userAnswer: Object.entries(question.choices).find(([_, v]) => v[1] === this.currentSelectedAnswer)[0],
+                    score: this.currentSelectedAnswer
+                });
                 this.currentIndex++;
                 this.showQuestion();
-            } finally {
-                nextBtn.textContent = this.currentIndex === this.questions.length - 1 
-                    ? "Submit and See Results" 
-                    : "Next";
-            }
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth' // Adds smooth scrolling animation
-            })
-        };
+            };
+
+        }else if (question.type === "scale") {
+            // Scale question UI
+            const sliderContainer = document.createElement("div");
+            sliderContainer.className = "slider-container";
+            
+            const slider = document.createElement("input");
+            slider.type = "range";
+            slider.min = "0";
+            slider.max = question.scale.toString();
+            slider.value = "5";
+            slider.step = "1";
+            slider.className = "scale-slider";
+            
+            const valueDisplay = document.createElement("div");
+            valueDisplay.className = "slider-value";
+            valueDisplay.textContent = `Selected: 5`;
+            
+            slider.oninput = () => {
+                valueDisplay.textContent = `Selected: ${slider.value}`;
+                this.currentSelectedAnswer = parseInt(slider.value);
+                nextBtn.disabled = false;
+            };
+            
+            sliderContainer.appendChild(slider);
+            sliderContainer.appendChild(valueDisplay);
+            optionsContainer.appendChild(sliderContainer);
+            
+            // Add scale labels
+            const scaleLabels = document.createElement("div");
+            scaleLabels.className = "scale-labels";
+            scaleLabels.innerHTML = `
+                <span>0 (Very Low)</span>
+                <span>${question.scale} (Very High)</span>
+            `;
+            optionsContainer.appendChild(scaleLabels);
+
+            nextBtn.onclick = () => {
+                this.userAnswers.push(this.currentSelectedAnswer || 5); // Default to 5 if not moved
+                this.quizResults.responses.push({
+                    question: question.text,
+                    userAnswer: this.currentSelectedAnswer || 5,
+                    score: this.currentSelectedAnswer || 5
+                });
+                this.currentIndex++;
+                this.showQuestion();
+            };
+        }
+        // Update progress bar
+        const progressPercentage = (this.currentIndex / totalQuestions) * 100;
+        progress.style.width = `${progressPercentage}%`;
+        progressText.textContent = `Question ${this.currentIndex + 1} of ${totalQuestions}`;
+        
+        // Set next button text
+        nextBtn.textContent = this.currentIndex === this.questions.length - 1 
+            ? "Submit and See Results" 
+            : "Next";
+        nextBtn.disabled = question.type !== "open-ended"; // Disable for non-open-ended until selection
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     calculateScore() {
@@ -212,13 +518,13 @@ class UbuntexIndex {
                 ${this.quizResults.responses.map((r, i) => `
                     <tr>
                         <td>${this.questions[i].text}</td>
-                        <td>${r.userAnswer}</td>
-                        <td>${r.gptScore.toFixed(1)}</td>
+                        <td>${typeof r.userAnswer === 'string' ? r.userAnswer : r.userAnswer.toFixed(1)}</td>
+                        <td>${r.score.toFixed(1)}/10</td>
                     </tr>
                 `).join('')}
                 <tr class="total-row">
                     <td colspan="2"><strong>Total Score</strong></td>
-                    <td><strong>${this.userAnswers.reduce((a, b) => a + b, 0).toFixed()} /100</strong></td>
+                    <td><strong>${this.userAnswers.reduce((a, b) => a + b, 0).toFixed()}/${this.questions.length * 10}</strong></td>
                 </tr>
             </tbody>
         `;
