@@ -380,6 +380,7 @@ class UbuntexIndex {
                 
             }
         } else if (question.type === "multiple-choice") {
+            charCounter.textContent = ""
             // Multiple choice question UI
             Object.entries(question.choices).forEach(([key, value]) => {
                 const button = document.createElement("button");
@@ -414,6 +415,7 @@ class UbuntexIndex {
             };
 
         }else if (question.type === "scale") {
+             charCounter.textContent = ""
             // Scale question UI
             const sliderContainer = document.createElement("div");
             sliderContainer.className = "slider-container";
