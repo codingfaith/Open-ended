@@ -60,7 +60,7 @@ button {
 .option-button:active{
     outline: none; 
     color: #ffffff;
-    background: #36454F;
+    background: rgba(25,25,122,0.4);
 }
 #next-btn {
     min-width: 150px;
