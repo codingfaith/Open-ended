@@ -429,7 +429,7 @@ class UbuntexIndex {
             
             const valueDisplay = document.createElement("div");
             valueDisplay.className = "slider-value";
-            valueDisplay.textContent = `Selected: 5 (drag slider to rate)`;
+            valueDisplay.textContent = `Selected: 5 (drag slider)`;
             
             slider.oninput = () => {
                 valueDisplay.textContent = `Selected: ${slider.value}`;
