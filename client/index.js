@@ -1,4 +1,4 @@
-const totalQuestions = 42;
+const totalQuestions = 44;
 const progress = document.getElementById("progress");
 const progressText = document.getElementById("progress-text");
 
@@ -119,20 +119,20 @@ class UbuntexIndex {
                 type: "scale" //18
 
             },{
-                text: "Rate on a 10 point scale your respect for the people in your country", //19
+                text: "Rate on a 10 point scale your respect for the people in your country", 
                 scale: 10,
-                type: "scale" //20
+                type: "scale" //19
             },{
                 text: "Rate on a 10 point scale your respect authorities in general",
                 scale: 10,
-                type: "scale" //21
+                type: "scale" //20
             },{
                 text: "When you witness wrongdoing or crime in your area, how do you respond, especially if it doesn't affect you directly?",
                 expectations: "Score 0-10 based on civic courage and communal duty. 0=no action, 10=strong intervention",
-                type: "open-ended" //22
+                type: "open-ended" //21
             },{
             // Dignity
-                text: "What matters the most to you about how you see others in a social setting?", //23
+                text: "What matters the most to you about how you see others in a social setting?", //22
                 choices: {
                     A: ["Their appearance and presence", 1],
                     B: ["Their qualifications and skills  ", 3],
@@ -143,9 +143,9 @@ class UbuntexIndex {
             },{
                 text: "South Africa often struggles with lack of respect between people—whether it's in families, on the roads, or in public service. How do you practice respect in your daily life, even when it's not returned",
                 expectations: "Score 0-10 based on consistency in upholding dignity and inner moral compass. 0=no respect shown, 10=consistent respect",
-                type: "open-ended" //24
+                type: "open-ended" //23
             },{
-                text: "How would you describe how you want others to treat you in social settings?", //25
+                text: "How would you describe how you want others to treat you in social settings?", //24
                 choices: {
                     A: ["Based on my appearance and presence ", 1],
                     B: ["Based on my qualifications and skills ", 3],
@@ -155,9 +155,9 @@ class UbuntexIndex {
             },{
                 text: "If you were offered a shortcut to benefit yourself — like a job, contract or favour — but it meant others would be excluded unfairly, how would you handle it?",
                 expectations: "Score 0-10 based on personal integrity,fairness and resistance to corrupt gain. 0=would take shortcut, 10=would refuse unfair advantage",
-                type: "open-ended" //26
+                type: "open-ended" //25
             },{
-                text: "Who in your view in any situation is responsible for doing the right thing?", //27
+                text: "Who in your view in any situation is responsible for doing the right thing?", //26
                 choices: {
                     A: ["Myself first and foremost ", 7],
                     B: ["Others", 2],
@@ -167,34 +167,34 @@ class UbuntexIndex {
             },{
                 text: "We often say 'every person for themselves' in South Africa. Do you believe that's the only way to survive, or is there still room to care for others? Can you give an example?",
                 expectations: "Score 0-10 based on collective progress. 0=extreme individualism, 10=strong communal care",
-                type: "open-ended" //28
+                type: "open-ended" //27
             },{
                 text: "On a 10 point scale how would you rate your importance as a human being, in general?",
                 scale: 10,
-                type: "scale" //29
+                type: "scale" //28
             },{
                 text: "On a 10 point scale how would you rate the importance of others?",
                 scale: 10,
+                type: "scale" //29
+            },{
+                text: "On a 10 point scale how would you rate the importance of dignified thoughts that show respect for others?", 
+                scale: 10,
                 type: "scale" //30
             },{
-                text: "On a 10 point scale how would you rate the importance of dignified thoughts that show respect for others?", //25
+                text: "On a 10 point scale how would you rate the importance of your value system and beliefs?", 
                 scale: 10,
                 type: "scale" //31
             },{
-                text: "On a 10 point scale how would you rate the importance of your value system and beliefs?", //26
+                text: "On a 10 point scale how would you rate the importance of dignified actions that show respect for others?",
                 scale: 10,
                 type: "scale" //32
             },{
-                text: "On a 10 point scale how would you rate the importance of dignified actions that show respect for others?", //27
-                scale: 10,
-                type: "scale" //33
-            },{
                 text: "Tell me about a decision you made recently that was important to you, but others around you didn't agree with or didn't understand. What made you go ahead with it anyway?",
                 expectations: "High scores for courage of conviction and internal reference points. Low scores for external validation",
-                type: "open-ended" //34
+                type: "open-ended" //33
             },{
             // Communal Responsibility (30%)
-                text: "Do you consider yourself to be a responsible citizen?", //35
+                text: "Do you consider yourself to be a responsible citizen?", //34
                 choices: {
                     A: ["It depends on the situation ", 2],
                     B: ["Sometimes", 3],
@@ -204,16 +204,16 @@ class UbuntexIndex {
             },{
                 text: "If you could design a school or workplace from scratch, what would it look like—and how would it be different from the ones you know?",
                 expectations: "High scores for capacity to think beyond inherited structures or social benchmarks 0=lack of originality and creativity",
-                type: "open-ended" //36
+                type: "open-ended" //35
             },{
-                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out your family?", //37
+                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out your family?", //36
                 choices: {
                     A: ["Yes", 4],
                     B: ["No", 1]
                 },
                 type: "multiple-choice"
             },{
-                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out your community?", //38
+                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out your community?", //37
                 choices: {
                     A: ["Yes", 5],
                     B: ["No", 1]
@@ -222,13 +222,13 @@ class UbuntexIndex {
             },{
                 text: "Imagine you are in a community where everyone earns the same and drives the same car. What would you do or pursue to express your identity or success?",
                 expectations: "High scores for intrinsic values or self-driven aspirations. Low scores material and comparative cues",
-                type: "open-ended" //39
+                type: "open-ended" //38
             },{
                 text: "When you look at South Africa today, what is something that most people accept as normal, but that you believe needs to be challenged or changed?",
                 expectations: "High scores for comfort with questioning social norms and forming their own views and clear independent thinking. Low scores if user adopts inherited views and lacks originality",
-                type: "open-ended" //40
+                type: "open-ended" //39
             },{
-                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out your country?", //41
+                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out your country?", //40
                 choices: {
                     A: ["Yes", 6],
                     B: ["No", 1]
@@ -237,9 +237,9 @@ class UbuntexIndex {
             },{
                 text: "Can you describe a time when you chose to follow your own path, even if it meant being alone or misunderstood? What motivated you?",
                 expectations: "High scores for internal moral compass and resistance to groupthink or peer conformity. Low scores if reliant on what others think/do, no evidence of personal reasoning",
-                type: "open-ended" //42
+                type: "open-ended" //41
             },{
-                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out the entire world?", //43
+                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out the entire world?", //42
                 choices: {
                     A: ["Yes", 3],
                     B: ["No", 1]
@@ -473,14 +473,39 @@ class UbuntexIndex {
         
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
+    
     calculateScore() {
-        const totalScore = this.userAnswers.reduce((a, b) => a + b, 0);
-        const maxPossibleScore = this.questions.length * 10; // Updated to 10-point scale
-        const finalScore = (totalScore / maxPossibleScore) * 100;
-        localStorage.setItem('ubuntexTestCompleted', 'true');
+        //modify userAnswers array according to the calculation method
+        const originalArray = [...this.userAnswers]
+        const newArray = [...originalArray]
 
-        this.displayResults(finalScore);
+        // Apply transformations based on array[5]
+        const base5 = originalArray[5] / 2
+        newArray[6] = originalArray[6] - base5
+        newArray[7] = originalArray[7] - base5
+        newArray[8] = originalArray[8] - base5
+        newArray[9] = originalArray[9] - base5
+
+        // Apply transformations based on array[13]
+        const base14 = originalArray[14] / 2
+        newArray[15] = originalArray[15] - base14
+        newArray[16] = originalArray[16] - base14
+        newArray[17] = originalArray[17] - base14
+        newArray[18] = originalArray[18] - base14
+        newArray[19] = originalArray[19] - base14
+
+        // Apply transformation based on array[22]
+        const base27 = originalArray[27] / 2
+        newArray[28] = originalArray[28] - base27
+
+        console.log(newArray)
+
+        const totalScore = newArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+        const maxPossibleScore = 315
+        const finalScore = (totalScore  / maxPossibleScore) * 100 
+        localStorage.setItem('ubuntexTestCompleted', 'true') // Mark test as completed in localStorage
+
+        this.displayResults(finalScore)
     }
 
     displayResults(score) {
@@ -502,7 +527,7 @@ class UbuntexIndex {
         `;
         this.renderResultsTable();
     }
-
+    
     renderResultsTable() {
         const table = document.createElement('table');
         table.className = 'results-table';
