@@ -379,8 +379,8 @@ class UbuntexIndex {
                 }
                 
             }
+            charCounter.innerHTML = ""
         } else if (question.type === "multiple-choice") {
-            charCounter.textContent = ""
             // Multiple choice question UI
             Object.entries(question.choices).forEach(([key, value]) => {
                 const button = document.createElement("button");
@@ -415,7 +415,6 @@ class UbuntexIndex {
             };
 
         }else if (question.type === "scale") {
-             charCounter.textContent = ""
             // Scale question UI
             const sliderContainer = document.createElement("div");
             sliderContainer.className = "slider-container";
@@ -545,14 +544,10 @@ class UbuntexIndex {
                 ${this.quizResults.responses.map((r, i) => `
                     <tr>
                         <td>${this.questions[i].text}</td>
-                        <td>${typeof r.userAnswer === 'string' ? r.userAnswer : r.userAnswer.toFixed(1)}</td>
-                        <td>${r.score.toFixed(1)}/10</td>
+                        <td>${typeof r.userAnswer === 'string' ? r.userAnswer : r.userAnswer.toFixed()}</td>
+                        <td>${r.score.toFixed()}</td>
                     </tr>
                 `).join('')}
-                <tr class="total-row">
-                    <td colspan="2"><strong>Total Score</strong></td>
-                    <td><strong>${this.userAnswers.reduce((a, b) => a + b, 0).toFixed()}/${this.questions.length * 10}</strong></td>
-                </tr>
             </tbody>
         `;
         document.getElementById("results-table").appendChild(table);

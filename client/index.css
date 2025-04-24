@@ -151,3 +151,9 @@ th, td {
     color: #ffffff;
     background: rgba(25,25,122,0.8);
 }
+.storage-notice {
+    color: #666;
+    margin-top: 20px;
+    font-size: 0.9em;
+    font-style: italic;
+}
