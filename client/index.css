@@ -59,8 +59,6 @@ button {
 .option-button:focus,
 .option-button:active{
     outline: none; 
-    color: #ffffff;
-    background: rgba(25,25,122,0.7);
 }
 #next-btn {
     min-width: 150px;
