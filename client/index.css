@@ -149,5 +149,5 @@ th, td {
 }
 .active {
     color: #ffffff;
-    background: #36454F;
+    background: rgba(25,25,122,0.4);
 }
