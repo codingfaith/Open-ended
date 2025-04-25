@@ -112,8 +112,8 @@ button {
     width: 100%;
     display: flex;
     color: #666;
-    font-size: 1em;
     margin-top: 5px;
+    font-size: 0.5em;
     justify-content: space-between;
 }
 table { 

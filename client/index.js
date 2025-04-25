@@ -163,7 +163,7 @@ class UbuntexIndex {
                 type: "multiple-choice",
                 category: "dignity"
             },{
-                text: "South Africa often struggles with lack of respect between people—whether it's in families, on the roads, or in public service. How do you practice respect in your daily life, even when it's not returned",
+                text: "South Africa often struggles with lack of respect between people — whether it's in families, on the roads, or in public service. How do you practice respect in your daily life, even when it's not returned",
                 expectations: "Score 0-10 based on consistency in upholding dignity and inner moral compass. 0=no respect shown, 10=consistent respect",
                 type: "open-ended",
                 category: "respect" //23
@@ -236,7 +236,7 @@ class UbuntexIndex {
                 type: "multiple-choice",
                 category: "communal responsibility" //34
             },{
-                text: "If you could design a school or workplace from scratch, what would it look like—and how would it be different from the ones you know?",
+                text: "If you could design a school or workplace from scratch, what would it look like — and how would it be different from the ones you know?",
                 expectations: "High scores for capacity to think beyond inherited structures or social benchmarks 0=lack of originality and creativity",
                 type: "open-ended",
                 category: "original thinking" //35
