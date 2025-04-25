@@ -6,7 +6,7 @@ class UbuntexIndex {
     constructor() {
         this.questions = [
             {
-                // empathy (25%)
+                // empathy
                 text: "In general, when is it right to consider the needs of others?", //1
                 type: "multiple-choice",
                 choices: {
@@ -15,7 +15,8 @@ class UbuntexIndex {
                     C: ["Together with mine", 5],
                     D: ["It's not important to consider the needs of others", 1]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "empathy"
             },{
                 text: "Do you feel that others care about your needs in general?", //2
                 type: "multiple-choice",
@@ -25,7 +26,8 @@ class UbuntexIndex {
                     C: ["Yes, at the same time as their needs", 3],
                     D: ["Its not important for them to consider my needs", 5]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "empathy"
             },{
                 text: "Who in your opinion is to blame for the bad things that you face from time to time?", //3
                 choices: {
@@ -34,7 +36,8 @@ class UbuntexIndex {
                     C: ["A combination of me and others", 4],
                     D: ["No one is to blame things just happen", 2],
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "empathy"
             },{
                 text: "When comparing your status in life  to that of others around you, where would you like to be?", //4
                 choices: {
@@ -43,7 +46,8 @@ class UbuntexIndex {
                     C: ["Same as others ", 5],
                     D: ["It does not matter", 7]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "empathy"
             },{ text: "How do you feel about working with others to achieve a common goal?", //5
                 choices: {
                     A: ["It is not easy to work with others ", 1],
@@ -51,41 +55,49 @@ class UbuntexIndex {
                     C: ["More can be achieved when working with others", 5],
                     D: ["Working with others is the only way of achieving lasting results ", 7]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "empathy"
             },{        
             //ratings
-                text: "On a 10 point scale where 1 means very low and 10 means very high, how would you rate your ability to understand yourself?", //6
+                text: "On a 10-point scale where 1 means very low and 10 means very high, how would you rate your ability to understand yourself?", //6
                 scale: 10,
-                type: "scale" //6
+                type: "scale",
+                category: "empathy" //6
             },{
-                text: "On a 10 point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in the world?", //7
+                text: "On a 10-point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in the world?", //7
                 scale: 10,
-                type: "scale" //7
+                type: "scale",
+                category: "empathy" //7
             },{
-                text: "On a 10 point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in your community?", //8
+                text: "On a 10-point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in your community?", //8
                 scale: 10,
-                type: "scale" //8
+                type: "scale",
+                category: "empathy" //8
             },{
-                text: "On a 10 point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in your country?", //9
+                text: "On a 10-point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in your country?", //9
                 scale: 10,
-                type: "scale" //9
+                type: "scale",
+                category: "empathy" //9
             },{
-                text: "On a 10 point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in your family?", //10
+                text: "On a 10-point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in your family?", //10
                 scale: 10,
-                type: "scale" //10
+                type: "scale",
+                category: "empathy" //10
             },{
                 text: "Many people today chase status and wealth, even if it means stepping on others. What are your thoughts on this kind of success, and how do you personally define a successful life?",
                 expectations: "Score 0-10 based on humility and community-centered values. 0=individualistic greed, 10=strong communal focus",
-                type: "open-ended" //11
+                type: "open-ended",
+                category: "empathy" //11
             },{ 
-            // respect (25%)
-                text: "How important is showing respect to  other human beings?", //12
+            // respect
+                text: "How important is showing respect to other human beings?", //12
                 choices: {
                     A: ["It depends on who ", 2],
                     B: ["Everyone needs to be respected", 5],
                     C: ["Respect is a luxury", 1]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "respect"
             },{
                 text: "How do you feel when someone you don't know is being disrespected?", //13
                 choices: {
@@ -93,43 +105,52 @@ class UbuntexIndex {
                     B: ["I also feel disrespected ", 6],
                     C: ["I feel bad about our society", 3]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "respect"
             },{
                 text: "What would you consider to be a true sign of showing respect to others?", //14
                 choices: {
                     A: ["Acting out your respect ", 7],
                     B: ["Not having negative thoughts about them", 3]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "respect"
             },{
-                text: "Rate on a 10 point scale your respect for yourself",
+                text: "Rate on a 10-point scale your respect for yourself",
                 scale: 10,
-                type: "scale" //15
+                type: "scale",
+                category: "respect" //15
             },{
-                text: "Rate on a 10 point scale your respect for your family members in general",
+                text: "Rate on a 10-point scale your respect for your family members in general",
                 scale: 10,
-                type: "scale" //16
+                type: "scale",
+                category: "respect" //16
             },{
-                text: "Rate on a 10 point scale your respect for people around the world",
+                text: "Rate on a 10-point scale your respect for people around the world",
                 scale: 10,
-                type: "scale" //17
+                type: "scale",
+                category: "respect" //17
             },{
-                text: "Rate on a 10 point scale your respect for your community", 
+                text: "Rate on a 10-point scale your respect for your community", 
                 scale: 10,
-                type: "scale" //18
+                type: "scale",
+                category: "respect" //18
 
             },{
-                text: "Rate on a 10 point scale your respect for the people in your country", 
+                text: "Rate on a 10-point scale your respect for the people in your country", 
                 scale: 10,
-                type: "scale" //19
+                type: "scale",
+                category: "respect" //19
             },{
-                text: "Rate on a 10 point scale your respect authorities in general",
+                text: "Rate on a 10-point scale your respect authorities in general",
                 scale: 10,
-                type: "scale" //20
+                type: "scale",
+                category: "respect" //20
             },{
                 text: "When you witness wrongdoing or crime in your area, how do you respond, especially if it doesn't affect you directly?",
                 expectations: "Score 0-10 based on civic courage and communal duty. 0=no action, 10=strong intervention",
-                type: "open-ended" //21
+                type: "open-ended",
+                category: "communal responsibility" //21
             },{
             // Dignity
                 text: "What matters the most to you about how you see others in a social setting?", //22
@@ -139,125 +160,148 @@ class UbuntexIndex {
                     C: ["Their dignity and worth as a person ", 6],
                     D: ["Their priorities and values ", 4]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "dignity"
             },{
                 text: "South Africa often struggles with lack of respect between people—whether it's in families, on the roads, or in public service. How do you practice respect in your daily life, even when it's not returned",
                 expectations: "Score 0-10 based on consistency in upholding dignity and inner moral compass. 0=no respect shown, 10=consistent respect",
-                type: "open-ended" //23
+                type: "open-ended",
+                category: "respect" //23
             },{
-                text: "How would you describe how you want others to treat you in social settings?", //24
+                text: "How would you describe how you want others to treat you in social settings?",
                 choices: {
                     A: ["Based on my appearance and presence ", 1],
                     B: ["Based on my qualifications and skills ", 3],
                     C: ["With honour simply because I am human ", 6]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "dignity" //24
             },{
                 text: "If you were offered a shortcut to benefit yourself — like a job, contract or favour — but it meant others would be excluded unfairly, how would you handle it?",
                 expectations: "Score 0-10 based on personal integrity,fairness and resistance to corrupt gain. 0=would take shortcut, 10=would refuse unfair advantage",
-                type: "open-ended" //25
+                type: "open-ended",
+                category: "dignity" //25
             },{
-                text: "Who in your view in any situation is responsible for doing the right thing?", //26
+                text: "Who in your view in any situation is responsible for doing the right thing?",
                 choices: {
                     A: ["Myself first and foremost ", 7],
                     B: ["Others", 2],
                     C: ["Everyone", 3]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "dignity" //26
             },{
                 text: "We often say 'every person for themselves' in South Africa. Do you believe that's the only way to survive, or is there still room to care for others? Can you give an example?",
                 expectations: "Score 0-10 based on collective progress. 0=extreme individualism, 10=strong communal care",
-                type: "open-ended" //27
+                type: "open-ended",
+                category: "empathy" //27
             },{
-                text: "On a 10 point scale how would you rate your importance as a human being, in general?",
+                text: "On a 10-point scale how would you rate your importance as a human being, in general?",
                 scale: 10,
-                type: "scale" //28
+                type: "scale",
+                category: "dignity" //28
             },{
-                text: "On a 10 point scale how would you rate the importance of others?",
+                text: "On a 10-point scale how would you rate the importance of others?",
                 scale: 10,
-                type: "scale" //29
+                type: "scale",
+                category: "dignity" //29
             },{
-                text: "On a 10 point scale how would you rate the importance of dignified thoughts that show respect for others?", 
+                text: "On a 10-point scale how would you rate the importance of dignified thoughts that show respect for others?", 
                 scale: 10,
-                type: "scale" //30
+                type: "scale",
+                category: "dignity" //30
             },{
-                text: "On a 10 point scale how would you rate the importance of your value system and beliefs?", 
+                text: "On a 10-point scale how would you rate the importance of your value system and beliefs?", 
                 scale: 10,
-                type: "scale" //31
+                type: "scale",
+                category: "dignity" //31
             },{
-                text: "On a 10 point scale how would you rate the importance of dignified actions that show respect for others?",
+                text: "On a 10-point scale how would you rate the importance of dignified actions that show respect for others?",
                 scale: 10,
-                type: "scale" //32
+                type: "scale",
+                category: "dignity" //32
             },{
                 text: "Tell me about a decision you made recently that was important to you, but others around you didn't agree with or didn't understand. What made you go ahead with it anyway?",
                 expectations: "High scores for courage of conviction and internal reference points. Low scores for external validation",
-                type: "open-ended" //33
+                type: "open-ended",
+                category: "original thinking" //33
             },{
-            // Communal Responsibility (30%)
-                text: "Do you consider yourself to be a responsible citizen?", //34
+            // Communal Responsibility
+                text: "Do you consider yourself to be a responsible citizen?",
                 choices: {
                     A: ["It depends on the situation ", 2],
                     B: ["Sometimes", 3],
                     C: ["Always", 5]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "communal responsibility" //34
             },{
                 text: "If you could design a school or workplace from scratch, what would it look like—and how would it be different from the ones you know?",
                 expectations: "High scores for capacity to think beyond inherited structures or social benchmarks 0=lack of originality and creativity",
-                type: "open-ended" //35
+                type: "open-ended",
+                category: "original thinking" //35
             },{
-                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out your family?", //36
+                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help your family?",
                 choices: {
                     A: ["Yes", 4],
                     B: ["No", 1]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "communal responsibility" //36
             },{
-                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out your community?", //37
+                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help your community?",
                 choices: {
                     A: ["Yes", 5],
                     B: ["No", 1]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "communal responsibility" //37
             },{
                 text: "Imagine you are in a community where everyone earns the same and drives the same car. What would you do or pursue to express your identity or success?",
                 expectations: "High scores for intrinsic values or self-driven aspirations. Low scores material and comparative cues",
-                type: "open-ended" //38
+                type: "open-ended",
+                category: "original thinking" //38
             },{
                 text: "When you look at South Africa today, what is something that most people accept as normal, but that you believe needs to be challenged or changed?",
                 expectations: "High scores for comfort with questioning social norms and forming their own views and clear independent thinking. Low scores if user adopts inherited views and lacks originality",
-                type: "open-ended" //39
+                type: "open-ended",
+                category: "original thinking" //39
             },{
-                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out your country?", //40
+                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help your country?", //40
                 choices: {
                     A: ["Yes", 6],
                     B: ["No", 1]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "communal responsibility"
             },{
                 text: "Can you describe a time when you chose to follow your own path, even if it meant being alone or misunderstood? What motivated you?",
                 expectations: "High scores for internal moral compass and resistance to groupthink or peer conformity. Low scores if reliant on what others think/do, no evidence of personal reasoning",
-                type: "open-ended" //41
+                type: "open-ended",
+                category: "original thinking" //41
             },{
-                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help out the entire world?", //42
+                text: "Have you in the past 12 months done anything taking longer than 30 minutes to help the entire world?", //42
                 choices: {
                     A: ["Yes", 3],
                     B: ["No", 1]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "communal responsibility"
             },{
-                text: "What kind of person would you most likely consider to be a role model?", //43
+                text: "What kind of person would you most likely consider to be a role model?",
                 choices: {
                     A: ["A popular and well known person", 1],
                     B: ["A skilled and talented person", 2],
                     C: ["Someone that sacrifices for their community ", 6],
                     D: ["A religious and upright person ", 4]
                 },
-                type: "multiple-choice"
+                type: "multiple-choice",
+                category: "dignity" //43
             },{
-                text: "Can you  rate the importance of service to the community to you personally, on a 10 point scale?",
+                text: "Can you rate the importance of service to the community to you personally, on a 10-point scale?",
                 scale: 10,
-                type: "scale"  //44
+                type: "scale",
+                category: "communal responsibility"  //44
             }
         ];
 
