@@ -567,34 +567,33 @@ class UbuntexIndex {
         resultContainer.innerHTML = `
             <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
             <p>Classification: ${classification}</p>
-            <div id="results-table"></div>
         `;
-        this.renderResultsTable();
+        // <div id="results-table"></div> this.renderResultsTable();
     }
     
-    renderResultsTable() {
-        const table = document.createElement('table');
-        table.className = 'results-table';
-        table.innerHTML = `
-            <thead>
-                <tr>
-                    <th>Question</th>
-                    <th>Your Answer</th>
-                    <th>Score</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${this.quizResults.responses.map((r, i) => `
-                    <tr>
-                        <td>${this.questions[i].text}</td>
-                        <td>${typeof r.userAnswer === 'string' ? r.userAnswer : r.userAnswer.toFixed()}</td>
-                        <td>${r.score.toFixed()}</td>
-                    </tr>
-                `).join('')}
-            </tbody>
-        `;
-        document.getElementById("results-table").appendChild(table);
-    }
+    // renderResultsTable() {
+    //     const table = document.createElement('table');
+    //     table.className = 'results-table';
+    //     table.innerHTML = `
+    //         <thead>
+    //             <tr>
+    //                 <th>Question</th>
+    //                 <th>Your Answer</th>
+    //                 <th>Score</th>
+    //             </tr>
+    //         </thead>
+    //         <tbody>
+    //             ${this.quizResults.responses.map((r, i) => `
+    //                 <tr>
+    //                     <td>${this.questions[i].text}</td>
+    //                     <td>${typeof r.userAnswer === 'string' ? r.userAnswer : r.userAnswer.toFixed()}</td>
+    //                     <td>${r.score.toFixed()}</td>
+    //                 </tr>
+    //             `).join('')}
+    //         </tbody>
+    //     `;
+    //     document.getElementById("results-table").appendChild(table);
+    // }
 }
 
 // Initialize the quiz when the page loads
