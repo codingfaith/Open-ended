@@ -339,7 +339,6 @@ class UbuntexIndex {
             // Open-ended question UI
             optionsContainer.innerHTML = `
                 <textarea id="user-response" placeholder="Type your answer..." maxlength="150"></textarea>
-                <div id="char-counter">0/150 characters</div>
             `;
             charCounter.textContent = `0/150 characters`;
             // Add input event listener for character counting
