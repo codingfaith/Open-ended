@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubundex Index Quiz</title>
+    <title>Ubuntex Index Quiz</title>
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <h1>Ubundex Index Quiz</h1>
     <div id="quiz-container">
+        <div class="branding">
+            <img src="./Plus94_logo2.png" alt="company logo" class="logo">
+            <header>
+                <h1>Ubuntex Index Quiz</h1>
+            </header>
+        </div>
         <div class="progress-container">
             <h2 id="progress-text">Question 1 of 10</h2>
             <div class="progress-bar">
@@ -19,13 +24,13 @@
         <div id="options" class="options"></div>
         <div class="char-counter" id="char-counter"></div>
         <button id="next-btn" disabled>Next</button>
+        <footer>©2025 Plus 94 Research. All rights reserved.</footer>
     </div>
     <div id="result" style="display: none;">
         <h2>Your Results</h2>
         <div id="result-details"></div>
         <!-- <div id="results-table"></div> -->
     </div>
-     
     <script src="index.js" type="module"></script>
 </body>
 </html>

@@ -8,8 +8,20 @@ body {
     font-size: larger; 
     font-family: "Poppins", sans-serif;
 }
+header {
+    width: 100%;
+}
 h1 {
+    font-size: 2rem;
     text-align: center;
+}
+.logo {
+    max-width: 150px;
+}
+.branding {
+    gap: 10px;
+    display: flex;
+    align-items: center;
 }
 .question { 
     font-size: large;
@@ -49,7 +61,7 @@ button {
     margin: auto;
     padding: 0.5em;
     max-width: 800px;
-    box-shadow: 1px 1px 3px 1px #808080;
+    box-shadow: 1px 1px 1px 1px #808080;
 }
 .option-button {
     color: #000000;
@@ -156,4 +168,9 @@ th, td {
     margin-top: 20px;
     font-size: 0.9em;
     font-style: italic;
+}
+footer {
+    margin-top: 20px;
+    font-size: smaller;
+    text-align: center;
 }
