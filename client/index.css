@@ -8,9 +8,6 @@ body {
     font-size: larger; 
     font-family: "Poppins", sans-serif;
 }
-header {
-    width: 100%;
-}
 h1 {
     font-size: 2rem;
     text-align: center;
@@ -22,6 +19,7 @@ h1 {
     gap: 10px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 .question { 
     font-size: large;
