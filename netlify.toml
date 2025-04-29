@@ -9,11 +9,11 @@
   status = 200
 
  [[redirects]]
-  from = "./quiz"
-  to = "./quiz.html"
+  from = "/quiz"
+  to = "/quiz.html"
   status = 200
 
 [[redirects]]
   from = "/*"
-  to = "./index.html"
+  to = "/index.html"
   status = 200 
