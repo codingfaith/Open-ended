@@ -4,33 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ubuntex Index Quiz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <div id="quiz-container">
-        <div class="branding">
-            <img src="./Plus94_logo2.png" alt="company logo" class="logo">
-            <header>
-                <h1>Ubuntex Quiz</h1>
-            </header>
-        </div>
-        <div class="progress-container">
-            <h2 id="progress-text">Question 1 of 10</h2>
-            <div class="progress-bar">
-                <div class="progress" id="progress"></div>
+    <div class="landing-container">
+        <div class="heading">
+            <div class="ubuntu-logo"><p>U</p></div>
+            <div class="ubuntu-text">
+                <p>Ubundex Index</p>
+                <span>Measuring Ubuntu in Society</span>
             </div>
         </div>
-        <div id="question" class="question"></div>
-        <div id="options" class="options"></div>
-        <div class="char-counter" id="char-counter"></div>
-        <button id="next-btn" disabled>Next</button>
-        <footer>©2025 Plus 94 Research. All rights reserved.</footer>
+        <nav>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+            <a href="#" id="register">Register</a>
+        </nav>
+        <div class="assessment">
+            <h1>Measure the Spirit of <span class="highlight">Ubuntu</span> in Your Organisation</h1>
+            <p>The Ubuntex Index quantifies social contribution, empathy, dignity, respect and community responsibility - values that make us uniquely South African.</p>
+            <a href="./landing.html" class="redirect">Start Assessment</a>
+        </div>
     </div>
-    <div id="result" style="display: none;">
-        <h2>Your Results</h2>
-        <div id="result-details"></div>
-        <!-- <div id="results-table"></div> -->
-    </div>
-    <script src="index.js" type="module"></script>
 </body>
 </html>
