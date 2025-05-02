@@ -15,15 +15,10 @@ body {
     padding: 0.5em;
     align-items: center;
     background: #ffffff;
-    justify-content: center;
+    justify-content: space-between;
 }
-.ubuntu-logo {
-    width: 100px;
-    height: 100px;
-    display: flex;
-    border-radius: 100%;
-    background: #7f87b7;
-    justify-content: center;  
+.logo {
+    max-width: 150px;
 }
 .ubuntu-logo p {
     font-size: 3rem;
