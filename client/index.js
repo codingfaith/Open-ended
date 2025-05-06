@@ -352,7 +352,7 @@ class UbuntexIndex {
             return score;
         } catch (error) {
             console.error("Scoring error:", error);
-            return 5; // Fallback score (mid-point of 0-10 range)
+            return 5; // Fallback score
         }
     }
 
@@ -413,6 +413,11 @@ class UbuntexIndex {
                 try {
                     const score = await this.fetchScoreFromOpenAI(userResponse, question.expectations);
                         this.userAnswers.push(score);
+                        this.quizResults.responses.push({
+                            question: question.text,
+                            userAnswer:userResponse,
+                            score: score
+                        })
                         this.currentIndex++;
                         this.showQuestion();
                     } finally {
@@ -450,7 +455,7 @@ class UbuntexIndex {
                 this.userAnswers.push(this.currentSelectedAnswer);
                 this.quizResults.responses.push({
                     question: question.text,
-                    userAnswer: Object.entries(question.choices).find(([_, v]) => v[1] === this.currentSelectedAnswer)[0],
+                    userAnswer: Object.entries(question.choices).find(([_, v]) => v[1] === this.currentSelectedAnswer)[1][0],
                     score: this.currentSelectedAnswer
                 });
                 this.currentIndex++;
@@ -554,8 +559,8 @@ class UbuntexIndex {
 
     displayResults(score) {
         let classification;
-        if (score <= 20) classification = "High Risk (Anti-Social)";
-        else if (score <= 40) classification = "Low Ubuntu Awareness";
+        if (score <= 40) classification = "High Risk (Anti-Social)";
+        else if (score <= 50) classification = "Low Ubuntu Awareness";
         else if (score <= 60) classification = "Moderate Ubuntu Awareness";
         else if (score <= 80) classification = "Strong Ubuntu Traits";
         else if (score <= 100) classification = "Ubuntu Ambassador (High Social Contribution)";
@@ -567,33 +572,34 @@ class UbuntexIndex {
         resultContainer.innerHTML = `
             <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
             <p>Classification: ${classification}</p>
+            <div id="results-table"></div>
         `;
-        // <div id="results-table"></div> this.renderResultsTable();
+         this.renderResultsTable();
     }
     
-    // renderResultsTable() {
-    //     const table = document.createElement('table');
-    //     table.className = 'results-table';
-    //     table.innerHTML = `
-    //         <thead>
-    //             <tr>
-    //                 <th>Question</th>
-    //                 <th>Your Answer</th>
-    //                 <th>Score</th>
-    //             </tr>
-    //         </thead>
-    //         <tbody>
-    //             ${this.quizResults.responses.map((r, i) => `
-    //                 <tr>
-    //                     <td>${this.questions[i].text}</td>
-    //                     <td>${typeof r.userAnswer === 'string' ? r.userAnswer : r.userAnswer.toFixed()}</td>
-    //                     <td>${r.score.toFixed()}</td>
-    //                 </tr>
-    //             `).join('')}
-    //         </tbody>
-    //     `;
-    //     document.getElementById("results-table").appendChild(table);
-    // }
+    renderResultsTable() {
+        const table = document.createElement('table');
+        table.className = 'results-table';
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Your Answer</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${this.quizResults.responses.map((r, i) => `
+                    <tr>
+                        <td>${this.questions[i].text}</td>
+                        <td>${typeof r.userAnswer === 'string' ? r.userAnswer : r.userAnswer.toFixed()}</td>
+                        <td>${r.score.toFixed()}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        `;
+        document.getElementById("results-table").appendChild(table);
+    }
 }
 
 // Initialize the quiz when the page loads

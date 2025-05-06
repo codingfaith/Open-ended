@@ -128,6 +128,7 @@ button {
 }
 table { 
     width: 100%; 
+    font-size: small;
     margin-top: 20px;
     border-collapse: collapse; 
 }
