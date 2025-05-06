@@ -601,7 +601,6 @@ class UbuntexIndex {
         document.getElementById("results-table").appendChild(table);
     }
 }
-
 // Initialize the quiz when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     const quiz = new UbuntexIndex();
