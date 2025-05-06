@@ -577,28 +577,86 @@ class UbuntexIndex {
          this.renderResultsTable();
     }
     
+    // renderResultsTable() {
+    //     const table = document.createElement('table');
+    //     table.className = 'results-table';
+    //     table.innerHTML = `
+    //         <thead>
+    //             <tr>
+    //                 <th>Question</th>
+    //                 <th>Your Answer</th>
+    //                 <th>Score</th>
+    //             </tr>
+    //         </thead>
+    //         <tbody>
+    //             ${this.quizResults.responses.map((r, i) => `
+    //                 <tr>
+    //                     <td>${this.questions[i].text}</td>
+    //                     <td>${typeof r.userAnswer === 'string' ? r.userAnswer : r.userAnswer.toFixed()}</td>
+    //                     <td>${r.score.toFixed()}</td>
+    //                 </tr>
+    //             `).join('')}
+    //         </tbody>
+    //     `;
+    //     document.getElementById("results-table").appendChild(table);
+    // }
     renderResultsTable() {
         const table = document.createElement('table');
         table.className = 'results-table';
-        table.innerHTML = `
-            <thead>
-                <tr>
-                    <th>Question</th>
-                    <th>Your Answer</th>
-                    <th>Score</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${this.quizResults.responses.map((r, i) => `
+        
+        try {
+            table.innerHTML = `
+                <thead>
                     <tr>
-                        <td>${this.questions[i].text}</td>
-                        <td>${typeof r.userAnswer === 'string' ? r.userAnswer : r.userAnswer.toFixed()}</td>
-                        <td>${r.score.toFixed()}</td>
+                        <th>Question</th>
+                        <th>Your Answer</th>
+                        <th>Score</th>
                     </tr>
-                `).join('')}
-            </tbody>
-        `;
-        document.getElementById("results-table").appendChild(table);
+                </thead>
+                <tbody>
+                    ${this.quizResults.responses.map((r, i) => {
+                        // Safely get question text
+                        const questionText = this.questions[i]?.text || 'Question not found';
+                        
+                        // Safely format user answer
+                        let userAnswer;
+                        if (typeof r.userAnswer === 'undefined') {
+                            userAnswer = 'No answer';
+                        } else if (typeof r.userAnswer === 'string') {
+                            userAnswer = r.userAnswer;
+                        } else {
+                            userAnswer = Number(r.userAnswer).toFixed(0);
+                        }
+                        
+                        // Safely format score
+                        const score = typeof r.score === 'undefined' 
+                            ? 'N/A' 
+                            : Number(r.score).toFixed(0);
+    
+                        return `
+                            <tr>
+                                <td>${questionText}</td>
+                                <td>${userAnswer}</td>
+                                <td>${score}</td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            `;
+        } catch (error) {
+            console.error('Error rendering results table:', error);
+            table.innerHTML = `
+                <tr>
+                    <td colspan="3">Error loading results. Please try again.</td>
+                </tr>
+            `;
+        }
+    
+        const container = document.getElementById("results-table");
+        if (container) {
+            container.innerHTML = '';
+            container.appendChild(table);
+        }
     }
 }
 // Initialize the quiz when the page loads
