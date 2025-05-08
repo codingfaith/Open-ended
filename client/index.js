@@ -4,6 +4,8 @@ const progressText = document.getElementById("progress-text");
 
 class UbuntexIndex {
     constructor() {
+        this.isLoading = true;
+        this.loadingError = null;
         this.questions = [
             {
                 // empathy
@@ -310,7 +312,16 @@ class UbuntexIndex {
         this.quizResults = {responses: []};
         this.checkTestCompletion();
     }
-
+    async initialize() {
+        try {
+            await this.checkTestCompletion();
+            this.isLoading = false;
+        } catch (error) {
+            this.loadingError = error;
+            this.isLoading = false;
+            console.error("Initialization failed:", error);
+        }
+    }
     checkTestCompletion() {
         const testCompleted = localStorage.getItem('ubuntexTestCompleted');
         if (testCompleted === 'true') {
@@ -331,6 +342,7 @@ class UbuntexIndex {
     }
 
     async fetchScoreFromOpenAI(userResponse, expectations) {
+        this.isLoading = true;
         try {
             const response = await fetch("/api/openai-proxy", {
                 method: "POST",
@@ -343,6 +355,7 @@ class UbuntexIndex {
             }
 
             const { score } = await response.json();
+            this.isLoading = false;
             
             this.quizResults.responses.push({
                 userAnswer: userResponse,
@@ -351,6 +364,7 @@ class UbuntexIndex {
             
             return score;
         } catch (error) {
+            this.isLoading = false;
             console.error("Scoring error:", error);
             return 5; // Fallback score
         }
@@ -360,7 +374,7 @@ class UbuntexIndex {
         this.showQuestion();
     }
 
-    showQuestion() {
+    async showQuestion() {
         const questionContainer = document.getElementById("question");
         const optionsContainer = document.getElementById("options");
         const nextBtn = document.getElementById("next-btn");
@@ -575,29 +589,27 @@ class UbuntexIndex {
         `;
          this.renderResultsTable();
     }
-    
-    // renderResultsTable() {
-    //     const table = document.createElement('table');
-    //     table.className = 'results-table';
-    //     table.innerHTML = `
-    //         <thead>
-    //             <tr>
-    //                 <th>Question</th>
-    //                 <th>Answer</th>
-    //             </tr>
-    //         </thead>
-    //         <tbody>
-    //             ${this.quizResults.responses.map((r, i) => `
-    //                 <tr>
-    //                     <td>${this.questions[i].text}</td>
-    //                     <td>${typeof r.userAnswer === 'string' ? r.userAnswer : r.userAnswer.toFixed()}</td>
-    //                 </tr>
-    //             `).join('')}
-    //         </tbody>
-    //     `;
-    //     document.getElementById("results-table").appendChild(table);
-    // }
+    displayLoadingState() {
+        document.getElementById("quiz-container").innerHTML = `
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading your assessment...</p>
+            </div>
+        `;
+    }
+   
     renderResultsTable() {
+        if (this.isLoading) {
+            this.displayLoadingState();
+            return;
+        }
+        // Verify data is ready
+        if (!this.quizResults?.responses || this.quizResults.responses.some(r => r.score === undefined)) {
+            console.warn("Data not ready:", this.quizResults);
+            setTimeout(() => this.renderResultsTable(), 500); // Retry after delay
+            return;
+        }
+
         const table = document.createElement('table');
         table.className = 'results-table';
         
@@ -623,12 +635,6 @@ class UbuntexIndex {
                         } else {
                             userAnswer = Number(r.userAnswer).toFixed(0);
                         }
-                        
-                        // Safely format score
-                        // const score = typeof r.score === 'undefined' 
-                        //     ? 'N/A' 
-                        //     : Number(r.score).toFixed(0);
-    
                         return `
                             <tr>
                                 <td>${questionText}</td>
@@ -655,6 +661,7 @@ class UbuntexIndex {
     }
 }
 // Initialize the quiz when the page loads
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const quiz = new UbuntexIndex();
+    await quiz.initialize();
 });
