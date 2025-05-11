@@ -316,8 +316,7 @@ class UbuntexIndex {
         if (testCompleted === 'true') {
             this.showCompletionMessage();
             return;
-        }
-        
+        } 
         this.startQuiz();
     }
 
@@ -343,12 +342,7 @@ class UbuntexIndex {
             }
 
             const { score } = await response.json();
-            
-            // this.quizResults.responses.push({
-            //     userAnswer: userResponse,
-            //     gptScore: score
-            // });
-            
+ 
             return score;
         } catch (error) {
             console.error("Scoring error:", error);
@@ -454,8 +448,7 @@ class UbuntexIndex {
                 this.userAnswers.push(this.currentSelectedAnswer);
                 this.quizResults.responses.push({
                     question: question.text,
-                    userAnswer: Object.entries(question.choices).find(([_, v]) => v[1] === this.currentSelectedAnswer)[1][0],
-                    // score: this.currentSelectedAnswer
+                    userAnswer: Object.entries(question.choices).find(([_, v]) => v[1] === this.currentSelectedAnswer)[1][0]
                 });
                 this.currentIndex++;
                 this.showQuestion();
@@ -502,8 +495,7 @@ class UbuntexIndex {
                 this.userAnswers.push(answer); 
                 this.quizResults.responses.push({
                     question: question.text,
-                    userAnswer: answer,
-                    // score:answer
+                    userAnswer: answer
                 });
                 this.currentIndex++;
                 this.showQuestion();
@@ -579,83 +571,6 @@ class UbuntexIndex {
         setTimeout(() => this.renderResultsTable(), 100);
     }
     
-    // renderResultsTable() {
-    //     const table = document.createElement('table');
-    //     table.className = 'results-table';
-    //     table.innerHTML = `
-    //         <thead>
-    //             <tr>
-    //                 <th>Question</th>
-    //                 <th>Answer</th>
-    //             </tr>
-    //         </thead>
-    //         <tbody>
-    //             ${this.quizResults.responses.map((r, i) => `
-    //                 <tr>
-    //                     <td>${this.questions[i].text}</td>
-    //                     <td>${typeof r.userAnswer === 'string' ? r.userAnswer : r.userAnswer.toFixed()}</td>
-    //                 </tr>
-    //             `).join('')}
-    //         </tbody>
-    //     `;
-    //     document.getElementById("results-table").appendChild(table);
-    // }
-    // renderResultsTable() {
-    //     const table = document.createElement('table');
-    //     table.className = 'results-table';
-        
-    //     try {
-    //         table.innerHTML = `
-    //             <thead>
-    //                 <tr>
-    //                     <th>Question</th>
-    //                     <th>Answer</th>
-    //                 </tr>
-    //             </thead>
-    //             <tbody>
-    //                 ${this.quizResults.responses.map((r, i) => {
-    //                     // Safely get question text
-    //                     const questionText = this.questions[i]?.text || 'Question not found';
-                        
-    //                     // Safely format user answer
-    //                     let userAnswer;
-    //                     if (typeof r.userAnswer === 'undefined') {
-    //                         userAnswer = 'No answer';
-    //                     } else if (typeof r.userAnswer === 'string') {
-    //                         userAnswer = r.userAnswer;
-    //                     } else {
-    //                         userAnswer = Number(r.userAnswer).toFixed(0);
-    //                     }
-                        
-    //                     // Safely format score
-    //                     // const score = typeof r.score === 'undefined' 
-    //                     //     ? 'N/A' 
-    //                     //     : Number(r.score).toFixed(0);
-    
-    //                     return `
-    //                         <tr>
-    //                             <td>${questionText}</td>
-    //                             <td>${userAnswer}</td>
-    //                         </tr>
-    //                     `;
-    //                 }).join('')}
-    //             </tbody>
-    //         `;
-    //     } catch (error) {
-    //         console.error('Error rendering results table:', error);
-    //         table.innerHTML = `
-    //             <tr>
-    //                 <td colspan="3">Error loading results. Please try again.</td>
-    //             </tr>
-    //         `;
-    //     }
-    
-    //     const container = document.getElementById("results-table");
-    //     if (container) {
-    //         container.innerHTML = '';
-    //         container.appendChild(table);
-    //     }
-    // }
     renderResultsTable() {
         console.log("render results function called")
         // First verify we have all responses
@@ -695,17 +610,9 @@ class UbuntexIndex {
                     answerCell.textContent = response.userAnswer !== undefined 
                         ? response.userAnswer.toString() 
                         : 'N/A';
-                }
-                
-                // Score column
-                // const scoreCell = document.createElement('td');
-                // scoreCell.textContent = response.score !== undefined 
-                //     ? response.score.toString() 
-                //     : 'N/A';
-                
+                }       
                 row.appendChild(questionCell);
                 row.appendChild(answerCell);
-                // row.appendChild(scoreCell);
                 tbody.appendChild(row);
             });
             table.appendChild(tbody);
