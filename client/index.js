@@ -719,7 +719,7 @@ class UbuntexIndex {
             `;
         }
         
-        const container = document.getElementById("results-table-container");
+        const container = document.getElementById("results-table");
         if (container) {
             container.innerHTML = '';
             container.appendChild(table);
