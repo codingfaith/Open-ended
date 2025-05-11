@@ -572,7 +572,6 @@ class UbuntexIndex {
     }
     
     renderResultsTable() {
-        console.log("render results function called")
         // First verify we have all responses
         if (this.quizResults.responses.length !== this.questions.length) {
             console.error("Not all responses have been recorded yet");
@@ -588,7 +587,7 @@ class UbuntexIndex {
             thead.innerHTML = `
                 <tr>
                     <th>Question</th>
-                    <th>Answer</th>
+                    <th>Your Answer</th>
                 </tr>
             `;
             table.appendChild(thead);
@@ -631,7 +630,6 @@ class UbuntexIndex {
             container.innerHTML = '';
             container.appendChild(table);
         }
-        console.table(table)
     }
 }
 // Initialize the quiz when the page loads
