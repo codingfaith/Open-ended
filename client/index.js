@@ -550,7 +550,7 @@ class UbuntexIndex {
     }
 
     async displayResults(score) {
-        const report = await this.generateComprehensiveReport();
+        const finalReport = await this.generateComprehensiveReport();
 
         let classification;
         if (score <= 40) classification = "High Risk (Anti-Social)";
@@ -580,7 +580,7 @@ class UbuntexIndex {
             reportBtn.addEventListener("click", () => {
                 document.getElementById("results-table").innerHTML = `
                     <h3>Detailed Analysis</h3>
-                    <div class="report-content">${report}</div>
+                    <div class="report-content">${finalReport}</div>
                 `;
             });
         }, 0);
@@ -659,19 +659,19 @@ class UbuntexIndex {
         const prompt = `
         Analyze this Ubuntu Index Test results and provide a detailed report in the following format:
         
-        **Key Insights**:
+        Key Insights:
         (Provide 3-5 key insights based on the responses)
         
-        **Strengths**:
+        Strengths:
         (List 3-5 strengths based on high-scoring answers)
         
-        **Areas for Improvement**:
+        Areas for Improvement:
         (List 3-5 areas where responses indicate lower Ubuntu values)
         
-        **Recommendations**:
+        Recommendations:
         (Suggest 3-5 actionable steps to improve Ubuntu awareness)
         
-        **Full Response Breakdown**:
+        Full Response Breakdown:
         (Summarize notable answers in bullet points)
         
         Test Responses:
