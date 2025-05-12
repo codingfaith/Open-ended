@@ -1,8 +1,6 @@
 const totalQuestions = 44;
 const progress = document.getElementById("progress");
 const progressText = document.getElementById("progress-text");
-const answersBtn = document.getElementById("answers")
-const reportBtn = document.getElementById("report")
 
 class UbuntexIndex {
     constructor() {
@@ -559,7 +557,7 @@ class UbuntexIndex {
         else if (score <= 80) classification = "Strong Ubuntu Traits";
         else if (score <= 100) classification = "Ubuntu Ambassador (High Social Contribution)";
         else classification = "Sorry, your score could not be calculated";
-        
+     
         document.getElementById("quiz-container").style.display = "none";
         const resultContainer = document.getElementById("result");
         resultContainer.style.display = "block";
@@ -572,16 +570,13 @@ class UbuntexIndex {
             </div>
             <div id="results-table"></div>
         `;
-        if(answersBtn){
-            answersBtn.addEventListener("click",()=>{
-                setTimeout(() => this.renderResultsTable(), 100);
-            })
-        }
-        if(reportBtn){
-            reportBtn.addEventListener("click",()=>{
-                console.log("report coming")
-            })
-        }
+        setTimeout(() => {
+            const answersBtn = document.getElementById("answers");
+            const reportBtn = document.getElementById("report");
+            
+            answersBtn.addEventListener("click", () => this.renderResultsTable(), 100 );
+            reportBtn.addEventListener("click", () => console.log("report coming"));
+        }, 0);
     }
     
     renderResultsTable() {
