@@ -577,6 +577,11 @@ class UbuntexIndex {
                 setTimeout(() => this.renderResultsTable(), 100);
             })
         }
+        if(reportBtn){
+            reportBtn.addEventListener("click",()=>{
+                console.log("report coming")
+            })
+        }
     }
     
     renderResultsTable() {
