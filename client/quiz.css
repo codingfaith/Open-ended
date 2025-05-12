@@ -173,3 +173,14 @@ footer {
     font-size: smaller;
     text-align: center;
 }
+.choiceButtons {
+    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+#report,
+#answers {
+    color: #ffffff;
+    background: #36454F;
+}

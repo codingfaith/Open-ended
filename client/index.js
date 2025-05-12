@@ -1,6 +1,8 @@
 const totalQuestions = 44;
 const progress = document.getElementById("progress");
 const progressText = document.getElementById("progress-text");
+const answersBtn = document.getElementById("answers")
+const reportBtn = document.getElementById("report")
 
 class UbuntexIndex {
     constructor() {
@@ -564,11 +566,17 @@ class UbuntexIndex {
         resultContainer.innerHTML = `
             <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
             <p>Classification: ${classification}</p>
-            <div id="results-table">
-                <p>Loading your detailed results...</p>
+            <div class="choiceButtons">
+                <button id="answers">Your Answers</button>
+                <button id="report">Full Report</button>
             </div>
+            <div id="results-table"></div>
         `;
-        setTimeout(() => this.renderResultsTable(), 100);
+        if(answersBtn){
+            answersBtn.addEventListener("click",()=>{
+                setTimeout(() => this.renderResultsTable(), 100);
+            })
+        }
     }
     
     renderResultsTable() {
