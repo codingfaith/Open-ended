@@ -658,21 +658,29 @@ class UbuntexIndex {
         }))
     };
 
-    // Construct a better prompt for OpenAI
-    const prompt = `
-    Analyze these Ubuntu Index Test results and provide a detailed report in markdown format:
+    // Prompt for OpenAI
+    const prompt = `Analyze these Ubuntu Index Test results and provide a detailed report using MARKDOWN FORMATTING with these exact sections:
     
-    ### Key Insights:
-    (Provide 3-5 key insights about the test taker's Ubuntu values)
+    ## Key Insights
+    - Provide 3-5 bullet points summarizing the overall results
+    - Focus on patterns across responses
     
-    ### Strengths:
-    (List 3-5 areas where the responses show strong Ubuntu principles)
+    ## Strengths
+    - List 3-5 specific strengths with examples from responses
+    - Mention which Ubuntu principles are strongest
     
-    ### Growth Opportunities:
-    (List 3-5 areas where Ubuntu values could be strengthened)
+    ## Growth Areas  
+    - List 3-5 specific opportunities for improvement
+    - Reference specific questions where scores were lower
     
-    ### Recommendations:
-    (Suggest 3-5 practical ways to improve Ubuntu awareness)
+    ## Recommendations
+    - Provide 3-5 actionable suggestions
+    - Include practical exercises or mindset shifts
+    
+    Formatting Requirements:
+    - Use proper markdown headers (##) for each section
+    - Use bullet points for lists
+    - Bold important terms like **empathy** or **communal responsibility**
     
     Test Responses:
     ${JSON.stringify(reportData.responses, null, 2)}
