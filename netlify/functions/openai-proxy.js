@@ -72,3 +72,69 @@ exports.handler = async (event) => {
       };
   }
 };
+// Report generation API endpoint
+exports.generateReportHandler = async (event) => {
+    // 1. Validate HTTP method
+    if (event.httpMethod !== 'POST') {
+        return { statusCode: 405, body: 'Method Not Allowed' };
+    }
+
+    try {
+        // 2. Parse input
+        const { responses } = JSON.parse(event.body);
+        
+        // 3. Construct analysis prompt
+        const prompt = `
+        Analyze these Ubuntu Index Test results and generate a detailed report:
+        
+        Question Responses:
+        ${responses.map(r => `• ${r.question}\n  Answer: ${r.userAnswer}\n  Score: ${r.score}`).join('\n')}
+        
+        Provide a 4-paragraph report with:
+        1. Overall interpretation
+        2. Key strengths
+        3. Potential growth areas
+        4. Practical recommendations
+        Use markdown formatting.`;
+
+        // 4. Call OpenAI (using same config as your scoring endpoint)
+        const response = await axios.post(
+            'https://api.openai.com/v1/chat/completions',
+            {
+                model: "gpt-4",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are an Ubuntu principles analyst. Provide detailed feedback."
+                    },
+                    { role: "user", content: prompt }
+                ],
+                temperature: 0.5  // Slightly higher creativity for reports
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                timeout: 8000  // Longer timeout for complex analysis
+            }
+        );
+
+        const report = response.data.choices[0]?.message?.content;
+        
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ report })
+        };
+
+    } catch (error) {
+        console.error('Report Generation Error:', error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({
+                report: "Could not generate report",
+                error: error.message
+            })
+        };
+    }
+};

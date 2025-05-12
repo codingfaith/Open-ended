@@ -549,7 +549,9 @@ class UbuntexIndex {
         this.displayResults(finalScore)
     }
 
-    displayResults(score) {
+    async displayResults(score) {
+        const report = await this.generateComprehensiveReport();
+
         let classification;
         if (score <= 40) classification = "High Risk (Anti-Social)";
         else if (score <= 50) classification = "Low Ubuntu Awareness";
@@ -575,7 +577,12 @@ class UbuntexIndex {
             const reportBtn = document.getElementById("report");
             
             answersBtn.addEventListener("click", () => this.renderResultsTable(), 100 );
-            reportBtn.addEventListener("click", () => console.log("report coming"));
+            reportBtn.addEventListener("click", () => {
+                document.getElementById("results-table").innerHTML = `
+                    <h3>Detailed Analysis</h3>
+                    <div class="report-content">${report}</div>
+                `;
+            });
         }, 0);
     }
     
@@ -637,6 +644,54 @@ class UbuntexIndex {
         if (container) {
             container.innerHTML = '';
             container.appendChild(table);
+        }
+    }
+    async generateComprehensiveReport() {
+        // Format the results for OpenAI
+        const reportData = {
+            responses: this.quizResults.responses.map((response, index) => ({
+                question: this.questions[index].text,
+                answer: response.userAnswer,
+                category: this.questions[index].category
+            }))
+        }
+        // Construct a prompt for OpenAI
+        const prompt = `
+        Analyze this Ubuntu Index Test results and provide a detailed report in the following format:
+        
+        **Key Insights**:
+        (Provide 3-5 key insights based on the responses)
+        
+        **Strengths**:
+        (List 3-5 strengths based on high-scoring answers)
+        
+        **Areas for Improvement**:
+        (List 3-5 areas where responses indicate lower Ubuntu values)
+        
+        **Recommendations**:
+        (Suggest 3-5 actionable steps to improve Ubuntu awareness)
+        
+        **Full Response Breakdown**:
+        (Summarize notable answers in bullet points)
+        
+        Test Responses:
+        ${JSON.stringify(reportData.responses, null, 2)}
+        `;
+
+        try {
+            const response = await fetch("/api/openai-proxy", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt })
+            });
+
+            if (!response.ok) throw new Error("API request failed");
+            
+            const { report } = await response.json();
+            return report;
+        } catch (error) {
+            console.error("Error generating report:", error);
+            return "Could not generate a detailed report. Please check your answers again.";
         }
     }
 }
