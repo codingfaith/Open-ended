@@ -562,6 +562,17 @@ class UbuntexIndex {
         try {
             const finalReport = await this.generateComprehensiveReport();
             loadingIndicator.style.display = "none";
+
+            // Display final results with classification and buttons
+            resultContainer.innerHTML = `
+                <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
+                <p>Classification: ${this.getClassification(score)}</p>
+                <div class="choiceButtons">
+                    <button id="answers">View Your Answers</button>
+                    <button id="report">Read Full Report</button>
+                </div>
+                <div id="results-table"></div>
+             `;
            
             // Set up button interactions
             document.getElementById("answers").addEventListener("click", () => {
