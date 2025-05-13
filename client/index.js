@@ -550,40 +550,50 @@ class UbuntexIndex {
     }
 
     async displayResults(score) {
-        const finalReport = await this.generateComprehensiveReport();
-
-        let classification;
-        if (score <= 40) classification = "High Risk (Anti-Social)";
-        else if (score <= 50) classification = "Low Ubuntu Awareness";
-        else if (score <= 60) classification = "Moderate Ubuntu Awareness";
-        else if (score <= 80) classification = "Strong Ubuntu Traits";
-        else if (score <= 100) classification = "Ubuntu Ambassador (High Social Contribution)";
-        else classification = "Sorry, your score could not be calculated";
-     
-        document.getElementById("quiz-container").style.display = "none";
+        // Get DOM elements
+        const quizContainer = document.getElementById("quiz-container");
         const resultContainer = document.getElementById("result");
+        const loadingIndicator = document.getElementById("loading-indicator");
+
+        quizContainer.style.display = "none";
         resultContainer.style.display = "block";
-        resultContainer.innerHTML = `
-            <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
-            <p>Classification: ${classification}</p>
-            <div class="choiceButtons">
-                <button id="answers">Your Answers</button>
-                <button id="report">Full Report</button>
-            </div>
-            <div id="results-table"></div>
-        `;
-        setTimeout(() => {
-            const answersBtn = document.getElementById("answers");
-            const reportBtn = document.getElementById("report");
-            
-            answersBtn.addEventListener("click", () => this.renderResultsTable(), 100 );
-            reportBtn.addEventListener("click", () => {
-                document.getElementById("results-table").innerHTML = `
-                    <h3>Detailed Analysis</h3>
-                    <div class="report-content">${finalReport}</div>
-                `;
+        loadingIndicator.style.display = "block";
+
+        try {
+            const finalReport = await this.generateComprehensiveReport();
+            loadingIndicator.style.display = "none";
+           
+            // Set up button interactions
+            document.getElementById("answers").addEventListener("click", () => {
+                this.showLoadingMessage("Compiling your answers...");
+                setTimeout(() => {
+                    this.renderResultsTable();
+                }, 50); // Small delay to allow loading message to render
             });
-        }, 0);
+            document.getElementById("report").addEventListener("click", () => {
+                this.showLoadingMessage("Finalizing your report...");
+                setTimeout(() => {
+                    document.getElementById("results-table").innerHTML = `
+                        <h3>Detailed Analysis</h3>
+                        <div class="report-content">${finalReport}</div>
+                    `;
+                }, 50);
+            });
+        } catch (error) {
+            console.error("Error displaying results:", error);
+            loadingIndicator.style.display = "none";
+            resultContainer.innerHTML = `
+                <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
+                <p class="error">We couldn't generate the full report. Please try again later.</p>
+                <div id="results-table">
+                    <button id="answers">View Your Answers</button>
+                </div>
+            `;
+            
+            document.getElementById("answers").addEventListener("click", () => {
+                this.renderResultsTable();
+            });
+        }
     }
     
     renderResultsTable() {
@@ -646,6 +656,27 @@ class UbuntexIndex {
             container.appendChild(table);
         }
     }
+
+    showLoadingMessage(message) {
+        const resultsTable = document.getElementById("results-table");
+        resultsTable.innerHTML = `
+            <div class="loading-message">
+                <div class="loading-spinner"></div>
+                <p>${message}</p>
+            </div>
+        `;
+    }
+
+    // Helper method to get classification
+    getClassification(score) {
+        if (score <= 40) return "High Risk (Anti-Social)";
+        if (score <= 50) return "Low Ubuntu Awareness";
+        if (score <= 60) return "Moderate Ubuntu Awareness";
+        if (score <= 80) return "Strong Ubuntu Traits";
+        if (score <= 100) return "Ubuntu Ambassador (High Social Contribution)";
+        return "Score could not be calculated";
+    }
+
     async generateComprehensiveReport() {
     // Format the results for OpenAI
     const reportData = {
