@@ -1,90 +1,57 @@
-const axios = require('axios');
-
-// Common OpenAI request configuration
-const makeOpenAIRequest = async (prompt, isReport = false) => {
-    return axios.post(
-        'https://api.openai.com/v1/chat/completions',
-        {
-            model: "gpt-4",
-            messages: [
-                {
-                    role: "system",
-                    content: isReport 
-                        ? "You are an Ubuntu principles analyst. Provide detailed feedback in markdown format." 
-                        : "You are a scoring tool. Return ONLY a number from 0-10."
-                },
-                { role: "user", content: prompt }
-            ],
-            temperature: isReport ? 0.5 : 0.2,
-            max_tokens: isReport ? 500 : 3
-        },
-        {
-            headers: {
-                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-                'Content-Type': 'application/json'
-            },
-            timeout: isReport ? 10000 : 5000
-        }
-    );
-};
-
-// Scoring endpoint
+// In openai-proxy.js
 exports.handler = async (event) => {
-    // Handle both scoring and report generation based on path
-    const path = event.path.split('/').pop();
-    
-    if (path === 'openai-proxy' && event.httpMethod === 'POST') {
-        try {
-            const body = JSON.parse(event.body);
-            
-            if (body.prompt) {
-                // This is a report generation request
-                const response = await makeOpenAIRequest(body.prompt, true);
-                const report = response.data.choices[0]?.message?.content;
-                
-                return {
-                    statusCode: 200,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ report })
-                };
-            } else if (body.userResponse && body.expectations) {
-                // This is a scoring request
-                const prompt = `Evaluate this response on a 0-10 scale. Expectations: ${body.expectations}\nResponse: ${body.userResponse}\n\nScore based on:
-                • Alignment with Ubuntu principles (empathy, respect, dignity, communal responsibility)
-                • Relevance to the question
-                • Specificity of response
-                RETURN ONLY A NUMBER BETWEEN 0 AND 10`;
+  const { userResponse, expectations, prompt } = JSON.parse(event.body);
+  const isReport = !!prompt;
 
-                const response = await makeOpenAIRequest(prompt);
-                const scoreText = response.data.choices[0]?.message?.content?.trim();
-                let score = parseFloat(scoreText);
-                score = isNaN(score) ? 5 : Math.min(10, Math.max(0, Math.round(score)));
+  try {
+    const model = isReport ? "gpt-4-1106-preview" : "gpt-3.5-turbo";
+    const maxTokens = isReport ? 1000 : 3;
+    const temperature = isReport ? 0.7 : 0.2;
 
-                return {
-                    statusCode: 200,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ score })
-                };
-            } else {
-                return {
-                    statusCode: 400,
-                    body: JSON.stringify({ error: 'Invalid request format' })
-                };
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            return {
-                statusCode: 500,
-                body: JSON.stringify({
-                    error: 'Internal server error',
-                    details: error.message
-                })
-            };
-        }
-    }
+    const response = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        model,
+        messages: [{
+          role: "system",
+          content: isReport 
+            ? "Generate concise markdown report with ## Headers and - bullet points" 
+            : "Return ONLY a number 0-10"
+        },{
+          role: "user",
+          content: isReport 
+            ? prompt.substring(0, 6000) // Ensure under token limit
+            : `Score 0-10: ${userResponse}\nCriteria: ${expectations}`
+        }],
+        max_tokens: maxTokens,
+        temperature
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: isReport ? 30000 : 5000
+      }
+    );
 
     return {
-        statusCode: 404,
-        body: JSON.stringify({ error: 'Not found' })
+      statusCode: 200,
+      body: JSON.stringify(isReport 
+        ? { report: response.data.choices[0].message.content }
+        : { score: parseInt(response.data.choices[0].message.content) || 5 }
+      )
     };
+  } catch (error) {
+    console.error(`GPT-${isReport ? '4' : '3.5'} Error:`, error.response?.data || error.message);
+    return {
+      statusCode: error.response?.status || 500,
+      body: JSON.stringify({
+        error: isReport 
+          ? "GPT-4 report generation failed" 
+          : "Scoring failed",
+        details: error.response?.data?.error?.message || error.message
+      })
+    };
+  }
 };
