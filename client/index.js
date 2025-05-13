@@ -689,63 +689,118 @@ class UbuntexIndex {
     }
 
     async generateComprehensiveReport() {
-    // Format the results for OpenAI
-    const reportData = {
-        responses: this.quizResults.responses.map((response, index) => ({
-            question: this.questions[index].text,
-            answer: typeof response.userAnswer === 'string' 
-                ? response.userAnswer 
-                : response.userAnswer.toString(),
-            category: this.questions[index].category
-        }))
-    };
+        // Format the results with truncation to prevent token overflow
+        const reportData = {
+            responses: this.quizResults.responses
+                .slice(0, 20) // Limit to first 20 responses for GPT-4
+                .map((response, index) => ({
+                    question: this.questions[index].text.substring(0, 100), // Truncate long questions
+                    answer: (typeof response.userAnswer === 'string' 
+                        ? response.userAnswer 
+                        : response.userAnswer.toString()
+                    ).substring(0, 150), // Truncate long answers
+                    category: this.questions[index].category,
+                    score: response.score || 0 // Include score if available
+                }))
+        };
 
-    // Prompt for OpenAI
-    const prompt = `Analyze these results and provide a detailed report on the responses given, using MARKDOWN FORMATTING with these sections:
+        // Optimized prompt for GPT-4
+        const prompt = `Analyze these test responses and generate a CONCISE markdown report:
 
-    ## Key Insights
-    - Provide 2-3 bullet points summarizing the overall results
-    - Focus on patterns across responses
-    
-    ## Strengths
-    - List 2-3 specific strengths with examples from responses
-    - Mention which Ubuntu principles are strongest
-    
-    ## Growth Areas  
-    - List 2-3 specific opportunities for improvement
-    - Reference specific questions where scores were lower
-    
-    ## Recommendations
-    - Provide 2-3 actionable suggestions
-    - Include practical exercises or mindset shifts
-    
-    Formatting Requirements:
-    - Use proper markdown headers (##) for each section
-    - Use bullet points for lists
-    - Use paragraphs to separate sections
-    - Bold important terms like *empathy* or *communal responsibility*
-    - Include specific examples from responses when possible
-    
-    Test Responses:
-    ${JSON.stringify(reportData.responses, null, 2)}
-    `;
+        ### Format Requirements:
+        - Use ## for section headers
+        - Use bullet points (-)
+        - Keep paragraphs under 3 sentences
+        - Bold important concepts (**empathy**)
+        - Include 1-2 specific examples per section
+        - Total length under 500 words
 
-    try {
-        const response = await fetch("/api/openai-proxy", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt })
-        });
+        ### Required Sections:
+        1. **Key Insights** (2-3 most important patterns)
+        2. **Strengths** (top 2 Ubuntu principles demonstrated)
+        3. **Growth Areas** (2 specific opportunities)
+        4. **Recommendations** (2 actionable suggestions)
 
-        if (!response.ok) throw new Error("API request failed");
-        
-        const { report } = await response.json();
-        return report || "No report could be generated.";
-    } catch (error) {
-        console.error("Error generating report:", error);
-        return "## Report Unavailable\nWe couldn't generate a detailed report at this time.";
+        ### Response Data:
+        ${JSON.stringify(reportData.responses, null, 2).substring(0, 3000)}`;
+
+        try {
+            // Show loading state
+            this.showLoadingMessage("Generating your personalized report...");
+
+            const startTime = Date.now();
+            const response = await fetch("/api/openai-proxy", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    prompt,
+                    model: "gpt-4" // Explicitly request GPT-4
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
+
+            const { report } = await response.json();
+            const generationTime = ((Date.now() - startTime) / 1000).toFixed(1);
+
+            console.log(`Report generated in ${generationTime}s`);
+            return this.formatReport(report || "No analysis could be generated.");
+            
+        } catch (error) {
+            console.error("Report generation failed:", {
+                error: error.message,
+                stack: error.stack
+            });
+
+            // Fallback to a simpler analysis if GPT-4 fails
+            return this.generateFallbackReport(reportData);
+        }
     }
-}
+
+    // Helper method to format markdown report
+    formatReport(rawReport) {
+        // Convert markdown to HTML with better formatting
+        return rawReport
+            .replace(/^##\s+(.*$)/gm, '<h2>$1</h2>')
+            .replace(/^###\s+(.*$)/gm, '<h3>$1</h3>')
+            .replace(/^\*\*(.*?)\*\*/gm, '<strong>$1</strong>')
+            .replace(/^\-\s+(.*$)/gm, '<li>$1</li>')
+            .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+            .replace(/\n\n/g, '</p><p>')
+            .replace(/\n/g, '<br>');
+    }
+
+    // Fallback for when GPT-4 fails
+    generateFallbackReport(reportData) {
+        const strengths = reportData.responses
+            .filter(r => r.score > 7)
+            .slice(0, 2)
+            .map(r => `${r.category}: ${r.answer.substring(0, 50)}...`);
+
+        const improvements = reportData.responses
+            .filter(r => r.score < 4)
+            .slice(0, 2)
+            .map(r => `${r.category}: ${r.answer.substring(0, 50)}...`);
+
+        return `
+            <h2>Basic Analysis</h2>
+            <p>We couldn't generate a full report, but here are key observations:</p>
+            
+            <h3>Strengths</h3>
+            <ul>
+                ${strengths.map(s => `<li>${s}</li>`).join('')}
+            </ul>
+            
+            <h3>Areas to Improve</h3>
+            <ul>
+                ${improvements.map(i => `<li>${i}</li>`).join('')}
+            </ul>
+            
+            <p>For a full analysis, please try again later.</p>
+        `;
+    }
 }
 // Initialize the quiz when the page loads
 document.addEventListener('DOMContentLoaded', () => {
