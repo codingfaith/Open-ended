@@ -701,7 +701,7 @@ class UbuntexIndex {
     };
 
     // Prompt for OpenAI
-    const prompt = `Analyze these Ubuntu Index Test results and provide a detailed report to the respondent (address respondent directly as "you"), using MARKDOWN FORMATTING with these sections:
+    const prompt = `Analyze these Ubuntu Index Test results and provide a detailed report on the responses given by individual, using MARKDOWN FORMATTING with these sections:
     1. Key Insights (## header)
     2. Strengths (## header)
     3. Growth Areas (## header) 
