@@ -686,7 +686,7 @@ class UbuntexIndex {
     - Use proper markdown headers (##) for each section
     - Use bullet points for lists
     - Use paragraphs to separate sections
-    - Bold important terms like **empathy** or **communal responsibility**
+    - Bold important terms like *empathy* or *communal responsibility*
     - Include specific examples from responses when possible
     
     Test Responses:
