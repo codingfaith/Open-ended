@@ -659,7 +659,12 @@ class UbuntexIndex {
     };
 
     // Prompt for OpenAI
-    const prompt = `Analyze these Ubuntu Index Test results and provide a detailed report using MARKDOWN FORMATTING with these exact sections:
+    const prompt = `Analyze these Ubuntu Index Test results and provide a detailed report using MARKDOWN FORMATTING with these sections:
+    1. Key Insights (## header)
+    2. Strengths (## header)
+    3. Growth Areas (## header) 
+    4. Recommendations (## header)
+
     
     ## Key Insights
     - Provide 3-5 bullet points summarizing the overall results
@@ -680,7 +685,9 @@ class UbuntexIndex {
     Formatting Requirements:
     - Use proper markdown headers (##) for each section
     - Use bullet points for lists
+    - Use paragraphs to separate sections
     - Bold important terms like **empathy** or **communal responsibility**
+    - Include specific examples from responses when possible
     
     Test Responses:
     ${JSON.stringify(reportData.responses, null, 2)}
