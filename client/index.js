@@ -701,7 +701,7 @@ class UbuntexIndex {
     };
 
     // Prompt for OpenAI
-    const prompt = `Analyze these results and provide a detailed report on the responses given, using MARKDOWN FORMATTING with these sections:
+    const prompt = `Analyze these results and provide a detailed report on the responses given by the individual, using MARKDOWN FORMATTING with these sections:
 
     ## Key Insights
     - Provide 2-3 bullet points summarizing the overall results
@@ -720,11 +720,12 @@ class UbuntexIndex {
     - Include practical exercises or mindset shifts
     
     Formatting Requirements:
-    - Use proper markdown headers (##) for each section
+    - Use proper markdown headers (##)in bold for each section
     - Use bullet points for lists
     - Use paragraphs to separate sections
     - Bold important terms like *empathy* or *communal responsibility*
     - Include specific examples from responses when possible
+    - Tone of report should address the individual quiz take not generalise
     
     Test Responses:
     ${JSON.stringify(reportData.responses, null, 2)}

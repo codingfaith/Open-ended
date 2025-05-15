@@ -219,3 +219,9 @@ footer {
     color: #e74c3c;
     font-weight: bold;
 }
+@media screen and (max-width: 386px) {
+    .choiceButtons {
+        width: 100%;
+        flex-direction: column;
+    }
+}
