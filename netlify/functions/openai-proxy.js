@@ -50,7 +50,7 @@ exports.handler = async (event) => {
             } else if (body.userResponse && body.expectations) {
                 // This is a scoring request
                 const prompt = `Evaluate this response on a 0-10 scale. Expectations: ${body.expectations}\nResponse: ${body.userResponse}\n\nScore based on:
-                • Alignment with Ubuntu principles (empathy, respect, dignity, communal responsibility)
+                • Alignment with Ubuntu principles (empathy, respect, dignity, communal responsibility, originality)
                 • Relevance to the question
                 • Specificity of response
                 RETURN ONLY A NUMBER BETWEEN 0 AND 10`;
