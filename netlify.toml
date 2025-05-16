@@ -4,6 +4,16 @@
   functions = "netlify/functions"
 
 [[redirects]]
+  from = "/form"
+  to = "/form.html"
+  status = 200
+
+[[redirects]]
+from = "/contact"
+to = "/contact.html"
+status = 200
+ 
+[[redirects]]
   from = "/quiz"
   to = "/quiz.html"
   status = 200
