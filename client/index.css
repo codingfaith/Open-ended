@@ -88,7 +88,7 @@ nav a:hover {
     text-decoration: underline;
 }
 
-@media screen and (max-width: 401px) {
+@media screen and (max-width: 541px) {
     .assessment h1 {
         font-size: x-large
     }
@@ -98,5 +98,16 @@ nav a:hover {
     .redirect, 
     .assessment p {
         font-size: large;
+    }
+    .assessment {
+        font-size: medium;
+    }
+}
+@media screen and (max-width: 355px) {
+    .assessment p {
+        font-size: medium;
+    }
+    .assessment {
+        font-size: small;
     }
 }
