@@ -36,3 +36,8 @@ input,
     color: #ffffff;
     background: #4c5582;
 }
+@media screen and (max-width: 400px) {
+    #auth-container {
+        font-size: medium;
+    }
+}

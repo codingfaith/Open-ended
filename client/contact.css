@@ -61,3 +61,16 @@ button:hover {
         padding: 0.5em;
     }
 }
+@media screen and (max-width: 400px) {
+    input,
+    button,textarea,
+    .contact-container p {
+        font-size: small;
+    }
+    .contact-container p {
+        margin: 0;
+    }
+    .contact-details {
+        height: auto;
+    }
+}
