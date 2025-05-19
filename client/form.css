@@ -26,7 +26,7 @@ input,
 #login-btn {
     cursor: pointer;
     color: #4c5582;
-    font-weight: bold;
+    font-weight: 500;
     border-radius: 10px;
     border: 1px solid #7f87b7;
     box-shadow: 1px 1px 1px 1px #7f87b7;   
