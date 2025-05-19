@@ -1,0 +1,39 @@
+#login-form,
+#auth-container {
+    padding: 1em;
+}
+#auth-container {
+    color: #ffffff;
+}
+#auth-container h2 {
+    text-align: center;
+}
+#login-form {
+    gap: 1em;
+    display: flex;
+    background: #7f87b7;
+    flex-direction: column;
+}
+#login-form {
+    width: 100%;
+}
+input,
+#login-btn {
+    border: none;
+    outline: none;
+    padding: 0.5em;
+    font-size: medium;
+    font-family: inherit;
+}
+#login-btn {
+    cursor: pointer;
+    color: #4c5582;
+    font-weight: bold;
+    border-radius: 10px;
+    border: 1px solid #7f87b7;
+    box-shadow: 1px 1px 1px 1px #4c5582;   
+}
+#login-btn:hover {
+    color: #ffffff;
+    background: #4c5582;
+}

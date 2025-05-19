@@ -87,12 +87,7 @@ nav a:hover {
     color: #4c5582;
     text-decoration: underline;
 }
-#register {
-    padding: 0.5em;
-    color: #ffffff;
-    border-radius: 10px;
-    background: #4c5582;
-}
+
 @media screen and (max-width: 401px) {
     .assessment h1 {
         font-size: x-large

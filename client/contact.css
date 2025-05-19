@@ -1,0 +1,57 @@
+#register {
+    padding: 0.5em;
+    color: #ffffff;
+    border-radius: 10px;
+    background: #4c5582;
+}
+.contact-details,
+.contact-container {
+    gap: 1em;
+    display: flex;
+}
+.contact-container {
+    padding-right: 0.5em;
+}
+.contact-details {
+    width: 60%;
+    color: #ffffff;
+    padding-top: 0.5em;
+    flex-direction: column;
+}
+.contact-container img {
+    width:100%;
+    height: 400px;
+    max-width: 280px;
+    overflow: hidden;
+}
+input,
+button,textarea {
+    font-size: medium;
+    font-family: inherit;   
+}
+textarea {
+    resize: none;
+}
+button,
+textarea {
+    border: none;
+    outline: none;
+}
+.contact-container span {
+    text-align: center;
+}
+button {
+    cursor: pointer;
+    box-shadow: 1px 1px 1px 1px #7f87b7;   
+}
+@media screen and (max-width: 768px) {
+    .contact-container img {
+        display: none;
+    }
+    .contact-details {
+        width: 100%;
+    }
+    .contact-container {
+        padding: 0.5em;
+    }
+}

@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="form.css">
 </head>
 <body>
     <div class="landing-container">
@@ -23,9 +24,26 @@
             <a href="./contact">Contact</a>
             <a href="#" id="register">Sign In</a>
         </nav>
-        <div class="assessment">
-           <p>Coming soon...</p>
+        <div id="auth-container">
+            <h2>Ubuntex Index Login</h2>  
+            <div id="login-form">
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button id="login-btn">Login</button>
+                <p>Don't have an account? <a href="#" id="show-signup">Sign up</a></p>
+            </div>
+            
+            <div id="signup-form" style="display:none;">
+                <h3>Sign Up</h3>
+                <input type="text" id="signup-firstname" placeholder="First Name" required>
+                <input type="text" id="signup-lastname" placeholder="Last Name" required>
+                <input type="email" id="signup-email" placeholder="Email" required>
+                <input type="password" id="signup-password" placeholder="Password" required>
+                <button id="signup-btn">Sign Up</button>
+                <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+            </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
 </html>
