@@ -10,13 +10,11 @@
 }
 #login-form {
     gap: 1em;
+     width: 100%;
     display: flex;
-    background: #7f87b7;
     flex-direction: column;
-}
-#login-form {
-    width: 100%;
-}
+    box-shadow: 1px 1px 1px 1px #7f87b7;  
+} 
 input,
 #login-btn {
     border: none;
@@ -31,9 +29,10 @@ input,
     font-weight: bold;
     border-radius: 10px;
     border: 1px solid #7f87b7;
-    box-shadow: 1px 1px 1px 1px #4c5582;   
+    box-shadow: 1px 1px 1px 1px #7f87b7;   
 }
 #login-btn:hover {
+    font-weight: 300;
     color: #ffffff;
     background: #4c5582;
 }

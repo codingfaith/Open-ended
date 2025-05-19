@@ -48,7 +48,7 @@ button {
     box-shadow: 1px 1px 1px 1px #7f87b7;   
 }
 button:hover {
-    color: skyblue;
+    color: #7f87b7;
 }
 @media screen and (max-width: 768px) {
     .contact-container img {
