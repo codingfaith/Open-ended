@@ -73,4 +73,7 @@ button:hover {
     .contact-details {
         height: auto;
     }
+    textarea {
+        height: 80px;
+    }
 }
