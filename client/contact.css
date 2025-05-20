@@ -45,6 +45,7 @@ textarea {
 }
 button {
     cursor: pointer;
+    border-radius: 10px;
     box-shadow: 1px 1px 1px 1px #7f87b7;   
 }
 button:hover {
