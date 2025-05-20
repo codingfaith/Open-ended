@@ -14,17 +14,23 @@
     padding: 1em;
     color: #ffffff;
     flex-direction: column;
-    box-shadow: 1px 1px 1px 1px #7f87b7; 
+}
+.contact-container {
+    background: #c7beb7;
+}
+#contact-landing-container {
+    background: #12222f;
 }
 .contact-container img {
     width:100%;
     height: auto;
     max-width: 250px;
-    overflow: hidden;
-    box-shadow: 1px 1px 1px 1px #7f87b7;  
+    overflow: hidden; 
 }
 input,
 button,textarea {
+    border: none;
+    outline: none;
     font-size: medium;
     font-family: inherit;   
 }
@@ -32,21 +38,17 @@ textarea {
     resize: none;
     height: 100px;
 }
-button,
-textarea {
-    border: none;
-    outline: none;
-}
 .contact-container span {
     text-align: center;
 }
 button {
     cursor: pointer;
+    color: #12222f;
     border-radius: 10px;
-    box-shadow: 1px 1px 1px 1px #7f87b7;   
+    box-shadow: 1px 1px 1px 1px #12222f;   
 }
 button:hover {
-    color: #7f87b7;
+    color: #4c5582;
 }
 .hidden {
   position: absolute;
@@ -61,6 +63,10 @@ button:hover {
     }
     .contact-container {
         padding: 0.5em;
+    }
+    .contact-container,
+    #contact-landing-container {
+        background: #4c5582;
     }
 }
 @media screen and (max-width: 400px) {
