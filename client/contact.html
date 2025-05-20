@@ -26,14 +26,30 @@
         </nav>
         <div class="contact-container">
             <img src="./contact.png" alt="smiling black female call center agent">
-            <form class="contact-details" id="contact-details">
+            <form 
+                class="contact-details" 
+                id="contact-details"
+                name="contact" 
+                method="POST" 
+                data-netlify="true"
+                netlify-honeypot="bot-field"
+            >
                 <p>Get in touch</p>
-                <input type="text" name="name" id="name" placeholder="Name...">
-                <input type="email" name="email" id="email" placeholder="Contact email...">
-                <input type="text" name="number" id="number" placeholder="Contact number...">
-                <textarea name="" id="" placeholder="Your message..."></textarea>
+                <!-- Hidden honeypot field for spam prevention -->
+                <input type="hidden" name="form-name" value="contact">
+                <p class="hidden">
+                    <label>Don't fill this out if you're human: <input name="bot-field"></label>
+                </p>
+                <input type="text" name="name" id="name" placeholder="Name..." required>
+                <input type="email" name="email" id="email" placeholder="Contact email..." required>
+                <input type="tel" name="number" id="number" placeholder="Contact number...">
+                <textarea name="message" id="message" placeholder="Your message..." required></textarea>
                 <button type="submit">Submit</button>
+                <input type="hidden" name="subject" value="New contact from your website">
+                <input type="hidden" name="thank-you" value="/thank-you">
             </form>
+            <!-- Shows success/error messages -->
+            <div id="form-message"></div>
         </div>
     </div>
 </body>
