@@ -4,8 +4,13 @@
   functions = "netlify/functions"
 
 [[redirects]]
-  from = "/form"
-  to = "/form.html"
+  from = "/dashboard"
+  to = "/dashboard.html"
+  status = 200  
+
+[[redirects]]
+  from = "/auth"
+  to = "/auth.html"
   status = 200
 
 [[redirects]]
