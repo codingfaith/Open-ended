@@ -6,23 +6,19 @@
 }
 .contact-details,
 .contact-container {
-    padding: 1em;
     display: flex;
-}
-.contact-container {
-    justify-content: center;
 }
 .contact-details {
     gap: 1em;
-    width: 60%;
-    height: 370px;
+    flex-grow: 1;
+    padding: 1em;
     color: #ffffff;
     flex-direction: column;
     box-shadow: 1px 1px 1px 1px #7f87b7; 
 }
 .contact-container img {
     width:100%;
-    height: 370px;
+    height: auto;
     max-width: 250px;
     overflow: hidden;
     box-shadow: 1px 1px 1px 1px #7f87b7;  
@@ -34,13 +30,14 @@ button,textarea {
 }
 textarea {
     resize: none;
+    height: 100px;
 }
 button,
 textarea {
     border: none;
     outline: none;
 }
-.contact-container p {
+.contact-container span {
     text-align: center;
 }
 button {
