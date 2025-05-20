@@ -54,22 +54,23 @@ body {
     font-size: larger;
 }
 .highlight {
-    color: skyblue;
+    color: #c7beb7;
 }
 .assessment a {
     width: 100%;
     padding: 10px;
     display: block;
     cursor: pointer;
-    color: #ffffff;
+    color: #4c5582;
     text-align: center;
     border-radius: 10px;
     text-decoration: none;
-    background:	#7f87b7;  
+    background: #ffffff;
+    
 }
 .assessment a:hover {
-    color: #4c5582;
-    background: #ffffff;
+    color: #ffffff;
+    background:	#c7beb7;  
 }
 nav {
     display: flex;
