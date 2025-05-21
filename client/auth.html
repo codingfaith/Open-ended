@@ -29,7 +29,14 @@
                 <h2>Ubuntex Index Login</h2>  
                 <input type="email" id="login-email" placeholder="Email" required>
                 <input type="password" id="login-password" placeholder="Password" required>
-                <button id="login-btn">Login</button>
+                <button id="login-btn">
+                    <span class="button-text">Login</span>
+                    <span class="loading-spinner" style="display:none;">
+                        <svg class="spinner" viewBox="0 0 50 50" style="width:20px;height:20px;">
+                        <circle cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                        </svg>
+                    </span>
+                </button>
                 <p>Don't have an account? <button id="show-signup">Sign up</button></p>
             </div>
             
@@ -39,7 +46,14 @@
                 <input type="text" id="signup-lastname" placeholder="Last Name" required>
                 <input type="email" id="signup-email" placeholder="Email" required>
                 <input type="password" id="signup-password" placeholder="Password" required>
-                <button id="signup-btn">Sign Up</button>
+                <button id="signup-btn">
+                    <span class="button-text">Sign up</span>
+                    <span class="loading-spinner" style="display:none;">
+                        <svg class="spinner" viewBox="0 0 50 50" style="width:20px;height:20px;">
+                        <circle cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                        </svg>
+                    </span>
+                </button>
                 <p>Already have an account? <button id="show-login">Login</button></p>
             </div>
         </div>

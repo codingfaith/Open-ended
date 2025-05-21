@@ -27,6 +27,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Signup handler
   document.getElementById('signup-btn').addEventListener('click', async (e) => {
     e.preventDefault();
+    const button = e.currentTarget;
+    const buttonText = button.querySelector('.button-text');
+    const spinner = button.querySelector('.loading-spinner');
     
     const userData = {
       email: document.getElementById('signup-email').value,
@@ -36,6 +39,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     try {
+      // Show loading state
+      button.disabled = true;
+      buttonText.style.display = 'none';
+      spinner.style.display = 'inline-flex'; 
+
       const response = await fetch('/.netlify/functions/auth-signup', {
         method: 'POST',
         body: JSON.stringify(userData),
@@ -61,13 +69,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Login handler
   document.getElementById('login-btn').addEventListener('click', async (e) => {
     e.preventDefault();
-    
+    const button = e.currentTarget;
+    const buttonText = button.querySelector('.button-text');
+    const spinner = button.querySelector('.loading-spinner');
+
     const credentials = {
       email: document.getElementById('login-email').value,
       password: document.getElementById('login-password').value
     };
 
     try {
+      // Show loading state
+      button.disabled = true;
+      buttonText.style.display = 'none';
+      spinner.style.display = 'inline-flex'; 
+    
       const response = await fetch('/.netlify/functions/auth-login', {
         method: 'POST',
         body: JSON.stringify(credentials),
