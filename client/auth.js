@@ -1,8 +1,10 @@
-// Initialize Supabase client using environment variables
-const supabaseUrl = process.env.SUPABASE_URL || window.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY || window.env.SUPABASE_KEY;
-
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+// auth.js
+async function initSupabase() {
+  const response = await fetch('/.netlify/functions/getConfig');
+  const { supabaseUrl, supabaseKey } = await response.json();
+  
+  return window.supabase.createClient(supabaseUrl, supabaseKey);
+}
 
 //grab elements
 const logIn = document.getElementById('login-form')
@@ -18,66 +20,71 @@ document.getElementById('show-login').addEventListener('click', () => {
   logIn.style.display = 'flex';
 })
 
-// Signup handler
-document.getElementById('signup-btn').addEventListener('click', async (e) => {
-  e.preventDefault();
-  
-  const userData = {
-    email: document.getElementById('signup-email').value,
-    password: document.getElementById('signup-password').value,
-    firstName: document.getElementById('signup-firstname').value,
-    lastName: document.getElementById('signup-lastname').value
-  };
+// supabase Usage
+document.addEventListener('DOMContentLoaded', async () => {
+  const supabase = await initSupabase();
 
-  try {
-    const response = await fetch('/.netlify/functions/auth-signup', {
-      method: 'POST',
-      body: JSON.stringify(userData),
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    const data = await response.json();
+  // Signup handler
+  document.getElementById('signup-btn').addEventListener('click', async (e) => {
+    e.preventDefault();
     
-    if (response.ok) {
-      alert('Signup successful! Check your email for confirmation.');
-      // Switch to login form
-      document.getElementById('signup-form').style.display = 'none';
-      document.getElementById('login-form').style.display = 'block';
-    } else {
-      throw new Error(data.error || 'Signup failed');
+    const userData = {
+      email: document.getElementById('signup-email').value,
+      password: document.getElementById('signup-password').value,
+      firstName: document.getElementById('signup-firstname').value,
+      lastName: document.getElementById('signup-lastname').value
+    };
+
+    try {
+      const response = await fetch('/.netlify/functions/auth-signup', {
+        method: 'POST',
+        body: JSON.stringify(userData),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        alert('Signup successful! Check your email for confirmation.');
+        // Switch to login form
+        signUp.style.display = 'none';
+        logIn.style.display = 'flex';
+      } else {
+        throw new Error(data.error || 'Signup failed');
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      alert(error.message);
     }
-  } catch (error) {
-    console.error('Signup error:', error);
-    alert(error.message);
-  }
-});
+  });
 
-// Login handler
-document.getElementById('login-btn').addEventListener('click', async (e) => {
-  e.preventDefault();
-  
-  const credentials = {
-    email: document.getElementById('login-email').value,
-    password: document.getElementById('login-password').value
-  };
-
-  try {
-    const response = await fetch('/.netlify/functions/auth-login', {
-      method: 'POST',
-      body: JSON.stringify(credentials),
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    const data = await response.json();
+  // Login handler
+  document.getElementById('login-btn').addEventListener('click', async (e) => {
+    e.preventDefault();
     
-    if (response.ok) {
-      // Redirect or update UI
-      window.location.href = '/dashboard.html';
-    } else {
-      throw new Error(data.error || 'Login failed');
+    const credentials = {
+      email: document.getElementById('login-email').value,
+      password: document.getElementById('login-password').value
+    };
+
+    try {
+      const response = await fetch('/.netlify/functions/auth-login', {
+        method: 'POST',
+        body: JSON.stringify(credentials),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        // Redirect or update UI
+        window.location.href = '/dashboard.html';
+      } else {
+        throw new Error(data.error || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      alert(error.message);
     }
-  } catch (error) {
-    console.error('Login error:', error);
-    alert(error.message);
-  }
+  });
 });
