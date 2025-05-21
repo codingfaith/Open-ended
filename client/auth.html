@@ -25,22 +25,22 @@
             <a href="#" id="register">Sign In</a>
         </nav>
         <div id="auth-container" class="form">
-            <h2>Ubuntex Index Login</h2>  
-            <div id="login-form">
+            <div id="login-form" style="display:none;">
+                <h2>Ubuntex Index Login</h2>  
                 <input type="email" id="login-email" placeholder="Email" required>
                 <input type="password" id="login-password" placeholder="Password" required>
                 <button id="login-btn">Login</button>
-                <p>Don't have an account? <a href="#" id="show-signup">Sign up</a></p>
+                <p>Don't have an account? <button id="show-signup">Sign up</button></p>
             </div>
             
-            <div id="signup-form" class="form" style="display:none;">
-                <h3>Sign Up</h3>
+            <div id="signup-form" class="form">
+                <h2>Ubuntex Index Sign-up</h2>  
                 <input type="text" id="signup-firstname" placeholder="First Name" required>
                 <input type="text" id="signup-lastname" placeholder="Last Name" required>
                 <input type="email" id="signup-email" placeholder="Email" required>
                 <input type="password" id="signup-password" placeholder="Password" required>
                 <button id="signup-btn">Sign Up</button>
-                <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+                <p>Already have an account? <button id="show-login">Login</button></p>
             </div>
         </div>
     </div>

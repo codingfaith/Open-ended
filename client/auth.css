@@ -1,4 +1,5 @@
 #login-form,
+#signup-form,
 #auth-container {
     padding: 1em;
 }
@@ -6,34 +7,56 @@
     color: #ffffff;
 }
 #auth-container h2 {
+    margin: 0;
     text-align: center;
 }
-#login-form {
+#login-form,
+#signup-form {
     gap: 1em;
-     width: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
 } 
 input,
-#login-btn {
+#login-btn,
+#signup-btn {
     border: none;
     outline: none;
     padding: 0.5em;
     font-size: medium;
     font-family: inherit;
 }
-#login-btn {
+#login-btn,
+#signup-btn {
     cursor: pointer;
     color: #4c5582;
     font-weight: 500;
     border-radius: 10px;
     box-shadow: 1px 1px 1px 1px gainsboro;   
 }
-#login-btn:hover {
+#show-login,
+#show-signup {
+    outline:none;
+    border: none;
+    color: aqua;
+    cursor: pointer;
+    font-size: large;
+    font-family: inherit;
+    background: transparent;
+    text-decoration: underline;
+}
+#login-btn:hover,
+#signup-btn:hover {
     color: #ffffff;
     background: #c7beb7;
 }
+ #show-login:hover,
+#show-signup:hover {
+    color: #c7beb7;
+}
 @media screen and (max-width: 400px) {
+    #show-login,
+    #show-signup,
     #auth-container {
         font-size: medium;
     }

@@ -4,6 +4,20 @@ const supabaseKey = process.env.SUPABASE_KEY;
 
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+//grab elements
+const logIn = document.getElementById('login-form')
+const signUp = document.getElementById('signup-form')
+
+//toggle between sign-up and login forms
+document.getElementById('show-signup').addEventListener('click', () => {
+  signUp.style.display = 'block';
+  logIn.style.display = 'none';
+})
+document.getElementById('show-login').addEventListener('click', () => {
+  signUp.style.display = 'none';
+  logIn.style.display = 'block';
+})
+
 // Signup handler
 document.getElementById('signup-btn').addEventListener('click', async (e) => {
   e.preventDefault();
