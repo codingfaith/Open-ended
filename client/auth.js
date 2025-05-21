@@ -1,3 +1,9 @@
+// Initialize Supabase client using environment variables
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
 // Signup handler
 document.getElementById('signup-btn').addEventListener('click', async (e) => {
   e.preventDefault();
