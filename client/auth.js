@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       if (response.ok) {
         // Redirect or update UI
-        window.location.href = '/dashboard.html';
+        window.location.href = '/dashboard';
       } else {
         throw new Error(data.error || 'Login failed');
       }

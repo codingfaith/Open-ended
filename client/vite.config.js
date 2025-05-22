@@ -10,7 +10,8 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         quiz: resolve(__dirname, 'quiz.html'),
         contact: resolve(__dirname, 'contact.html'),
-        auth: resolve(__dirname, 'auth.html')  
+        auth: resolve(__dirname, 'auth.html'),
+        dashboard: resolve(__dirname, 'dashboard.html')    
       }
     }
   }
