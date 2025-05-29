@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
+     <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
     <div class="landing-container">
@@ -23,10 +24,16 @@
             <a href="./about">About</a>
             <a href="./contact">Contact</a>
         </nav>
-        <div class="assessment">
-            <button>See previous results</button>
+        <div class="assessment" id="dashboard-assess">
+            <h1 id="greeting">Hello, User!</h1>
+            <button id="dashboard-results">See previous results</button>
+            <img src="./quiz.jpg" id="dashboard-img"/>
+            <div id="previous-results" class="hide">
+                <span>You have no results to show yet! Start assessment below 😊</span>
+            </div>
             <a href="./quiz" class="redirect">Start Assessment</a>
         </div>
     </div>
+    <script src="dashboard.js"  type="module"></script>
 </body>
 </html>
