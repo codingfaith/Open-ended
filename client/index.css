@@ -117,6 +117,7 @@ nav a:hover {
         font-size: medium;
     }
 }
+
 @media screen and (max-width: 355px) {
     .assessment p {
         font-size: medium;

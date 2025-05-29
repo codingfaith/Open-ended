@@ -567,13 +567,13 @@ class UbuntexIndex {
             resultContainer.innerHTML = `
                 <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
                 <p>Classification: ${this.getClassification(score)}</p>
-                <div class="choiceButtons">
+                <div class="choiceButtons" id="choiceButtons">
                     <button id="answers">View Your Answers</button>
                     <button id="report">Read Full Report</button>
                 </div>
                 <div id="results-table"></div>
              `;
-           
+            document.getElementById("choiceButtons").style.display = "none"
             // Set up button interactions
             document.getElementById("answers").addEventListener("click", () => {
                 this.showLoadingMessage("Compiling your answers...");
