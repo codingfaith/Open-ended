@@ -24,8 +24,7 @@
     height: auto;
     max-width: 250px;
     overflow: hidden;
-    border-bottom-left-radius: 25%; 
-    border-bottom-right-radius: 30%; 
+    border-bottom-right-radius: 10px; 
 }
 input,
 button,textarea {
