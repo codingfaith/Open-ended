@@ -45,10 +45,10 @@ button {
     cursor: pointer;
     color: #12222f;
     border-radius: 10px;
-    box-shadow: 1px 1px 1px 1px #12222f;   
+    box-shadow: 1px 1px 1px 1px gray;   
 }
 button:hover {
-    color: #4c5582;
+    color: skyblue;
 }
 .hidden {
   position: absolute;
@@ -63,10 +63,6 @@ button:hover {
     }
     .contact-container {
         padding: 0.5em;
-    }
-    .contact-container,
-    #contact-landing-container {
-        background: #4c5582;
     }
 }
 @media screen and (max-width: 400px) {

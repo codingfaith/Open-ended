@@ -48,11 +48,11 @@ input,
 #login-btn:hover,
 #signup-btn:hover {
     color: #ffffff;
-    background: #c7beb7;
+    background: skyblue;
 }
  #show-login:hover,
 #show-signup:hover {
-    color: #c7beb7;
+    color: skyblue;
 }
 /* media queries */
 @media screen and (max-width: 400px) {

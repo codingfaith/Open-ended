@@ -26,6 +26,10 @@ body {
     font-weight: bold;
     align-self: center;
 }
+p {
+    text-align: justify;
+    text-justify: inter-word;
+}
 .ubuntu-text p {
     margin: 0;
     color: #4c5582;
@@ -34,10 +38,10 @@ body {
 }
 .landing-container {
     margin: auto;
-    height: 100vh;
+    min-height: 100vh;
     max-width: 800px;
     background: #4c5582;
-    box-shadow: 1px 1px 1px 1px #808080;
+    box-shadow: 1px 1px 2px 2px #ccc;
 }
 .landing-container h1 {
     margin: 0;
@@ -54,7 +58,7 @@ body {
     font-size: larger;
 }
 .highlight {
-    color: #c7beb7;
+    color: skyblue;
 }
 .assessment a {
     width: 100%;
@@ -65,12 +69,21 @@ body {
     text-align: center;
     border-radius: 10px;
     text-decoration: none;
-    background: #ffffff;
-    
+    background: #ffffff;   
+}
+#read-more {
+    padding: 0;
+    color: skyblue;
+    text-align: left;
+    width: fit-content;
+    font-style: italic;
+    padding-bottom: 10px;
+    background: transparent; 
+    text-decoration:underline; 
 }
 .assessment a:hover {
     color: #ffffff;
-    background:	#c7beb7;  
+    background:	skyblue;  
 }
 nav {
     display: flex;
