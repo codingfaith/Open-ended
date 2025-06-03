@@ -1,27 +1,5 @@
-// Firebase references (will be initialized after config fetch)
+// Firebase instances
 let auth, db;
-
-// Initialize Firebase asynchronously
-async function initializeFirebase() {
-  try {
-    // Fetch config from Netlify function
-    const response = await fetch('/.netlify/functions/getConfig');
-    if (!response.ok) throw new Error('Failed to fetch Firebase config');
-    
-    const { firebaseConfig } = await response.json();
-    const app = firebase.initializeApp(firebaseConfig);
-    
-    auth = firebase.auth();
-    db = firebase.firestore();
-    
-    console.log('Firebase initialized successfully');
-    return { auth, db };
-  } catch (error) {
-    console.error('Firebase initialization error:', error);
-    showError('Failed to initialize application. Please refresh the page.');
-    throw error;
-  }
-}
 
 // Main initialization function
 async function initAuthSystem() {
@@ -30,12 +8,40 @@ async function initAuthSystem() {
     setupEventListeners();
     checkAuthState();
   } catch (error) {
-    // Critical failure - disable forms
-    document.querySelectorAll('#login-btn, #signup-btn').forEach(btn => {
-      btn.disabled = true;
-    });
+    console.error("Auth system initialization failed:", error);
+    showError("System error. Please refresh the page.");
+    disableForms();
   }
 }
+
+async function initializeFirebase() {
+  try {
+    const response = await fetch('/.netlify/functions/getConfig');
+    if (!response.ok) throw new Error('Failed to fetch config');
+    
+    const { firebaseConfig } = await response.json();
+    
+    // Initialize only if not already initialized
+    const app = firebase.apps.length 
+      ? firebase.app() 
+      : firebase.initializeApp(firebaseConfig);
+    
+    auth = firebase.auth();
+    db = firebase.firestore();
+    
+    console.log("Firebase initialized successfully");
+  } catch (error) {
+    console.error("Firebase init error:", error);
+    throw error; // Rethrow for parent handler
+  }
+}
+
+function disableForms() {
+  document.querySelectorAll('#login-btn, #signup-btn').forEach(btn => {
+    btn.disabled = true;
+  });
+}
+
 
 // Setup all event listeners after Firebase is ready
 function setupEventListeners() {
@@ -93,6 +99,7 @@ async function handleSignup(e) {
 
   try {
     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+    if (!db) throw new Error("Database not initialized");
     
     await db.collection('users').doc(userCredential.user.uid).set({
       firstName,
@@ -109,74 +116,20 @@ async function handleSignup(e) {
   }
 }
 
-// Auth state listener
+// Modified checkAuthState to prevent redirect loop
 function checkAuthState() {
   auth.onAuthStateChanged(user => {
     if (user) {
       console.log('User is logged in:', user.email);
-      window.location.href = '/dashboard.html';
+      // Only redirect if not already on dashboard
+      if (!window.location.pathname.includes('/dashboard.html')) {
+        window.location.href = '/dashboard.html';
+      }
     }
   });
 }
 
-// Utility functions (unchanged)
-function setLoading(button, isLoading) {
-  const buttonText = button.querySelector('.button-text');
-  const spinner = button.querySelector('.loading-spinner');
-  
-  button.disabled = isLoading;
-  buttonText.style.display = isLoading ? 'none' : 'block';
-  spinner.style.display = isLoading ? 'block' : 'none';
-}
-
-function showError(message) {
-  document.getElementById('auth-error').textContent = message;
-}
-
-function clearError() {
-  document.getElementById('auth-error').textContent = '';
-}
-
-function getFriendlyError(error) {
-  // Handle case where full error object is passed
-  const code = error.code || error;
-  
-  switch(code) {
-    // Authentication Errors
-    case 'auth/invalid-email': 
-    case 'auth/invalid-email-address': // Some versions use this
-      return 'Invalid email address';
-      
-    case 'auth/user-disabled': 
-      return 'Account disabled by administrator';
-      
-    case 'auth/user-not-found':
-    case 'auth/wrong-password': // Note: Firebase returns this instead of "user-not-found" for security
-      return 'Invalid email or password';
-      
-    case 'auth/email-already-in-use': 
-      return 'Email already registered';
-      
-    case 'auth/weak-password': 
-      return 'Password must be at least 6 characters';
-      
-    // Network/System Errors  
-    case 'auth/network-request-failed':
-      return 'Network error. Check your connection';
-      
-    case 'auth/too-many-requests':
-      return 'Too many attempts. Try again later or reset password';
-      
-    // Timeout Errors  
-    case 'auth/timeout':
-      return 'Request timed out. Try again';
-      
-    // Default catch-all
-    default:
-      console.warn('Unhandled auth error:', code); // Log unknown errors
-      return typeof error === 'string' ? error : 'Login failed. Please try again';
-  }
-}
-
-// Start the authentication system
-initAuthSystem();
+// Start the system when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  initAuthSystem();
+});
