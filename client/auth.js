@@ -20,6 +20,27 @@ async function initAuthSystem() {
     disableForms();
   }
 }
+// Utility Functions (add these at the top of your file)
+function clearError() {
+  const errorElement = document.getElementById('auth-error');
+  if (errorElement) errorElement.textContent = '';
+}
+
+function setLoading(button, isLoading) {
+  if (!button) return;
+  
+  const buttonText = button.querySelector('.button-text');
+  const spinner = button.querySelector('.loading-spinner');
+  
+  if (buttonText) buttonText.style.display = isLoading ? 'none' : 'block';
+  if (spinner) spinner.style.display = isLoading ? 'block' : 'none';
+  button.disabled = isLoading;
+}
+
+function showError(message) {
+  const errorElement = document.getElementById('auth-error');
+  if (errorElement) errorElement.textContent = message;
+}
 
 async function initializeFirebase() {
   try {
@@ -163,6 +184,7 @@ async function handleSignup(e) {
     setLoading(signupBtn, false);
   }
 }
+
 
 function setupEventListeners() {
   // Get elements safely
