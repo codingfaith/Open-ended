@@ -15,6 +15,8 @@ async function initializeFirebase() {
     db = firebase.firestore();
     
     console.log('Firebase initialized successfully');
+    console.log(auth);
+    console.log(db);
     return { auth, db };
   } catch (error) {
     console.error('Firebase initialization error:', error);
