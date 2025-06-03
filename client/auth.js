@@ -1,12 +1,19 @@
 // Firebase instances
 let auth, db;
+let authStateUnsubscribe = null; // To store the auth state listener
 
-// Main initialization function
+// Main initialization
 async function initAuthSystem() {
+  if (!window.firebase) {
+    showError("Firebase SDK not loaded. Please refresh.");
+    disableForms();
+    return;
+  }
+
   try {
     await initializeFirebase();
     setupEventListeners();
-    checkAuthState();
+    setupAuthStateListener();
   } catch (error) {
     console.error("Auth system initialization failed:", error);
     showError("System error. Please refresh the page.");
@@ -32,104 +39,135 @@ async function initializeFirebase() {
     console.log("Firebase initialized successfully");
   } catch (error) {
     console.error("Firebase init error:", error);
-    throw error; // Rethrow for parent handler
+    throw error;
   }
 }
 
+function setupAuthStateListener() {
+  // Clean up previous listener if exists
+  if (authStateUnsubscribe) authStateUnsubscribe();
+  
+  authStateUnsubscribe = auth.onAuthStateChanged(user => {
+    if (user && !window.location.pathname.includes('/dashboard.html')) {
+      console.log('Redirecting authenticated user');
+      window.location.href = '/dashboard.html';
+    }
+  });
+}
+
 function disableForms() {
-  document.querySelectorAll('#login-btn, #signup-btn').forEach(btn => {
-    btn.disabled = true;
-  });
+  const buttons = document.querySelectorAll('#login-btn, #signup-btn');
+  if (buttons) {
+    buttons.forEach(btn => btn.disabled = true);
+  }
 }
 
-
-// Setup all event listeners after Firebase is ready
-function setupEventListeners() {
-  // Toggle Forms
-  document.getElementById('show-signup').addEventListener('click', () => {
-    document.getElementById('login-form').style.display = 'none';
-    document.getElementById('signup-form').style.display = 'flex';
-    clearError();
-  });
-
-  document.getElementById('show-login').addEventListener('click', () => {
-    document.getElementById('signup-form').style.display = 'none';
-    document.getElementById('login-form').style.display = 'flex';
-    clearError();
-  });
-
-  // Login
-  document.getElementById('login-btn').addEventListener('click', handleLogin);
-
-  // Signup
-  document.getElementById('signup-btn').addEventListener('click', handleSignup);
+// Form validation
+function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(String(email).toLowerCase());
 }
 
-// Login handler
+// Login handler with debouncing
+let isLoginProcessing = false;
 async function handleLogin(e) {
   e.preventDefault();
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
+  if (isLoginProcessing) return;
+  
+  const emailInput = document.getElementById('login-email');
+  const passwordInput = document.getElementById('login-password');
   const loginBtn = document.getElementById('login-btn');
+  
+  if (!emailInput || !passwordInput || !loginBtn) return;
 
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+
+  if (!validateEmail(email)) {
+    showError('Please enter a valid email address');
+    return;
+  }
+
+  isLoginProcessing = true;
   setLoading(loginBtn, true);
   clearError();
 
   try {
     await auth.signInWithEmailAndPassword(email, password);
-    window.location.href = '/dashboard.html';
+    // Redirect handled by auth state listener
   } catch (error) {
-    showError(getFriendlyError(error.code));
+    showError(getFriendlyError(error));
   } finally {
+    isLoginProcessing = false;
     setLoading(loginBtn, false);
   }
 }
 
-// Signup handler
+// Signup handler with enhanced validation
+let isSignupProcessing = false;
 async function handleSignup(e) {
   e.preventDefault();
-  const email = document.getElementById('signup-email').value;
-  const password = document.getElementById('signup-password').value;
-  const firstName = document.getElementById('signup-firstname').value;
-  const lastName = document.getElementById('signup-lastname').value;
+  if (isSignupProcessing) return;
+
+  const emailInput = document.getElementById('signup-email');
+  const passwordInput = document.getElementById('signup-password');
+  const firstNameInput = document.getElementById('signup-firstname');
+  const lastNameInput = document.getElementById('signup-lastname');
   const signupBtn = document.getElementById('signup-btn');
 
+  if (!emailInput || !passwordInput || !firstNameInput || !lastNameInput || !signupBtn) return;
+
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+  const firstName = firstNameInput.value.trim();
+  const lastName = lastNameInput.value.trim();
+
+  if (!validateEmail(email)) {
+    showError('Please enter a valid email address');
+    return;
+  }
+
+  if (password.length < 6) {
+    showError('Password must be at least 6 characters');
+    return;
+  }
+
+  if (!firstName || !lastName) {
+    showError('Please enter your full name');
+    return;
+  }
+
+  isSignupProcessing = true;
   setLoading(signupBtn, true);
   clearError();
 
   try {
     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+    
     if (!db) throw new Error("Database not initialized");
     
     await db.collection('users').doc(userCredential.user.uid).set({
       firstName,
       lastName,
       email,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      lastLogin: firebase.firestore.FieldValue.serverTimestamp()
     });
-
-    window.location.href = '/dashboard.html';
+    
+    // Send email verification (recommended)
+    await userCredential.user.sendEmailVerification();
   } catch (error) {
-    showError(getFriendlyError(error.code));
+    showError(getFriendlyError(error));
   } finally {
+    isSignupProcessing = false;
     setLoading(signupBtn, false);
   }
 }
 
-// Modified checkAuthState to prevent redirect loop
-function checkAuthState() {
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      console.log('User is logged in:', user.email);
-      // Only redirect if not already on dashboard
-      if (!window.location.pathname.includes('/dashboard.html')) {
-        window.location.href = '/dashboard.html';
-      }
-    }
-  });
-}
+// Clean up on page unload
+window.addEventListener('beforeunload', () => {
+  if (authStateUnsubscribe) authStateUnsubscribe();
+});
 
 // Start the system when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  initAuthSystem();
-});
+document.addEventListener('DOMContentLoaded', initAuthSystem);
