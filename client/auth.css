@@ -54,6 +54,14 @@ input,
 #show-signup:hover {
     color: skyblue;
 }
+#auth-error {
+    width: 100%;
+    color: orange;
+    margin-top: 10px;
+    text-align: center;
+    font-size: smaller;
+    font-style: italic;
+}
 /* media queries */
 @media screen and (max-width: 400px) {
     #show-login,
