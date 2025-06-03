@@ -164,6 +164,40 @@ async function handleSignup(e) {
   }
 }
 
+function setupEventListeners() {
+  // Get elements safely
+  const showSignup = document.getElementById('show-signup');
+  const showLogin = document.getElementById('show-login');
+  const loginForm = document.getElementById('login-form');
+  const signupForm = document.getElementById('signup-form');
+  
+  // Verify all elements exist
+  if (!showSignup || !showLogin || !loginForm || !signupForm) {
+    console.error('Form elements missing!');
+    return;
+  }
+
+  // Toggle to Signup Form
+  showSignup.addEventListener('click', (e) => {
+    e.preventDefault();
+    loginForm.style.display = 'none';
+    signupForm.style.display = 'flex';
+    clearError();
+  });
+
+  // Toggle to Login Form
+  showLogin.addEventListener('click', (e) => {
+    e.preventDefault();
+    signupForm.style.display = 'none';
+    loginForm.style.display = 'flex';
+    clearError();
+  });
+
+  // Login/Signup button handlers remain the same
+  document.getElementById('login-btn')?.addEventListener('click', handleLogin);
+  document.getElementById('signup-btn')?.addEventListener('click', handleSignup);
+}
+
 // Clean up on page unload
 window.addEventListener('beforeunload', () => {
   if (authStateUnsubscribe) authStateUnsubscribe();
