@@ -15,8 +15,6 @@ async function initializeFirebase() {
     db = firebase.firestore();
     
     console.log('Firebase initialized successfully');
-    console.log(auth);
-    console.log(db);
     return { auth, db };
   } catch (error) {
     console.error('Firebase initialization error:', error);
@@ -103,7 +101,7 @@ async function handleSignup(e) {
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    window.location.href = '/profile.html';
+    window.location.href = '/dashboard.html';
   } catch (error) {
     showError(getFriendlyError(error.code));
   } finally {
@@ -139,15 +137,44 @@ function clearError() {
   document.getElementById('auth-error').textContent = '';
 }
 
-function getFriendlyError(code) {
+function getFriendlyError(error) {
+  // Handle case where full error object is passed
+  const code = error.code || error;
+  
   switch(code) {
-    case 'auth/invalid-email': return 'Invalid email address';
-    case 'auth/user-disabled': return 'Account disabled';
-    case 'auth/user-not-found': return 'Account not found';
-    case 'auth/wrong-password': return 'Incorrect password';
-    case 'auth/email-already-in-use': return 'Email already in use';
-    case 'auth/weak-password': return 'Password should be at least 6 characters';
-    default: return 'Login failed. Please try again.';
+    // Authentication Errors
+    case 'auth/invalid-email': 
+    case 'auth/invalid-email-address': // Some versions use this
+      return 'Invalid email address';
+      
+    case 'auth/user-disabled': 
+      return 'Account disabled by administrator';
+      
+    case 'auth/user-not-found':
+    case 'auth/wrong-password': // Note: Firebase returns this instead of "user-not-found" for security
+      return 'Invalid email or password';
+      
+    case 'auth/email-already-in-use': 
+      return 'Email already registered';
+      
+    case 'auth/weak-password': 
+      return 'Password must be at least 6 characters';
+      
+    // Network/System Errors  
+    case 'auth/network-request-failed':
+      return 'Network error. Check your connection';
+      
+    case 'auth/too-many-requests':
+      return 'Too many attempts. Try again later or reset password';
+      
+    // Timeout Errors  
+    case 'auth/timeout':
+      return 'Request timed out. Try again';
+      
+    // Default catch-all
+    default:
+      console.warn('Unhandled auth error:', code); // Log unknown errors
+      return typeof error === 'string' ? error : 'Login failed. Please try again';
   }
 }
 
