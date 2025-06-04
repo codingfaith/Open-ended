@@ -250,6 +250,7 @@ function setupEventListeners() {
 
   // Toggle to Signup Form
   showSignup.addEventListener('click', (e) => {
+    console.log("clicked sign in")
     e.preventDefault();
     loginForm.style.display = 'none';
     signupForm.style.display = 'flex';
@@ -258,6 +259,7 @@ function setupEventListeners() {
 
   // Toggle to Login Form
   showLogin.addEventListener('click', (e) => {
+    console.log("clicked sign up")
     e.preventDefault();
     signupForm.style.display = 'none';
     loginForm.style.display = 'flex';
