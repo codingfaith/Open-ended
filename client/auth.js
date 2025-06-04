@@ -195,6 +195,7 @@ async function handleSignup(e) {
 
 // Logout handler
 async function handleLogout(e) {
+  console.log("logging out")
   if (e) e.preventDefault();
   
   const logoutBtn = document.getElementById('logout-btn');
