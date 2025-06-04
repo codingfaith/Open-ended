@@ -12,6 +12,7 @@
     border-radius: 10px;
     background: #ffffff;   
 }
+#logout:hover,
 #dashboard-results:hover {
     color: #ffffff;
     background: skyblue;
