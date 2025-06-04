@@ -1,13 +1,14 @@
 #greeting {
     color: #ffffff;
 }
+#logout,
 #dashboard-results {
     border: none;
     outline: none;
     padding: 10px;
     cursor: pointer;
     color: #4c5582;
-    font-size: larger;
+    font-size: large;
     border-radius: 10px;
     background: #ffffff;   
 }
@@ -38,4 +39,9 @@
 }
 .show {
     display: block;
+}
+.welcome {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
