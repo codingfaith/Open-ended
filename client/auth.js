@@ -2,27 +2,7 @@
 let auth, db;
 let authStateUnsubscribe = null; // To store the auth state listener
 
-// Main initialization
-async function initAuthSystem() {
-  if (!window.firebase) {
-    showError("Firebase SDK not loaded. Please refresh.");
-    disableForms();
-    return;
-  }
-
-  try {
-    await initializeFirebase();
-    setupEventListeners();
-    setupAuthStateListener();
-  } catch (error) {
-    console.error("Auth system initialization failed:", error);
-    showError("System error. Please refresh the page.");
-    disableForms();
-  }
-
-
-}
-// Utility Functions (add these at the top of your file)
+// Utility Functions
 function clearError() {
   const errorElement = document.getElementById('auth-error');
   if (errorElement) errorElement.textContent = '';
@@ -44,24 +24,48 @@ function showError(message) {
   if (errorElement) errorElement.textContent = message;
 }
 
+// Main initialization
+async function initAuthSystem() {
+  try {
+    // Verify Firebase is loaded
+    if (typeof firebase === 'undefined' || typeof firebase.initializeApp !== 'function') {
+      throw new Error('Firebase SDK not loaded');
+    }
+
+    await initializeFirebase();
+    setupEventListeners();
+    setupAuthStateListener();
+  } catch (error) {
+    console.error("Auth system initialization failed:", error);
+    showError("System error. Please refresh the page.");
+    disableForms();
+  }
+}
+
+//initialize firebase
 async function initializeFirebase() {
   try {
     const response = await fetch('/.netlify/functions/getConfig');
-    if (!response.ok) throw new Error(`Failed to fetch config: ${response.status}`);
-    console.log("Raw response from getConfig:", data); // Log the full response
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     
-    const { firebaseConfig } = await response.json();
+    const data = await response.json();
+    console.log("Response from getConfig:", data);
     
-    // Initialize only if not already initialized
+    if (!data.firebaseConfig) {
+      throw new Error('Invalid Firebase configuration');
+    }
+
     const app = firebase.apps.length 
       ? firebase.app() 
-      : firebase.initializeApp(firebaseConfig);
+      : firebase.initializeApp(data.firebaseConfig);
     
     auth = firebase.auth();
     db = firebase.firestore();
     
-    console.log("Firebase initialized successfully");
-    console.log("Loaded Firebase config:", firebaseConfig);
+    // Verify services initialized
+    if (!auth || !db) throw new Error('Firebase services not initialized');
+    
+    console.log("Firebase initialized successfully", data.firebaseConfig.projectId);
   } catch (error) {
     console.error("Firebase init error:", error);
     throw error;
