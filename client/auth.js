@@ -201,6 +201,15 @@ function getFriendlyError(error) {
     case 'auth/user-not-found':
     case 'auth/wrong-password': // Note: Firebase returns this instead of "user-not-found" for security
       return 'Invalid email or password';
+    
+    case 'auth/operation-not-allowed':
+      return 'Email/password login is disabled for this app';
+
+    case 'auth/requires-recent-login':
+      return 'Please re-authenticate to update sensitive data';
+
+    case 'auth/provider-already-linked':
+      return 'Account already connected to another provider';
       
     case 'auth/email-already-in-use': 
       return 'Email already registered';
