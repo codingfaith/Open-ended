@@ -19,7 +19,7 @@ async function initAuthSystem() {
     showError("System error. Please refresh the page.");
     disableForms();
   }
-  console.log("Loaded Firebase config:", firebaseConfig);
+
 
 }
 // Utility Functions (add these at the top of your file)
@@ -60,6 +60,7 @@ async function initializeFirebase() {
     db = firebase.firestore();
     
     console.log("Firebase initialized successfully");
+    console.log("Loaded Firebase config:", firebaseConfig);
   } catch (error) {
     console.error("Firebase init error:", error);
     throw error;
@@ -252,7 +253,6 @@ function setupEventListeners() {
 
   // Toggle to Signup Form
   showSignup.addEventListener('click', (e) => {
-    console.log("clicked sign in")
     e.preventDefault();
     loginForm.style.display = 'none';
     signupForm.style.display = 'flex';
@@ -261,7 +261,6 @@ function setupEventListeners() {
 
   // Toggle to Login Form
   showLogin.addEventListener('click', (e) => {
-    console.log("clicked sign up")
     e.preventDefault();
     signupForm.style.display = 'none';
     loginForm.style.display = 'flex';
