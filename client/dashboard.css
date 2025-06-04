@@ -1,7 +1,7 @@
 #greeting {
     color: #ffffff;
 }
-#logout,
+#logout-btn,
 #dashboard-results {
     border: none;
     outline: none;
@@ -12,7 +12,7 @@
     border-radius: 10px;
     background: #ffffff;   
 }
-#logout:hover,
+#logout-btn:hover,
 #dashboard-results:hover {
     color: #ffffff;
     background: skyblue;

@@ -193,6 +193,42 @@ async function handleSignup(e) {
   }
 }
 
+// Logout handler
+async function handleLogout(e) {
+  if (e) e.preventDefault();
+  
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) setLoading(logoutBtn, true);
+
+  try {
+    // Verify auth is initialized
+    if (!auth) {
+      throw new Error('Authentication service not available');
+    }
+
+    console.log('Attempting to sign out user...');
+    await auth.signOut();
+
+    // Clear any client-side storage
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    console.log('User signed out successfully');
+    // Redirect to login page after logout
+    window.location.href = '/index.html'; // Update with your login page path
+    
+  } catch (error) {
+    console.error('Logout failed:', error);
+    showError(getFriendlyError(error));
+    
+    // If logout failed but we want to force redirect
+    window.location.href = '/index.html';
+    
+  } finally {
+    if (logoutBtn) setLoading(logoutBtn, false);
+  }
+}
+
 function getFriendlyError(error) {
   // Handle case where full error object is passed
   const code = error.code || error;
@@ -275,9 +311,10 @@ function setupEventListeners() {
     clearError();
   });
 
-  // Login/Signup button handlers remain the same
+  // Login/Signup button handlers 
   document.getElementById('login-btn')?.addEventListener('click', handleLogin);
   document.getElementById('signup-btn')?.addEventListener('click', handleSignup);
+   document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
 }
 
 // Clean up on page unload
