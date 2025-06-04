@@ -185,6 +185,46 @@ async function handleSignup(e) {
   }
 }
 
+function getFriendlyError(error) {
+  // Handle case where full error object is passed
+  const code = error.code || error;
+  
+  switch(code) {
+    // Authentication Errors
+    case 'auth/invalid-email': 
+    case 'auth/invalid-email-address': // Some versions use this
+      return 'Invalid email address';
+      
+    case 'auth/user-disabled': 
+      return 'Account disabled by administrator';
+      
+    case 'auth/user-not-found':
+    case 'auth/wrong-password': // Note: Firebase returns this instead of "user-not-found" for security
+      return 'Invalid email or password';
+      
+    case 'auth/email-already-in-use': 
+      return 'Email already registered';
+      
+    case 'auth/weak-password': 
+      return 'Password must be at least 6 characters';
+      
+    // Network/System Errors  
+    case 'auth/network-request-failed':
+      return 'Network error. Check your connection';
+      
+    case 'auth/too-many-requests':
+      return 'Too many attempts. Try again later or reset password';
+      
+    // Timeout Errors  
+    case 'auth/timeout':
+      return 'Request timed out. Try again';
+      
+    // Default catch-all
+    default:
+      console.warn('Unhandled auth error:', code); // Log unknown errors
+      return typeof error === 'string' ? error : 'Login failed. Please try again';
+  }
+}
 
 function setupEventListeners() {
   // Get elements safely
