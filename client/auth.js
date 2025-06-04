@@ -19,6 +19,8 @@ async function initAuthSystem() {
     showError("System error. Please refresh the page.");
     disableForms();
   }
+  console.log("Loaded Firebase config:", firebaseConfig);
+
 }
 // Utility Functions (add these at the top of your file)
 function clearError() {
