@@ -47,7 +47,8 @@ function showError(message) {
 async function initializeFirebase() {
   try {
     const response = await fetch('/.netlify/functions/getConfig');
-    if (!response.ok) throw new Error('Failed to fetch config');
+    if (!response.ok) throw new Error(`Failed to fetch config: ${response.status}`);
+    console.log("Raw response from getConfig:", data); // Log the full response
     
     const { firebaseConfig } = await response.json();
     
@@ -207,6 +208,9 @@ function getFriendlyError(error) {
     
     case 'auth/operation-not-allowed':
       return 'Email/password login is disabled for this app';
+
+    case 'auth/configuration-not-found':
+      return 'Invalid Firebase configuration. Please contact support.';  
 
     case 'auth/requires-recent-login':
       return 'Please re-authenticate to update sensitive data';
