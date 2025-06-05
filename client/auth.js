@@ -363,7 +363,9 @@ function setupEventListeners() {
   // Login/Signup/Logout button handlers 
   document.getElementById('login-btn')?.addEventListener('click', handleLogin);
   document.getElementById('signup-btn')?.addEventListener('click', handleSignup);
-  document.getElementById('logout-btn')?.addEventListener('click', console.log(document.getElementById('logout-btn')));
+  document.getElementById('logout-btn')?.addEventListener('click', ()=>{
+    document.getElementById('logout-btn').style.background = "red";
+  });
   // document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
 }
 
