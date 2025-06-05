@@ -231,6 +231,7 @@ async function handleSignup(e) {
 
 // Logout handler
 async function handleLogout(e) {
+  console.log("Logout button clicked");
   if (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -371,4 +372,13 @@ window.addEventListener('beforeunload', () => {
 });
 
 // Start the system when DOM is ready
-document.addEventListener('DOMContentLoaded', initAuthSystem);
+document.addEventListener('DOMContentLoaded', ()=>  {
+  initAuthSystem();
+
+  // Safety fallback for logout button
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', handleLogout);
+    console.log("Logout listener bound via fallback");
+  }
+});
