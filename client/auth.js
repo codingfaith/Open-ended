@@ -25,7 +25,7 @@ function showError(message, type = 'error') {
   if (!errorElement) return;
   
   errorElement.textContent = message;
-  errorElement.style.color = type === 'success' ? 'green' : 'red';
+  errorElement.style.color = type === 'success' ? 'green' : 'orange';
   errorElement.scrollIntoView({ behavior: 'smooth' });
 }
 
