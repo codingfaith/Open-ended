@@ -90,25 +90,32 @@ async function initializeFirebase() {
   }
 }
 
-// Update setupAuthStateListener for better logout handling
+// Update the auth state listener with redirect protection
 function setupAuthStateListener() {
   if (authStateUnsubscribe) authStateUnsubscribe();
   
-  authStateUnsubscribe = auth.onAuthStateChanged(user => {
-    const currentPath = window.location.pathname;
+  let isHandlingRedirect = false;
+  
+  authStateUnsubscribe = auth.onAuthStateChanged(async user => {
+    if (isHandlingRedirect) return;
+    isHandlingRedirect = true;
     
-    if (user) {
-      console.log('User authenticated:', user.uid);
-      if (!currentPath.includes('/dashboard.html')) {
+    const currentPath = window.location.pathname;
+    const isDashboard = currentPath.includes('/dashboard.html');
+    
+    try {
+      if (user && !isDashboard) {
         console.log('Redirecting to dashboard...');
         window.location.href = '/dashboard.html';
       }
-    } else {
-      console.log('No authenticated user');
-      if (currentPath.includes('/dashboard.html')) {
+      else if (!user && isDashboard) {
         console.log('Redirecting to login...');
         window.location.href = '/index.html';
       }
+    } finally {
+      setTimeout(() => {
+        isHandlingRedirect = false;
+      }, 1000);
     }
   });
 }
@@ -243,6 +250,9 @@ async function handleLogout(e) {
     
     // Sign out from Firebase
     await auth.signOut();
+    // Force refresh auth state
+    await auth.updateCurrentUser(null);
+    console.log('Auth state forcefully cleared');
     
     // Clear client-side data
     localStorage.clear();
