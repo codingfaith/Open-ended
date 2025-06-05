@@ -377,6 +377,7 @@ document.addEventListener('DOMContentLoaded', ()=>  {
 
   // Safety fallback for logout button
   const logoutBtn = document.getElementById('logout-btn');
+  console.log(logoutBtn)
   if (logoutBtn) {
     logoutBtn.addEventListener('click', handleLogout);
     console.log("Logout listener bound via fallback");
