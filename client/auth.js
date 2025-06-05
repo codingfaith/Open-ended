@@ -19,14 +19,32 @@ function setLoading(button, isLoading) {
   button.disabled = isLoading;
 }
 
-function showError(message) {
+// Update showError to handle success/error states
+function showError(message, type = 'error') {
   const errorElement = document.getElementById('auth-error');
-  if (errorElement) errorElement.textContent = message;
+  if (!errorElement) return;
+  
+  errorElement.textContent = message;
+  errorElement.style.color = type === 'success' ? 'green' : 'red';
 }
 
 // Main initialization
 async function initAuthSystem() {
-  try {
+  try { 
+    // Check for logout messages in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const logoutStatus = urlParams.get('logout');
+    
+    if (logoutStatus === 'success') {
+      showError('You have been logged out successfully', 'success');
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (logoutStatus === 'error') {
+      showError('Logout failed. Please try again.', 'error');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+
     // Verify Firebase is loaded
     if (typeof firebase === 'undefined' || typeof firebase.initializeApp !== 'function') {
       throw new Error('Firebase SDK not loaded');
@@ -72,14 +90,25 @@ async function initializeFirebase() {
   }
 }
 
+// Update setupAuthStateListener for better logout handling
 function setupAuthStateListener() {
-  // Clean up previous listener if exists
   if (authStateUnsubscribe) authStateUnsubscribe();
   
   authStateUnsubscribe = auth.onAuthStateChanged(user => {
-    if (user && !window.location.pathname.includes('/dashboard.html')) {
-      console.log('Redirecting authenticated user');
-      window.location.href = '/dashboard.html';
+    const currentPath = window.location.pathname;
+    
+    if (user) {
+      console.log('User authenticated:', user.uid);
+      if (!currentPath.includes('/dashboard.html')) {
+        console.log('Redirecting to dashboard...');
+        window.location.href = '/dashboard.html';
+      }
+    } else {
+      console.log('No authenticated user');
+      if (currentPath.includes('/dashboard.html')) {
+        console.log('Redirecting to login...');
+        window.location.href = '/index.html';
+      }
     }
   });
 }
@@ -195,35 +224,43 @@ async function handleSignup(e) {
 
 // Logout handler
 async function handleLogout(e) {
-  console.log("logging out")
-  if (e) e.preventDefault();
-  
-  const logoutBtn = document.getElementById('logout-btn');
-  if (logoutBtn) setLoading(logoutBtn, true);
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
 
+  const logoutBtn = document.getElementById('logout-btn');
   try {
+    if (logoutBtn) setLoading(logoutBtn, true);
+
     // Verify auth is initialized
     if (!auth) {
+      console.warn('Auth service not initialized during logout');
       throw new Error('Authentication service not available');
     }
 
-    console.log('Attempting to sign out user...');
+    console.log('Initiating logout process...');
+    
+    // Sign out from Firebase
     await auth.signOut();
-
-    // Clear any client-side storage
+    
+    // Clear client-side data
     localStorage.clear();
     sessionStorage.clear();
-    
-    console.log('User signed out successfully');
-    // Redirect to login page after logout
-    window.location.href = '/index.html'; // Update with your login page path
-    
+    console.log('User session cleared successfully');
+
+    // Redirect to login page with success state
+    const redirectUrl = new URL('/index.html', window.location.origin);
+    redirectUrl.searchParams.set('logout', 'success');
+    window.location.href = redirectUrl.toString();
+
   } catch (error) {
-    console.error('Logout failed:', error);
-    showError(getFriendlyError(error));
+    console.error('Logout error:', error);
     
-    // If logout failed but we want to force redirect
-    window.location.href = '/index.html';
+    // Fallback redirect if logout fails
+    const redirectUrl = new URL('/index.html', window.location.origin);
+    redirectUrl.searchParams.set('logout', 'error');
+    window.location.href = redirectUrl.toString();
     
   } finally {
     if (logoutBtn) setLoading(logoutBtn, false);
@@ -315,7 +352,7 @@ function setupEventListeners() {
   // Login/Signup button handlers 
   document.getElementById('login-btn')?.addEventListener('click', handleLogin);
   document.getElementById('signup-btn')?.addEventListener('click', handleSignup);
-   document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
+  document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
 }
 
 // Clean up on page unload
