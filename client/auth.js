@@ -359,7 +359,7 @@ function setupEventListeners() {
     clearError();
   });
 
-  // Login/Signup button handlers 
+  // Login/Signup/Logout button handlers 
   document.getElementById('login-btn')?.addEventListener('click', handleLogin);
   document.getElementById('signup-btn')?.addEventListener('click', handleSignup);
   document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
