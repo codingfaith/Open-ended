@@ -179,8 +179,10 @@ async function handleSignup(e) {
   const firstNameInput = document.getElementById('signup-firstname');
   const lastNameInput = document.getElementById('signup-lastname');
   const signupBtn = document.getElementById('signup-btn');
+  const loginForm = document.getElementById('login-form');
+  const signupForm = document.getElementById('signup-form');
 
-  if (!emailInput || !passwordInput || !firstNameInput || !lastNameInput || !signupBtn) return;
+  if (!emailInput || !passwordInput || !firstNameInput || !lastNameInput || !signupBtn || !loginForm || !signupForm) return;
 
   const email = emailInput.value.trim();
   const password = passwordInput.value;
@@ -219,8 +221,20 @@ async function handleSignup(e) {
       lastLogin: firebase.firestore.FieldValue.serverTimestamp()
     });
     
-    // Send email verification (recommended)
+    // Send email verification
     await userCredential.user.sendEmailVerification();
+
+    // Show success message and switch to login form
+    showError('Signup successful! Please check your email for verification.', 'success');
+    signupForm.style.display = 'none';
+    loginForm.style.display = 'flex';
+
+    // Clear form fields
+    emailInput.value = '';
+    passwordInput.value = '';
+    firstNameInput.value = '';
+    lastNameInput.value = '';
+
   } catch (error) {
     showError(getFriendlyError(error));
   } finally {
@@ -363,10 +377,8 @@ function setupEventListeners() {
   // Login/Signup/Logout button handlers 
   document.getElementById('login-btn')?.addEventListener('click', handleLogin);
   document.getElementById('signup-btn')?.addEventListener('click', handleSignup);
-  document.getElementById('logout-btn')?.addEventListener('click', ()=>{
-    document.getElementById('logout-btn').style.background = "red";
-  });
-  // document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
+  document.getElementById('logout-btn')?.addEventListener('click', console.log(document.getElementById('logout-btn')));
+  document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
 }
 
 // Clean up on page unload
