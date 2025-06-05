@@ -12,6 +12,10 @@
     border-radius: 10px;
     background: #ffffff;   
 }
+#logout-btn {
+    position: relative;
+    z-index: 9999;
+}
 #logout-btn:hover,
 #dashboard-results:hover {
     color: #ffffff;
