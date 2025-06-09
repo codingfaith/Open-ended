@@ -102,16 +102,16 @@ function setupAuthStateListener() {
     isHandlingRedirect = true;
     
     const currentPath = window.location.pathname;
-    const isDashboard = currentPath.includes('/dashboard.html');
+    const isDashboard = currentPath.includes('/dashboard');
     
     try {
       if (user && !isDashboard) {
         console.log('Redirecting to dashboard...');
-        window.location.href = '/dashboard.html';
+        window.location.href = '/dashboard';
       }
       else if (!user && isDashboard) {
         console.log('Redirecting to login...');
-        window.location.href = '/index.html';
+        window.location.href = '/index';
       }
     } finally {
       setTimeout(() => {
@@ -246,7 +246,6 @@ async function handleSignup(e) {
 
 // Logout handler
 async function handleLogout(e) {
-  console.log("Logout button clicked");
   if (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -276,7 +275,7 @@ async function handleLogout(e) {
     console.log('User session cleared successfully');
 
     // Redirect to login page with success state
-    const redirectUrl = new URL('/index.html', window.location.origin);
+    const redirectUrl = new URL('/index', window.location.origin);
     redirectUrl.searchParams.set('logout', 'success');
     window.location.href = redirectUrl.toString();
 
@@ -284,7 +283,7 @@ async function handleLogout(e) {
     console.error('Logout error:', error);
     
     // Fallback redirect if logout fails
-    const redirectUrl = new URL('/index.html', window.location.origin);
+    const redirectUrl = new URL('/index', window.location.origin);
     redirectUrl.searchParams.set('logout', 'error');
     window.location.href = redirectUrl.toString();
     
@@ -358,7 +357,7 @@ function setupEventListeners() {
     console.error('Form elements missing!');
     return;
   }
-
+ 
   // Toggle to Signup Form
   showSignup.addEventListener('click', (e) => {
     e.preventDefault();
@@ -378,7 +377,6 @@ function setupEventListeners() {
   // Login/Signup/Logout button handlers 
   document.getElementById('login-btn')?.addEventListener('click', handleLogin);
   document.getElementById('signup-btn')?.addEventListener('click', handleSignup);
-  document.getElementById('logout-btn')?.addEventListener('click', console.log(document.getElementById('logout-btn')));
   document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
 }
 
@@ -393,7 +391,6 @@ document.addEventListener('DOMContentLoaded', ()=>  {
 
   // Safety fallback for logout button
   const logoutBtn = document.getElementById('logout-btn');
-  console.log(logoutBtn)
   if (logoutBtn) {
     logoutBtn.addEventListener('click', handleLogout);
     console.log("Logout listener bound via fallback");
