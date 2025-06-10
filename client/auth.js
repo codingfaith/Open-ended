@@ -96,9 +96,10 @@ function setupAuthStateListener() {
   if (authStateUnsubscribe) authStateUnsubscribe();
   
   let isHandlingRedirect = false;
+  let isLoggingOut = false;
   
   authStateUnsubscribe = auth.onAuthStateChanged(async user => {
-    if (isHandlingRedirect) return;
+    if (isHandlingRedirect || isLoggingOut) return;
     isHandlingRedirect = true;
     
     const currentPath = window.location.pathname;
@@ -250,6 +251,7 @@ async function handleLogout(e) {
     e.preventDefault();
     e.stopPropagation();
   }
+  window.isLoggingOut = true;
 
   console.log('[Logout] Starting logout process...');
   const logoutBtn = document.getElementById('logout-btn');
@@ -381,7 +383,7 @@ function setupEventListeners() {
   // Login/Signup/Logout button handlers 
   document.getElementById('login-btn')?.addEventListener('click', handleLogin);
   document.getElementById('signup-btn')?.addEventListener('click', handleSignup);
-  document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
+  // document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
 }
 
 // Clean up on page unload
