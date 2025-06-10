@@ -255,32 +255,42 @@ async function handleLogout(e) {
   try {
     if (logoutBtn) setLoading(logoutBtn, true);
 
+    // Verify auth is initialized
     if (!auth) {
       console.warn('Auth service not initialized during logout');
       throw new Error('Authentication service not available');
     }
 
     console.log('Initiating logout process...');
+    
+    // Sign out from Firebase
     await auth.signOut();
-
+    // Force refresh auth state
+    await auth.updateCurrentUser(null);
+    console.log('Auth state forcefully cleared');
+    
+    // Clear client-side data
     localStorage.clear();
     sessionStorage.clear();
     console.log('User session cleared successfully');
 
+    // Redirect to login page with success state
     const redirectUrl = new URL('/index', window.location.origin);
     redirectUrl.searchParams.set('logout', 'success');
     window.location.href = redirectUrl.toString();
 
   } catch (error) {
     console.error('Logout error:', error);
+    
+    // Fallback redirect if logout fails
     const redirectUrl = new URL('/index', window.location.origin);
     redirectUrl.searchParams.set('logout', 'error');
     window.location.href = redirectUrl.toString();
+    
   } finally {
     if (logoutBtn) setLoading(logoutBtn, false);
   }
 }
-
 
 function getFriendlyError(error) {
   // Handle case where full error object is passed
@@ -378,4 +388,11 @@ window.addEventListener('beforeunload', () => {
 // Start the system when DOM is ready
 document.addEventListener('DOMContentLoaded', ()=>  {
   initAuthSystem();
+
+  // Safety fallback for logout button
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', handleLogout);
+    console.log("Logout listener bound via fallback");
+  }
 });
