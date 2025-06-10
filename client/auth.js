@@ -383,7 +383,6 @@ function setupEventListeners() {
   // Login/Signup/Logout button handlers 
   document.getElementById('login-btn')?.addEventListener('click', handleLogin);
   document.getElementById('signup-btn')?.addEventListener('click', handleSignup);
-  // document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
 }
 
 // Clean up on page unload
@@ -399,6 +398,5 @@ document.addEventListener('DOMContentLoaded', ()=>  {
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', handleLogout);
-    console.log("Logout listener bound via fallback");
   }
 });
