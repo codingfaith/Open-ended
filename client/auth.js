@@ -91,14 +91,14 @@ async function initializeFirebase() {
   }
 }
 
-// Update the auth state listener with redirect protection
 function setupAuthStateListener() {
   if (authStateUnsubscribe) authStateUnsubscribe();
   
   let isHandlingRedirect = false;
+  let isLoggingOut = false;
   
   authStateUnsubscribe = auth.onAuthStateChanged(async user => {
-    if (isHandlingRedirect) return;
+    if (isHandlingRedirect || isLoggingOut) return;
     isHandlingRedirect = true;
     
     const currentPath = window.location.pathname;
@@ -250,32 +250,47 @@ async function handleLogout(e) {
     e.preventDefault();
     e.stopPropagation();
   }
-
+  window.isLoggingOut = true;
+  console.log('[Logout] Starting logout process...');
   const logoutBtn = document.getElementById('logout-btn');
+  
   try {
     if (logoutBtn) setLoading(logoutBtn, true);
 
+    // Verify auth is initialized
     if (!auth) {
-      console.warn('Auth service not initialized during logout');
+      console.error('[Logout] Auth service not initialized');
       throw new Error('Authentication service not available');
     }
 
-    console.log('Initiating logout process...');
+    // Check current user state
+    console.log('[Logout] Current user before signout:', auth.currentUser);
+    
+    // Sign out from Firebase
+    console.log('[Logout] Attempting signOut...');
     await auth.signOut();
-
+    
+    // Verify signout worked
+    console.log('[Logout] Current user after signout:', auth.currentUser);
+    
+    // Clear client-side data
     localStorage.clear();
     sessionStorage.clear();
-    console.log('User session cleared successfully');
+    console.log('[Logout] Local storage cleared');
 
+    // Use replaceState to avoid back button issues
     const redirectUrl = new URL('/index', window.location.origin);
     redirectUrl.searchParams.set('logout', 'success');
-    window.location.href = redirectUrl.toString();
+    console.log('[Logout] Redirecting to:', redirectUrl.toString());
+    window.location.replace(redirectUrl.toString());
 
   } catch (error) {
-    console.error('Logout error:', error);
+    console.error('[Logout] Full error:', error);
+    
     const redirectUrl = new URL('/index', window.location.origin);
     redirectUrl.searchParams.set('logout', 'error');
-    window.location.href = redirectUrl.toString();
+    window.location.replace(redirectUrl.toString());
+    
   } finally {
     if (logoutBtn) setLoading(logoutBtn, false);
   }
@@ -378,11 +393,4 @@ window.addEventListener('beforeunload', () => {
 // Start the system when DOM is ready
 document.addEventListener('DOMContentLoaded', ()=>  {
   initAuthSystem();
-
-  // Safety fallback for logout button
-  const logoutBtn = document.getElementById('logout-btn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', handleLogout);
-    console.log("Logout listener bound via fallback");
-  }
 });
