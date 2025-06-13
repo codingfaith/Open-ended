@@ -1,6 +1,7 @@
 // Firebase instances
 let auth, db;
 let authStateUnsubscribe = null; // To store the auth state listener
+let isFirebaseReady = false;
 
 // Utility Functions
 function clearError() {
@@ -96,13 +97,20 @@ export async function initializeFirebase() {
     if (!auth || !db) {
       throw new Error('Firebase services failed to initialize');
     }
-
+    isFirebaseReady = true;
     console.log('Firebase initialized successfully');
     return { auth, db };
     
   } catch (error) {
     console.error('Firebase initialization failed:', error);
     throw error; // Rethrow for caller to handle
+  }
+}
+
+
+export function checkAuthReady() {
+  if (!isFirebaseReady) {
+    throw new Error('Authentication service not ready - please wait');
   }
 }
 
