@@ -216,48 +216,43 @@ async function handleLogout(e) {
     e.preventDefault();
     e.stopPropagation();
   }
-  
-  const logoutBtn = document.getElementById('logout-btn');
+
   try {
-    // Set loading state
-    if (logoutBtn) setLoading(logoutBtn, true);
-    console.log('[Logout] Initiated');
+    // Ensure Firebase is ready
+    if (!firebase.apps.length || !auth) {
+      console.warn('Firebase not ready - initializing');
+      await initializeFirebase();
+    }
 
-    // Verify auth
-    if (!auth) throw new Error('Authentication service not available');
-    console.log('[Logout] Current user:', auth.currentUser?.uid);
+    // Safety check
+    if (!auth) {
+      throw new Error('Auth unavailable after initialization');
+    }
 
-    // Execute signout with cleanup delay
+    console.log('Proceeding with logout...');
     await auth.signOut();
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Clear client-side data
-    localStorage.
-    sessionStorage.clear();
-    console.log('[Logout] Local storage cleared');
     
-    // Success redirect
-    console.log('[Logout] Successful');
-    setTimeout(() => {
-      window.location.replace(`/index?logout=success&t=${Date.now()}`);
-    }, 300);
+    // Clear only auth-related items
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('firebase:')) {
+        localStorage.removeItem(key);
+      }
+    });
 
+    // Redirect with cache-buster
+    window.location.assign(`/index?logout=success&t=${Date.now()}`);
+    
   } catch (error) {
-    console.error('[Logout] Failed:', error);
+    console.error('Logout failed:', error);
     
-    // Error redirect with details
+    // Detailed error redirect
     const params = new URLSearchParams({
       logout: 'error',
-      code: error.code || 'unknown',
-      message: error.message.substring(0, 100) // Truncate long messages
+      code: error.code || 'internal',
+      from: 'handleLogout'
     });
     
-    setTimeout(() => {
-      window.location.replace(`/index?${params.toString()}`);
-    }, 300);
-    
-  } finally {
-    if (logoutBtn) setLoading(logoutBtn, false);
+    window.location.assign(`/index?${params.toString()}`);
   }
 }
 
