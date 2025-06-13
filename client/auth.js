@@ -176,41 +176,41 @@ function validateEmail(email) {
 }
 
 // Login handler with debouncing
-// let isLoginProcessing = false;
-// async function handleLogin(e) {
-//   e.preventDefault();
-//   if (isLoginProcessing) return;
+let isLoginProcessing = false;
+async function handleLogin(e) {
+  e.preventDefault();
+  if (isLoginProcessing) return;
   
-//   const emailInput = document.getElementById('login-email');
-//   const passwordInput = document.getElementById('login-password');
-//   const loginBtn = document.getElementById('login-btn');
+  const emailInput = document.getElementById('login-email');
+  const passwordInput = document.getElementById('login-password');
+  const loginBtn = document.getElementById('login-btn');
   
-//   if (!emailInput || !passwordInput || !loginBtn) return;
+  if (!emailInput || !passwordInput || !loginBtn) return;
 
-//   const email = emailInput.value.trim();
-//   const password = passwordInput.value;
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
 
-//   if (!validateEmail(email)) {
-//     showError('Please enter a valid email address');
-//     return;
-//   }
+  if (!validateEmail(email)) {
+    showError('Please enter a valid email address');
+    return;
+  }
 
-//   isLoginProcessing = true;
-//   setLoading(loginBtn, true);
-//   clearError();
+  isLoginProcessing = true;
+  setLoading(loginBtn, true);
+  clearError();
 
-//   try {
-//     await auth.signInWithEmailAndPassword(email, password);
-//     // Redirect handled by auth state listener
-//   } catch (error) {
-//     showError(getFriendlyError(error));
-//   } finally {
-//     isLoginProcessing = false;
-//     setLoading(loginBtn, false);
-//   }
-// }
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+    // Redirect handled by auth state listener
+  } catch (error) {
+    showError(getFriendlyError(error));
+  } finally {
+    isLoginProcessing = false;
+    setLoading(loginBtn, false);
+  }
+}
 
-//logout function logout function
+//logout function
 async function handleLogout(e) {
   if (e) {
     e.preventDefault();
@@ -337,57 +337,57 @@ async function handleSignup(e) {
 }
 
 // Logout handler
-async function handleLogout(e) {
-  if (e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-  window.isLoggingOut = true;
+// async function handleLogout(e) {
+//   if (e) {
+//     e.preventDefault();
+//     e.stopPropagation();
+//   }
+//   window.isLoggingOut = true;
 
-  console.log('[Logout] Starting logout process...');
-  const logoutBtn = document.getElementById('logout-btn');
+//   console.log('[Logout] Starting logout process...');
+//   const logoutBtn = document.getElementById('logout-btn');
   
-  try {
-    if (logoutBtn) setLoading(logoutBtn, true);
+//   try {
+//     if (logoutBtn) setLoading(logoutBtn, true);
 
-    // Verify auth is initialized
-    if (!auth) {
-      console.error('[Logout] Auth service not initialized');
-      throw new Error('Authentication service not available');
-    }
+//     // Verify auth is initialized
+//     if (!auth) {
+//       console.error('[Logout] Auth service not initialized');
+//       throw new Error('Authentication service not available');
+//     }
 
-    // Check current user state
-    console.log('[Logout] Current user before signout:', auth.currentUser);
+//     // Check current user state
+//     console.log('[Logout] Current user before signout:', auth.currentUser);
     
-    // Sign out from Firebase
-    console.log('[Logout] Attempting signOut...');
-    await auth.signOut();
+//     // Sign out from Firebase
+//     console.log('[Logout] Attempting signOut...');
+//     await auth.signOut();
     
-    // Verify signout worked
-    console.log('[Logout] Current user after signout:', auth.currentUser);
+//     // Verify signout worked
+//     console.log('[Logout] Current user after signout:', auth.currentUser);
     
-    // Clear client-side data
-    localStorage.clear();
-    sessionStorage.clear();
-    console.log('[Logout] Local storage cleared');
+//     // Clear client-side data
+//     localStorage.clear();
+//     sessionStorage.clear();
+//     console.log('[Logout] Local storage cleared');
 
-    // Use replaceState to avoid back button issues
-    const redirectUrl = new URL('/index', window.location.origin);
-    redirectUrl.searchParams.set('logout', 'success');
-    console.log('[Logout] Redirecting to:', redirectUrl.toString());
-    window.location.replace(redirectUrl.toString());
+//     // Use replaceState to avoid back button issues
+//     const redirectUrl = new URL('/index', window.location.origin);
+//     redirectUrl.searchParams.set('logout', 'success');
+//     console.log('[Logout] Redirecting to:', redirectUrl.toString());
+//     window.location.replace(redirectUrl.toString());
 
-  } catch (error) {
-    console.error('[Logout] Full error:', error);
+//   } catch (error) {
+//     console.error('[Logout] Full error:', error);
     
-    const redirectUrl = new URL('/index', window.location.origin);
-    redirectUrl.searchParams.set('logout', 'error');
-    window.location.replace(redirectUrl.toString());
+//     const redirectUrl = new URL('/index', window.location.origin);
+//     redirectUrl.searchParams.set('logout', 'error');
+//     window.location.replace(redirectUrl.toString());
     
-  } finally {
-    if (logoutBtn) setLoading(logoutBtn, false);
-  }
-}
+//   } finally {
+//     if (logoutBtn) setLoading(logoutBtn, false);
+//   }
+// }
 
 function getFriendlyError(error) {
   // Handle case where full error object is passed
