@@ -64,30 +64,45 @@ async function initAuthSystem() {
 //initialize firebase
 export async function initializeFirebase() {
   try {
-    const response = await fetch('/.netlify/functions/getConfig');
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    
-    const data = await response.json();
-    console.log("Response from getConfig:", data);
-    
-    if (!data.firebaseConfig) {
-      throw new Error('Invalid Firebase configuration');
+    // 1. Check if already initialized
+    if (firebase.apps.length && auth && db) {
+      console.log('Firebase already initialized');
+      return { auth, db }; // Return existing instances
     }
 
+    // 2. Fetch configuration
+    const response = await fetch('/.netlify/functions/getConfig');
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log("Firebase config received:", data);
+    
+    if (!data.firebaseConfig) {
+      throw new Error('Missing firebaseConfig in response');
+    }
+
+    // 3. Initialize or get existing app
     const app = firebase.apps.length 
       ? firebase.app() 
       : firebase.initializeApp(data.firebaseConfig);
     
+    // 4. Initialize services
     auth = firebase.auth();
     db = firebase.firestore();
     
-    // Verify services initialized
-    if (!auth || !db) throw new Error('Firebase services not initialized');
+    // 5. Verify services
+    if (!auth || !db) {
+      throw new Error('Firebase services failed to initialize');
+    }
+
+    console.log('Firebase initialized successfully');
+    return { auth, db };
     
-    console.log("Firebase initialized successfully", data.firebaseConfig.projectId);
   } catch (error) {
-    console.error("Firebase init error:", error);
-    throw error;
+    console.error('Firebase initialization failed:', error);
+    throw error; // Rethrow for caller to handle
   }
 }
 
@@ -490,6 +505,14 @@ document.addEventListener('DOMContentLoaded', ()=>  {
   // Safety fallback for logout button
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
-    logoutBtn.addEventListener('click', handleLogout);
+    logoutBtn.addEventListener('click', async (e) => {
+      try {
+        checkAuthReady();
+        await handleLogout(e);
+      } catch (error) {
+        console.error('Logout preparation failed:', error);
+        showError('System not ready - try again in a moment');
+      }
+    });
   }
 });
