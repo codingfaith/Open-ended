@@ -210,7 +210,7 @@ function validateEmail(email) {
 //   }
 // }
 
-//logout function
+//logout function logout function
 async function handleLogout(e) {
   if (e) {
     e.preventDefault();
