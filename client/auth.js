@@ -209,6 +209,8 @@ function validateEmail(email) {
 //     setLoading(loginBtn, false);
 //   }
 // }
+
+//logout function
 async function handleLogout(e) {
   if (e) {
     e.preventDefault();
