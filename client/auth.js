@@ -97,29 +97,69 @@ function setupAuthStateListener() {
   
   let isHandlingRedirect = false;
   let isLoggingOut = false;
+  let lastRedirectTime = 0;
+  let authChecked = false;
   
   authStateUnsubscribe = auth.onAuthStateChanged(async user => {
-    if (isHandlingRedirect || isLoggingOut) return;
-    isHandlingRedirect = true;
+    authChecked = true;
+    const now = Date.now();
     
-    const currentPath = window.location.pathname;
-    const isDashboard = currentPath.includes('/dashboard');
+    // Debug logs
+    console.log('Auth state changed:', user ? 'User logged in' : 'User logged out');
+    console.log('Current path:', window.location.pathname);
+    
+    // Prevent multiple redirects
+    if (isHandlingRedirect || isLoggingOut || (now - lastRedirectTime < 2000)) {
+      console.log('Redirect skipped (already handling or too recent)');
+      return;
+    }
+    
+    isHandlingRedirect = true;
+    lastRedirectTime = now;
+    
+    // Normalize path (remove trailing slashes and query params)
+    const currentPath = window.location.pathname.replace(/\/$/, '').split('?')[0].toLowerCase();
+    const isDashboard = currentPath.endsWith('/dashboard');
+    
+    console.log('Processed path:', { currentPath, isDashboard });
     
     try {
-      if (user && !isDashboard) {
-        console.log('Redirecting to dashboard...');
-        window.location.href = '/dashboard';
+      if (user) {
+        if (!isDashboard) {
+          console.log('Redirecting to dashboard...');
+          // Use replaceState to avoid adding to browser history
+          window.history.replaceState(null, '', '/dashboard');
+          // Force reload only if necessary
+          if (window.location.pathname !== '/dashboard') {
+            window.location.href = '/dashboard';
+          }
+        }
+      } else {
+        if (isDashboard) {
+          console.log('Redirecting to login...');
+          window.history.replaceState(null, '', '/index');
+          if (window.location.pathname !== '/index') {
+            window.location.href = '/index';
+          }
+        }
       }
-      else if (!user && isDashboard) {
-        console.log('Redirecting to login...');
-        window.location.href = '/index';
-      }
+    } catch (error) {
+      console.error('Redirect error:', error);
     } finally {
       setTimeout(() => {
         isHandlingRedirect = false;
+        console.log('Redirect lock released');
       }, 1000);
     }
   });
+
+  // Add timeout for auth check
+  setTimeout(() => {
+    if (!authChecked) {
+      console.warn('Auth state check is taking too long...');
+      // Optional: show user feedback or fallback behavior
+    }
+  }, 3000);
 }
 
 function disableForms() {
@@ -383,7 +423,6 @@ function setupEventListeners() {
   // Login/Signup/Logout button handlers 
   document.getElementById('login-btn')?.addEventListener('click', handleLogin);
   document.getElementById('signup-btn')?.addEventListener('click', handleSignup);
-  document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
 }
 
 // Clean up on page unload
@@ -394,4 +433,10 @@ window.addEventListener('beforeunload', () => {
 // Start the system when DOM is ready
 document.addEventListener('DOMContentLoaded', ()=>  {
   initAuthSystem();
+
+  // Safety fallback for logout button
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', handleLogout);
+  }
 });
