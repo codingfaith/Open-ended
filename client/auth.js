@@ -244,6 +244,13 @@ async function handleLogout(e) {
     
   } catch (error) {
     console.error('Logout failed:', error);
+    console.group('[Logout] Full Error Details');
+    console.error('Error object:', error);
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.message);
+    console.error('Auth state:', auth?.currentUser);
+    console.error('Firebase apps:', firebase.apps);
+    console.groupEnd();
     
     // Detailed error redirect
     const params = new URLSearchParams({
