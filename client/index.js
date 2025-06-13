@@ -1,3 +1,7 @@
+import { initializeFirebase } from './auth.js';
+
+let auth, db;
+
 const totalQuestions = 44;
 const progress = document.getElementById("progress");
 const progressText = document.getElementById("progress-text");

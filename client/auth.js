@@ -62,7 +62,7 @@ async function initAuthSystem() {
 }
 
 //initialize firebase
-async function initializeFirebase() {
+export async function initializeFirebase() {
   try {
     const response = await fetch('/.netlify/functions/getConfig');
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
