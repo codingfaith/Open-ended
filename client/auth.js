@@ -176,37 +176,86 @@ function validateEmail(email) {
 }
 
 // Login handler with debouncing
-let isLoginProcessing = false;
-async function handleLogin(e) {
-  e.preventDefault();
-  if (isLoginProcessing) return;
+// let isLoginProcessing = false;
+// async function handleLogin(e) {
+//   e.preventDefault();
+//   if (isLoginProcessing) return;
   
-  const emailInput = document.getElementById('login-email');
-  const passwordInput = document.getElementById('login-password');
-  const loginBtn = document.getElementById('login-btn');
+//   const emailInput = document.getElementById('login-email');
+//   const passwordInput = document.getElementById('login-password');
+//   const loginBtn = document.getElementById('login-btn');
   
-  if (!emailInput || !passwordInput || !loginBtn) return;
+//   if (!emailInput || !passwordInput || !loginBtn) return;
 
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
+//   const email = emailInput.value.trim();
+//   const password = passwordInput.value;
 
-  if (!validateEmail(email)) {
-    showError('Please enter a valid email address');
-    return;
+//   if (!validateEmail(email)) {
+//     showError('Please enter a valid email address');
+//     return;
+//   }
+
+//   isLoginProcessing = true;
+//   setLoading(loginBtn, true);
+//   clearError();
+
+//   try {
+//     await auth.signInWithEmailAndPassword(email, password);
+//     // Redirect handled by auth state listener
+//   } catch (error) {
+//     showError(getFriendlyError(error));
+//   } finally {
+//     isLoginProcessing = false;
+//     setLoading(loginBtn, false);
+//   }
+// }
+async function handleLogout(e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
   }
-
-  isLoginProcessing = true;
-  setLoading(loginBtn, true);
-  clearError();
-
+  
+  const logoutBtn = document.getElementById('logout-btn');
   try {
-    await auth.signInWithEmailAndPassword(email, password);
-    // Redirect handled by auth state listener
+    // Set loading state
+    if (logoutBtn) setLoading(logoutBtn, true);
+    console.log('[Logout] Initiated');
+
+    // Verify auth
+    if (!auth) throw new Error('Authentication service not available');
+    console.log('[Logout] Current user:', auth.currentUser?.uid);
+
+    // Execute signout with cleanup delay
+    await auth.signOut();
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Clear client-side data
+    localStorage.
+    sessionStorage.clear();
+    console.log('[Logout] Local storage cleared');
+    
+    // Success redirect
+    console.log('[Logout] Successful');
+    setTimeout(() => {
+      window.location.replace(`/index?logout=success&t=${Date.now()}`);
+    }, 300);
+
   } catch (error) {
-    showError(getFriendlyError(error));
+    console.error('[Logout] Failed:', error);
+    
+    // Error redirect with details
+    const params = new URLSearchParams({
+      logout: 'error',
+      code: error.code || 'unknown',
+      message: error.message.substring(0, 100) // Truncate long messages
+    });
+    
+    setTimeout(() => {
+      window.location.replace(`/index?${params.toString()}`);
+    }, 300);
+    
   } finally {
-    isLoginProcessing = false;
-    setLoading(loginBtn, false);
+    if (logoutBtn) setLoading(logoutBtn, false);
   }
 }
 
