@@ -5,6 +5,16 @@ let isFirebaseReady = false;
 let authStateUnsubscribe = null; // To store the auth state listener
 let initializationPromise = null; // To prevent duplicate initializations
 
+// At the top of your script
+if (typeof firebase === 'undefined') {
+  console.warn('Firebase SDK not detected on initial load');
+  window.addEventListener('load', () => {
+    console.log('Window loaded, attempting auth system initialization');
+    initAuthSystem();
+  });
+} else {
+  document.addEventListener('DOMContentLoaded', initAuthSystem);
+}
 // Utility Functions
 function clearError() {
   const errorElement = document.getElementById('auth-error');
@@ -66,26 +76,29 @@ async function initAuthSystem() {
 
 // New helper function
 async function ensureFirebaseLoaded() {
-  // Check if already loaded
-  if (typeof firebase !== 'undefined' && typeof firebase.initializeApp === 'function') {
+  if (typeof firebase !== 'undefined' && firebase.initializeApp) {
+    console.log('Firebase SDK already loaded');
     return true;
   }
 
-  // If not loaded, wait for it
+  console.log('Waiting for Firebase SDK to load...');
   return new Promise((resolve) => {
-    const checkInterval = setInterval(() => {
-      if (typeof firebase !== 'undefined' && typeof firebase.initializeApp === 'function') {
-        clearInterval(checkInterval);
-        resolve(true);
-      }
-    }, 100);
+    const maxWaitTime = 10000; // Increase timeout to 10 seconds
+    let elapsedTime = 0;
+    const checkInterval = 100;
 
-    // Timeout after 5 seconds
-    setTimeout(() => {
-      clearInterval(checkInterval);
-      console.error("Firebase SDK failed to load");
-      resolve(false);
-    }, 5000);
+    const interval = setInterval(() => {
+      elapsedTime += checkInterval;
+      if (typeof firebase !== 'undefined' && firebase.initializeApp) {
+        clearInterval(interval);
+        console.log('Firebase SDK loaded successfully');
+        resolve(true);
+      } else if (elapsedTime >= maxWaitTime) {
+        clearInterval(interval);
+        console.error('Firebase SDK failed to load after', maxWaitTime / 1000, 'seconds');
+        resolve(false);
+      }
+    }, checkInterval);
   });
 }
 
@@ -135,17 +148,18 @@ async function ensureFirebaseLoaded() {
 // }
 
 export async function initializeFirebase() {
-  // Return existing promise if initialization is already in progress
   if (initializationPromise) {
     return initializationPromise;
   }
 
   initializationPromise = (async () => {
     try {
-      // 1. Verify Firebase SDK is actually loaded
+      // 1. Verify Firebase SDK
       if (typeof firebase === 'undefined' || !firebase.initializeApp) {
+        console.error('Firebase SDK not loaded');
         throw new Error('Firebase SDK not properly loaded');
       }
+      console.log('Firebase SDK verified');
 
       // 2. Check for existing initialized services
       if (firebase.apps.length > 0 && auth && db) {
@@ -153,7 +167,8 @@ export async function initializeFirebase() {
         return { auth, db };
       }
 
-      // 3. Fetch configuration with timeout
+      // 3. Fetch configuration
+      console.log('Fetching Firebase config...');
       const configResponse = await Promise.race([
         fetch('/.netlify/functions/getConfig'),
         new Promise((_, reject) =>
@@ -162,26 +177,31 @@ export async function initializeFirebase() {
       ]);
 
       if (!configResponse.ok) {
+        console.error('Config fetch failed with status:', configResponse.status);
         throw new Error(`HTTP error! Status: ${configResponse.status}`);
       }
 
       const { firebaseConfig } = await configResponse.json();
-      
+      console.log('Firebase config fetched:', firebaseConfig);
+
       // 4. Validate configuration
       if (!firebaseConfig || !firebaseConfig.apiKey) {
+        console.error('Invalid Firebase config:', firebaseConfig);
         throw new Error('Invalid Firebase configuration');
       }
 
       // 5. Initialize or get app instance
-      const app = firebase.apps.length 
+      const app = firebase.apps.length
         ? firebase.app()
         : firebase.initializeApp(firebaseConfig);
+      console.log('Firebase app initialized:', app.name);
 
-      // 6. Initialize services with error protection
+      // 6. Initialize services
       auth = firebase.auth?.(app) || null;
       db = firebase.firestore?.(app) || null;
 
       if (!auth || !db) {
+        console.error('Firebase services failed to initialize:', { auth, db });
         throw new Error('Firebase services failed to initialize');
       }
 
@@ -196,9 +216,7 @@ export async function initializeFirebase() {
       isFirebaseReady = true;
       console.log('Firebase initialized successfully');
       return { auth, db };
-
     } catch (error) {
-      // Reset state on failure
       isFirebaseReady = false;
       initializationPromise = null;
       console.error('Firebase initialization failed:', error);
@@ -580,20 +598,20 @@ window.addEventListener('beforeunload', () => {
 });
 
 // Start the system when DOM is ready
-document.addEventListener('DOMContentLoaded', ()=>  {
-  initAuthSystem();
+// document.addEventListener('DOMContentLoaded', ()=>  {
+//   initAuthSystem();
 
-  // Safety fallback for logout button
-  const logoutBtn = document.getElementById('logout-btn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', async (e) => {
-      try {
-        checkAuthReady();
-        await handleLogout(e);
-      } catch (error) {
-        console.error('Logout preparation failed:', error);
-        showError('System not ready - try again in a moment');
-      }
-    });
-  }
-});
+//   // Safety fallback for logout button
+//   const logoutBtn = document.getElementById('logout-btn');
+//   if (logoutBtn) {
+//     logoutBtn.addEventListener('click', async (e) => {
+//       try {
+//         checkAuthReady();
+//         await handleLogout(e);
+//       } catch (error) {
+//         console.error('Logout preparation failed:', error);
+//         showError('System not ready - try again in a moment');
+//       }
+//     });
+//   }
+// });
