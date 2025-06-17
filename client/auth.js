@@ -49,8 +49,6 @@ async function initAuthSystem() {
 
     // Verify Firebase is loaded
     if (typeof firebase === 'undefined' || typeof firebase.initializeApp !== 'function') {
-      console.log(typeof firebase);
-      console.log(typeof firebase.initializeApp)
       throw new Error('Firebase SDK not loaded');
     }
 
@@ -112,7 +110,6 @@ export async function initializeFirebase() {
 
 export function checkAuthReady() {
   if (!isFirebaseReady) {
-    console.log('Firebase still not loaded');
     throw new Error('Authentication service not ready - please wait');
   }
 }
@@ -183,7 +180,6 @@ function setupAuthStateListener() {
   setTimeout(() => {
     if (!authChecked) {
       console.warn('Auth state check is taking too long...');
-      // Optional: show user feedback or fallback behavior
     }
   }, 3000);
 }
