@@ -33,25 +33,25 @@ function showError(message, type = 'error') {
 // Main initialization
 async function initAuthSystem() {
   try { 
-    // Check for logout messages in URL
+    // 1. Handle logout messages first (no Firebase needed)
     const urlParams = new URLSearchParams(window.location.search);
     const logoutStatus = urlParams.get('logout');
     
     if (logoutStatus === 'success') {
       showError('You have been logged out successfully', 'success');
-      // Clean URL
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (logoutStatus === 'error') {
       showError('Logout failed. Please try again.', 'error');
       window.history.replaceState({}, document.title, window.location.pathname);
     }
 
-
-    // Verify Firebase is loaded
-    if (typeof firebase === 'undefined' || typeof firebase.initializeApp !== 'function') {
-      throw new Error('Firebase SDK not loaded');
+    // 2. Ensure Firebase is loaded before proceeding
+    if (!await ensureFirebaseLoaded()) {
+      showError("Authentication system is loading...");
+      return;
     }
 
+    // 3. Now safe to initialize Firebase
     await initializeFirebase();
     setupEventListeners();
     setupAuthStateListener();
@@ -60,6 +60,31 @@ async function initAuthSystem() {
     showError("System error. Please refresh the page.");
     disableForms();
   }
+}
+
+// New helper function
+async function ensureFirebaseLoaded() {
+  // Check if already loaded
+  if (typeof firebase !== 'undefined' && typeof firebase.initializeApp === 'function') {
+    return true;
+  }
+
+  // If not loaded, wait for it
+  return new Promise((resolve) => {
+    const checkInterval = setInterval(() => {
+      if (typeof firebase !== 'undefined' && typeof firebase.initializeApp === 'function') {
+        clearInterval(checkInterval);
+        resolve(true);
+      }
+    }, 100);
+
+    // Timeout after 5 seconds
+    setTimeout(() => {
+      clearInterval(checkInterval);
+      console.error("Firebase SDK failed to load");
+      resolve(false);
+    }, 5000);
+  });
 }
 
 //initialize firebase
