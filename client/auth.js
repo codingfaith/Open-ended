@@ -237,57 +237,57 @@ async function handleLogin(e) {
 }
 
 //logout function
-async function handleLogout(e) {
-  if (e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
+// async function handleLogout(e) {
+//   if (e) {
+//     e.preventDefault();
+//     e.stopPropagation();
+//   }
 
-  try {
-    // Ensure Firebase is ready
-    if (!firebase.apps.length || !auth) {
-      console.warn('Firebase not ready - initializing');
-      await initializeFirebase();
-    }
+//   try {
+//     // Ensure Firebase is ready
+//     if (!firebase.apps.length || !auth) {
+//       console.warn('Firebase not ready - initializing');
+//       await initializeFirebase();
+//     }
 
-    // Safety check
-    if (!auth) {
-      throw new Error('Auth unavailable after initialization');
-    }
+//     // Safety check
+//     if (!auth) {
+//       throw new Error('Auth unavailable after initialization');
+//     }
 
-    console.log('Proceeding with logout...');
-    await auth.signOut();
+//     console.log('Proceeding with logout...');
+//     await auth.signOut();
     
-    // Clear only auth-related items
-    Object.keys(localStorage).forEach(key => {
-      if (key.startsWith('firebase:')) {
-        localStorage.removeItem(key);
-      }
-    });
+//     // Clear only auth-related items
+//     Object.keys(localStorage).forEach(key => {
+//       if (key.startsWith('firebase:')) {
+//         localStorage.removeItem(key);
+//       }
+//     });
 
-    // Redirect with cache-buster
-    window.location.assign(`/index?logout=success&t=${Date.now()}`);
+//     // Redirect with cache-buster
+//     window.location.assign(`/index?logout=success&t=${Date.now()}`);
     
-  } catch (error) {
-    console.error('Logout failed:', error);
-    console.group('[Logout] Full Error Details');
-    console.error('Error object:', error);
-    console.error('Error code:', error.code);
-    console.error('Error message:', error.message);
-    console.error('Auth state:', auth?.currentUser);
-    console.error('Firebase apps:', firebase.apps);
-    console.groupEnd();
+//   } catch (error) {
+//     console.error('Logout failed:', error);
+//     console.group('[Logout] Full Error Details');
+//     console.error('Error object:', error);
+//     console.error('Error code:', error.code);
+//     console.error('Error message:', error.message);
+//     console.error('Auth state:', auth?.currentUser);
+//     console.error('Firebase apps:', firebase.apps);
+//     console.groupEnd();
     
-    // Detailed error redirect
-    const params = new URLSearchParams({
-      logout: 'error',
-      code: error.code || 'internal',
-      from: 'handleLogout'
-    });
+//     // Detailed error redirect
+//     const params = new URLSearchParams({
+//       logout: 'error',
+//       code: error.code || 'internal',
+//       from: 'handleLogout'
+//     });
     
-    window.location.assign(`/index?${params.toString()}`);
-  }
-}
+//     window.location.assign(`/index?${params.toString()}`);
+//   }
+// }
 
 // Signup handler with enhanced validation
 let isSignupProcessing = false;
@@ -365,57 +365,57 @@ async function handleSignup(e) {
 }
 
 // Logout handler
-// async function handleLogout(e) {
-//   if (e) {
-//     e.preventDefault();
-//     e.stopPropagation();
-//   }
-//   window.isLoggingOut = true;
+async function handleLogout(e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  window.isLoggingOut = true;
 
-//   console.log('[Logout] Starting logout process...');
-//   const logoutBtn = document.getElementById('logout-btn');
+  console.log('[Logout] Starting logout process...');
+  const logoutBtn = document.getElementById('logout-btn');
   
-//   try {
-//     if (logoutBtn) setLoading(logoutBtn, true);
+  try {
+    if (logoutBtn) setLoading(logoutBtn, true);
 
-//     // Verify auth is initialized
-//     if (!auth) {
-//       console.error('[Logout] Auth service not initialized');
-//       throw new Error('Authentication service not available');
-//     }
+    // Verify auth is initialized
+    if (!auth) {
+      console.error('[Logout] Auth service not initialized');
+      throw new Error('Authentication service not available');
+    }
 
-//     // Check current user state
-//     console.log('[Logout] Current user before signout:', auth.currentUser);
+    // Check current user state
+    console.log('[Logout] Current user before signout:', auth.currentUser);
     
-//     // Sign out from Firebase
-//     console.log('[Logout] Attempting signOut...');
-//     await auth.signOut();
+    // Sign out from Firebase
+    console.log('[Logout] Attempting signOut...');
+    await auth.signOut();
     
-//     // Verify signout worked
-//     console.log('[Logout] Current user after signout:', auth.currentUser);
+    // Verify signout worked
+    console.log('[Logout] Current user after signout:', auth.currentUser);
     
-//     // Clear client-side data
-//     localStorage.clear();
-//     sessionStorage.clear();
-//     console.log('[Logout] Local storage cleared');
+    // Clear client-side data
+    localStorage.clear();
+    sessionStorage.clear();
+    console.log('[Logout] Local storage cleared');
 
-//     // Use replaceState to avoid back button issues
-//     const redirectUrl = new URL('/index', window.location.origin);
-//     redirectUrl.searchParams.set('logout', 'success');
-//     console.log('[Logout] Redirecting to:', redirectUrl.toString());
-//     window.location.replace(redirectUrl.toString());
+    // Use replaceState to avoid back button issues
+    const redirectUrl = new URL('/index', window.location.origin);
+    redirectUrl.searchParams.set('logout', 'success');
+    console.log('[Logout] Redirecting to:', redirectUrl.toString());
+    window.location.replace(redirectUrl.toString());
 
-//   } catch (error) {
-//     console.error('[Logout] Full error:', error);
+  } catch (error) {
+    console.error('[Logout] Full error:', error);
     
-//     const redirectUrl = new URL('/index', window.location.origin);
-//     redirectUrl.searchParams.set('logout', 'error');
-//     window.location.replace(redirectUrl.toString());
+    const redirectUrl = new URL('/index', window.location.origin);
+    redirectUrl.searchParams.set('logout', 'error');
+    window.location.replace(redirectUrl.toString());
     
-//   } finally {
-//     if (logoutBtn) setLoading(logoutBtn, false);
-//   }
-// }
+  } finally {
+    if (logoutBtn) setLoading(logoutBtn, false);
+  }
+}
 
 function getFriendlyError(error) {
   // Handle case where full error object is passed
