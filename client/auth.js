@@ -237,57 +237,83 @@ async function handleLogin(e) {
 }
 
 //logout function
-// async function handleLogout(e) {
-//   if (e) {
-//     e.preventDefault();
-//     e.stopPropagation();
-//   }
+async function handleLogout(e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
 
-//   try {
-//     // Ensure Firebase is ready
-//     if (!firebase.apps.length || !auth) {
-//       console.warn('Firebase not ready - initializing');
-//       await initializeFirebase();
-//     }
+  // UI state management
+  window.isLoggingOut = true;
+  const logoutBtn = document.getElementById('logout-btn');
+  try {
+    if (logoutBtn) setLoading(logoutBtn, true);
+    console.log('[Logout] Starting logout process...');
 
-//     // Safety check
-//     if (!auth) {
-//       throw new Error('Auth unavailable after initialization');
-//     }
+    // Ensure Firebase is ready
+    if (!firebase.apps.length || !auth) {
+      console.warn('[Logout] Firebase not ready - initializing');
+      await initializeFirebase();
+    }
 
-//     console.log('Proceeding with logout...');
-//     await auth.signOut();
-    
-//     // Clear only auth-related items
-//     Object.keys(localStorage).forEach(key => {
-//       if (key.startsWith('firebase:')) {
-//         localStorage.removeItem(key);
-//       }
-//     });
+    // Safety check
+    if (!auth) {
+      throw new Error('Auth unavailable after initialization');
+    }
 
-//     // Redirect with cache-buster
-//     window.location.assign(`/index?logout=success&t=${Date.now()}`);
+    // Check current user state
+    console.log('[Logout] Current user before signout:', auth.currentUser);
     
-//   } catch (error) {
-//     console.error('Logout failed:', error);
-//     console.group('[Logout] Full Error Details');
-//     console.error('Error object:', error);
-//     console.error('Error code:', error.code);
-//     console.error('Error message:', error.message);
-//     console.error('Auth state:', auth?.currentUser);
-//     console.error('Firebase apps:', firebase.apps);
-//     console.groupEnd();
+    // Sign out from Firebase
+    console.log('[Logout] Attempting signOut...');
+    await auth.signOut();
     
-//     // Detailed error redirect
-//     const params = new URLSearchParams({
-//       logout: 'error',
-//       code: error.code || 'internal',
-//       from: 'handleLogout'
-//     });
+    // Verify signout worked
+    console.log('[Logout] Current user after signout:', auth.currentUser);
     
-//     window.location.assign(`/index?${params.toString()}`);
-//   }
-// }
+    // Clear client-side authentication data
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('firebase:')) {
+        localStorage.removeItem(key);
+      }
+    });
+    sessionStorage.clear();
+    console.log('[Logout] Authentication data cleared');
+
+    // Redirect with cache-buster and using replace to prevent back button issues
+    const redirectUrl = new URL('/index', window.location.origin);
+    redirectUrl.searchParams.set('logout', 'success');
+    redirectUrl.searchParams.set('t', Date.now()); // cache-buster
+    console.log('[Logout] Redirecting to:', redirectUrl.toString());
+    window.location.replace(redirectUrl.toString());
+
+  } catch (error) {
+    console.error('[Logout] Logout failed:', error);
+    console.group('[Logout] Full Error Details');
+    console.error('Error object:', error);
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.message);
+    console.error('Auth state:', auth?.currentUser);
+    console.error('Firebase apps:', firebase.apps);
+    console.groupEnd();
+    
+    // Detailed error redirect
+    const redirectUrl = new URL('/index', window.location.origin);
+    const params = new URLSearchParams({
+      logout: 'error',
+      code: error.code || 'internal',
+      from: 'handleLogout'
+    });
+    redirectUrl.search = params.toString();
+    window.location.replace(redirectUrl.toString());
+    
+  } finally {
+    // Cleanup
+    window.isLoggingOut = false;
+    if (logoutBtn) setLoading(logoutBtn, false);
+    console.log('[Logout] Process completed');
+  }
+}
 
 // Signup handler with enhanced validation
 let isSignupProcessing = false;
@@ -361,59 +387,6 @@ async function handleSignup(e) {
   } finally {
     isSignupProcessing = false;
     setLoading(signupBtn, false);
-  }
-}
-
-// Logout handler
-async function handleLogout(e) {
-  if (e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-  window.isLoggingOut = true;
-
-  console.log('[Logout] Starting logout process...');
-  const logoutBtn = document.getElementById('logout-btn');
-  
-  try {
-    if (logoutBtn) setLoading(logoutBtn, true);
-
-    // Verify auth is initialized
-    if (!auth) {
-      console.error('[Logout] Auth service not initialized');
-      throw new Error('Authentication service not available');
-    }
-
-    // Check current user state
-    console.log('[Logout] Current user before signout:', auth.currentUser);
-    
-    // Sign out from Firebase
-    console.log('[Logout] Attempting signOut...');
-    await auth.signOut();
-    
-    // Verify signout worked
-    console.log('[Logout] Current user after signout:', auth.currentUser);
-    
-    // Clear client-side data
-    localStorage.clear();
-    sessionStorage.clear();
-    console.log('[Logout] Local storage cleared');
-
-    // Use replaceState to avoid back button issues
-    const redirectUrl = new URL('/index', window.location.origin);
-    redirectUrl.searchParams.set('logout', 'success');
-    console.log('[Logout] Redirecting to:', redirectUrl.toString());
-    window.location.replace(redirectUrl.toString());
-
-  } catch (error) {
-    console.error('[Logout] Full error:', error);
-    
-    const redirectUrl = new URL('/index', window.location.origin);
-    redirectUrl.searchParams.set('logout', 'error');
-    window.location.replace(redirectUrl.toString());
-    
-  } finally {
-    if (logoutBtn) setLoading(logoutBtn, false);
   }
 }
 
