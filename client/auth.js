@@ -1,7 +1,9 @@
 // Firebase instances
-let auth, db;
-let authStateUnsubscribe = null; // To store the auth state listener
+let db = null;
+let auth = null;
 let isFirebaseReady = false;
+let authStateUnsubscribe = null; // To store the auth state listener
+let initializationPromise = null; // To prevent duplicate initializations
 
 // Utility Functions
 function clearError() {
@@ -88,50 +90,124 @@ async function ensureFirebaseLoaded() {
 }
 
 //initialize firebase
+// export async function initializeFirebase() {
+//   try {
+//     // 1. Check if already initialized
+//     if (firebase.apps.length && auth && db) {
+//       console.log('Firebase already initialized');
+//       return { auth, db }; // Return existing instances
+//     }
+
+//     // 2. Fetch configuration
+//     const response = await fetch('/.netlify/functions/getConfig');
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! Status: ${response.status}`);
+//     }
+    
+//     const data = await response.json();
+//     console.log("Firebase config received:", data);
+    
+//     if (!data.firebaseConfig) {
+//       throw new Error('Missing firebaseConfig in response');
+//     }
+
+//     // 3. Initialize or get existing app
+//     const app = firebase.apps.length 
+//       ? firebase.app() 
+//       : firebase.initializeApp(data.firebaseConfig);
+    
+//     // 4. Initialize services
+//     auth = firebase.auth();
+//     db = firebase.firestore();
+    
+//     // 5. Verify services
+//     if (!auth || !db) {
+//       throw new Error('Firebase services failed to initialize');
+//     }
+//     isFirebaseReady = true;
+//     console.log('Firebase initialized successfully');
+//     return { auth, db };
+    
+//   } catch (error) {
+//     console.error('Firebase initialization failed:', error);
+//     throw error; // Rethrow for caller to handle
+//   }
+// }
+
 export async function initializeFirebase() {
-  try {
-    // 1. Check if already initialized
-    if (firebase.apps.length && auth && db) {
-      console.log('Firebase already initialized');
-      return { auth, db }; // Return existing instances
-    }
-
-    // 2. Fetch configuration
-    const response = await fetch('/.netlify/functions/getConfig');
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    console.log("Firebase config received:", data);
-    
-    if (!data.firebaseConfig) {
-      throw new Error('Missing firebaseConfig in response');
-    }
-
-    // 3. Initialize or get existing app
-    const app = firebase.apps.length 
-      ? firebase.app() 
-      : firebase.initializeApp(data.firebaseConfig);
-    
-    // 4. Initialize services
-    auth = firebase.auth();
-    db = firebase.firestore();
-    
-    // 5. Verify services
-    if (!auth || !db) {
-      throw new Error('Firebase services failed to initialize');
-    }
-    isFirebaseReady = true;
-    console.log('Firebase initialized successfully');
-    return { auth, db };
-    
-  } catch (error) {
-    console.error('Firebase initialization failed:', error);
-    throw error; // Rethrow for caller to handle
+  // Return existing promise if initialization is already in progress
+  if (initializationPromise) {
+    return initializationPromise;
   }
-}
 
+  initializationPromise = (async () => {
+    try {
+      // 1. Verify Firebase SDK is actually loaded
+      if (typeof firebase === 'undefined' || !firebase.initializeApp) {
+        throw new Error('Firebase SDK not properly loaded');
+      }
+
+      // 2. Check for existing initialized services
+      if (firebase.apps.length > 0 && auth && db) {
+        console.debug('Firebase already initialized');
+        return { auth, db };
+      }
+
+      // 3. Fetch configuration with timeout
+      const configResponse = await Promise.race([
+        fetch('/.netlify/functions/getConfig'),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Config fetch timeout')), 5000)
+        )
+      ]);
+
+      if (!configResponse.ok) {
+        throw new Error(`HTTP error! Status: ${configResponse.status}`);
+      }
+
+      const { firebaseConfig } = await configResponse.json();
+      
+      // 4. Validate configuration
+      if (!firebaseConfig || !firebaseConfig.apiKey) {
+        throw new Error('Invalid Firebase configuration');
+      }
+
+      // 5. Initialize or get app instance
+      const app = firebase.apps.length 
+        ? firebase.app()
+        : firebase.initializeApp(firebaseConfig);
+
+      // 6. Initialize services with error protection
+      auth = firebase.auth?.(app) || null;
+      db = firebase.firestore?.(app) || null;
+
+      if (!auth || !db) {
+        throw new Error('Firebase services failed to initialize');
+      }
+
+      // 7. Configure Firestore persistence
+      try {
+        await db.enablePersistence({ synchronizeTabs: true });
+        console.debug('Firestore persistence enabled');
+      } catch (persistenceError) {
+        console.warn('Firestore persistence failed:', persistenceError);
+      }
+
+      isFirebaseReady = true;
+      console.log('Firebase initialized successfully');
+      return { auth, db };
+
+    } catch (error) {
+      // Reset state on failure
+      isFirebaseReady = false;
+      initializationPromise = null;
+      console.error('Firebase initialization failed:', error);
+      throw error;
+    }
+  })();
+
+  return initializationPromise;
+}
 
 export function checkAuthReady() {
   if (!isFirebaseReady) {
