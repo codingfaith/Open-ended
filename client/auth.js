@@ -103,50 +103,6 @@ async function ensureFirebaseLoaded() {
 }
 
 //initialize firebase
-// export async function initializeFirebase() {
-//   try {
-//     // 1. Check if already initialized
-//     if (firebase.apps.length && auth && db) {
-//       console.log('Firebase already initialized');
-//       return { auth, db }; // Return existing instances
-//     }
-
-//     // 2. Fetch configuration
-//     const response = await fetch('/.netlify/functions/getConfig');
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! Status: ${response.status}`);
-//     }
-    
-//     const data = await response.json();
-//     console.log("Firebase config received:", data);
-    
-//     if (!data.firebaseConfig) {
-//       throw new Error('Missing firebaseConfig in response');
-//     }
-
-//     // 3. Initialize or get existing app
-//     const app = firebase.apps.length 
-//       ? firebase.app() 
-//       : firebase.initializeApp(data.firebaseConfig);
-    
-//     // 4. Initialize services
-//     auth = firebase.auth();
-//     db = firebase.firestore();
-    
-//     // 5. Verify services
-//     if (!auth || !db) {
-//       throw new Error('Firebase services failed to initialize');
-//     }
-//     isFirebaseReady = true;
-//     console.log('Firebase initialized successfully');
-//     return { auth, db };
-    
-//   } catch (error) {
-//     console.error('Firebase initialization failed:', error);
-//     throw error; // Rethrow for caller to handle
-//   }
-// }
-
 export async function initializeFirebase() {
   if (initializationPromise) {
     return initializationPromise;
@@ -353,6 +309,7 @@ async function handleLogin(e) {
 
 //logout function
 async function handleLogout(e) {
+  console.log('clicked logout');
   if (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -597,22 +554,3 @@ function setupEventListeners() {
 window.addEventListener('beforeunload', () => {
   if (authStateUnsubscribe) authStateUnsubscribe();
 });
-
-// Start the system when DOM is ready
-// document.addEventListener('DOMContentLoaded', ()=>  {
-//   initAuthSystem();
-
-//   // Safety fallback for logout button
-//   const logoutBtn = document.getElementById('logout-btn');
-//   if (logoutBtn) {
-//     logoutBtn.addEventListener('click', async (e) => {
-//       try {
-//         checkAuthReady();
-//         await handleLogout(e);
-//       } catch (error) {
-//         console.error('Logout preparation failed:', error);
-//         showError('System not ready - try again in a moment');
-//       }
-//     });
-//   }
-// });
