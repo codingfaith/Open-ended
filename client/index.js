@@ -562,10 +562,7 @@ class UbuntexIndex {
     loadingIndicator.style.display = "block";
 
     try {
-        const finalReport = await this.generateComprehensiveReport()
-            .toString()
-            .replace(/^## (.+)$/gm, (_, match) => `**${match}**\n`)
-            .replace(/\*\*(.+?)\*\*/g, (_, match) => `**${match}**`);
+        const finalReport = await this.generateComprehensiveReport();
         
         loadingIndicator.style.display = "none";
 
@@ -586,13 +583,11 @@ class UbuntexIndex {
             const user = auth.currentUser;
             
             if (user) {
-                console.log(`user is ${user}`)
                 const db = firebase.firestore();
                 const resultsRef = db.collection('userResults').doc(user.uid);
                 
                 // Prepare data to save
                 const resultData = {
-                    user: `${user.firstName} ${user.lastName}`,
                     score: score.toFixed(2),
                     classification: this.getClassification(score),
                     answers: this.quizResults.responses,
