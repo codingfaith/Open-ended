@@ -563,6 +563,7 @@ class UbuntexIndex {
 
     try {
         const finalReport = await this.generateComprehensiveReport()
+            .toString
             .replace(/^## (.+)$/gm, (_, match) => `**${match}**\n`)
             .replace(/\*\*(.+?)\*\*/g, (_, match) => `**${match}**`);
         
