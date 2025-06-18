@@ -218,18 +218,24 @@ function setupAuthStateListener() {
     // Normalize path (remove trailing slashes and query params)
     const currentPath = window.location.pathname.replace(/\/$/, '').split('?')[0].toLowerCase();
     const isDashboard = currentPath.endsWith('/dashboard');
+    const isQuiz = currentPath.endsWith('/quiz');
     
-    console.log('Processed path:', { currentPath, isDashboard });
+    console.log('Processed path:', { currentPath, isDashboard, isQuiz });
     
     try {
       if (user) {
+        // Authenticated user logic
+        if (isQuiz) {
+          // Allow to stay on quiz page
+          return;
+        }
         if (!isDashboard) {
           console.log('Redirecting to dashboard...');
-          // Directly use window.location.replace() which will both change the URL and reload
           window.location.replace('/dashboard');
         }
       } else {
-        if (isDashboard) {
+        // Unauthenticated user logic
+        if (isDashboard || isQuiz) {
           console.log('Redirecting to login...');
           window.location.replace('/index');
         }
