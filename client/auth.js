@@ -347,7 +347,7 @@ async function handleLogout(e) {
     // Redirect with cache-buster and using replace to prevent back button issues
     const redirectUrl = new URL('/index', window.location.origin);
     redirectUrl.searchParams.set('logout', 'success');
-    redirectUrl.searchParams.set('t', Date.now()); // cache-buster
+    redirectUrl.searchParams.set('_', ''); // Hidden cache-buster
     console.log('[Logout] Redirecting to:', redirectUrl.toString());
     window.location.replace(redirectUrl.toString());
 
