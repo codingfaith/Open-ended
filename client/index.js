@@ -647,7 +647,7 @@ class UbuntexIndex {
                 const resultData = {
                     score: score.toFixed(2),
                     classification: this.getClassification(score),
-                    answers: this.userAnswers, // Assuming this contains user answers
+                    answers: this.quizResults.responses, // Assuming this contains user answers
                     report: finalReport,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 };
