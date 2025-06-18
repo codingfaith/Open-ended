@@ -523,10 +523,10 @@ function setupEventListeners() {
   const signupForm = document.getElementById('signup-form');
   
   // Verify all elements exist
-  if (!showSignup || !showLogin || !loginForm || !signupForm) {
-    console.error('Form elements missing!');
-    return;
-  }
+  // if (!showSignup || !showLogin || !loginForm || !signupForm) {
+  //   console.error('Form elements missing!');
+  //   return;
+  // }
  
   // Toggle to Signup Form
   showSignup.addEventListener('click', (e) => {
