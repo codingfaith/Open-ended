@@ -591,6 +591,7 @@ class UbuntexIndex {
                 
                 // Prepare data to save
                 const resultData = {
+                    user: `${user.firstName} ${user.lastName}`,
                     score: score.toFixed(2),
                     classification: this.getClassification(score),
                     answers: this.quizResults.responses,
