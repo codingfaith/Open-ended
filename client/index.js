@@ -551,64 +551,6 @@ class UbuntexIndex {
         this.displayResults(finalScore)
     }
 
-    // async displayResults(score) {
-    //     // Get DOM elements
-    //     const quizContainer = document.getElementById("quiz-container");
-    //     const resultContainer = document.getElementById("result");
-    //     const loadingIndicator = document.getElementById("loading-indicator");
-
-    //     quizContainer.style.display = "none";
-    //     resultContainer.style.display = "block";
-    //     loadingIndicator.style.display = "block";
-
-    //     try {
-    //         const finalReport = await this.generateComprehensiveReport();
-    //         loadingIndicator.style.display = "none";
-
-    //         // Display final results with classification and buttons
-    //         resultContainer.innerHTML = `
-    //             <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
-    //             <p>Classification: ${this.getClassification(score)}</p>
-    //             <div class="choiceButtons" id="choiceButtons">
-    //                 <button id="answers">View Your Answers</button>
-    //                 <button id="report">Read Full Report</button>
-    //             </div>
-    //             <div id="results-table"></div>
-    //          `;
-    //         document.getElementById("choiceButtons").style.display = "none"
-    //         // Set up button interactions
-    //         document.getElementById("answers").addEventListener("click", () => {
-    //             this.showLoadingMessage("Compiling your answers...");
-    //             setTimeout(() => {
-    //                 this.renderResultsTable();
-    //             }, 50); // Small delay to allow loading message to render
-    //         });
-    //         document.getElementById("report").addEventListener("click", () => {
-    //             this.showLoadingMessage("Finalizing your report...");
-    //             setTimeout(() => {
-    //                 document.getElementById("results-table").innerHTML = `
-    //                     <h3>Detailed Analysis</h3>
-    //                     <div class="report-content">${finalReport}</div>
-    //                 `;
-    //             }, 50);
-    //         });
-    //     } catch (error) {
-    //         console.error("Error displaying results:", error);
-    //         loadingIndicator.style.display = "none";
-    //         resultContainer.innerHTML = `
-    //             <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
-    //             <p class="error">We couldn't generate the full report. Please try again later.</p>
-    //             <div id="results-table">
-    //                 <button id="answers">View Your Answers</button>
-    //             </div>
-    //         `;
-            
-    //         document.getElementById("answers").addEventListener("click", () => {
-    //             this.renderResultsTable();
-    //         });
-    //     }
-    // }
-
     async displayResults(score) {
     // Get DOM elements
     const quizContainer = document.getElementById("quiz-container");
@@ -620,7 +562,10 @@ class UbuntexIndex {
     loadingIndicator.style.display = "block";
 
     try {
-        const finalReport = await this.generateComprehensiveReport();
+        const finalReport = await this.generateComprehensiveReport()
+            .replace(/^## (.+)$/gm, (_, match) => `**${match}**\n`)
+            .replace(/\*\*(.+?)\*\*/g, (_, match) => `**${match}**`);
+        
         loadingIndicator.style.display = "none";
 
         // Display final results with classification and buttons
@@ -647,7 +592,7 @@ class UbuntexIndex {
                 const resultData = {
                     score: score.toFixed(2),
                     classification: this.getClassification(score),
-                    answers: this.quizResults.responses, // Assuming this contains user answers
+                    answers: this.quizResults.responses,
                     report: finalReport,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 };
