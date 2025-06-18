@@ -529,21 +529,25 @@ function setupEventListeners() {
   // }
  
   // Toggle to Signup Form
-  showSignup.addEventListener('click', (e) => {
-    e.preventDefault();
-    loginForm.style.display = 'none';
-    signupForm.style.display = 'flex';
-    clearError();
-  });
+  if(showSignup) {
+    showSignup.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginForm.style.display = 'none';
+      signupForm.style.display = 'flex';
+      clearError();
+    });
+  }
 
   // Toggle to Login Form
-  showLogin.addEventListener('click', (e) => {
-    e.preventDefault();
-    signupForm.style.display = 'none';
-    loginForm.style.display = 'flex';
-    clearError();
-  });
-
+  if(showLogin) {
+    showLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      signupForm.style.display = 'none';
+      loginForm.style.display = 'flex';
+      clearError();
+    });
+  }
+ 
   // Login/Signup/Logout button handlers 
   document.getElementById('login-btn')?.addEventListener('click', handleLogin);
   document.getElementById('signup-btn')?.addEventListener('click', handleSignup);
