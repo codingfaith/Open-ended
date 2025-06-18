@@ -585,6 +585,7 @@ class UbuntexIndex {
             const user = auth.currentUser;
             
             if (user) {
+                console.log(`user is ${user}`)
                 const db = firebase.firestore();
                 const resultsRef = db.collection('userResults').doc(user.uid);
                 
