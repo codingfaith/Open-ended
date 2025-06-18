@@ -1,6 +1,4 @@
 import { initializeFirebase } from './auth.js';
-console.log(`Hello,just testing ${initializeFirebase()} here`);
-let auth, db;
 
 const totalQuestions = 44;
 const progress = document.getElementById("progress");
@@ -553,63 +551,149 @@ class UbuntexIndex {
         this.displayResults(finalScore)
     }
 
-    async displayResults(score) {
-        // Get DOM elements
-        const quizContainer = document.getElementById("quiz-container");
-        const resultContainer = document.getElementById("result");
-        const loadingIndicator = document.getElementById("loading-indicator");
+    // async displayResults(score) {
+    //     // Get DOM elements
+    //     const quizContainer = document.getElementById("quiz-container");
+    //     const resultContainer = document.getElementById("result");
+    //     const loadingIndicator = document.getElementById("loading-indicator");
 
-        quizContainer.style.display = "none";
-        resultContainer.style.display = "block";
-        loadingIndicator.style.display = "block";
+    //     quizContainer.style.display = "none";
+    //     resultContainer.style.display = "block";
+    //     loadingIndicator.style.display = "block";
 
-        try {
-            const finalReport = await this.generateComprehensiveReport();
-            loadingIndicator.style.display = "none";
+    //     try {
+    //         const finalReport = await this.generateComprehensiveReport();
+    //         loadingIndicator.style.display = "none";
 
-            // Display final results with classification and buttons
-            resultContainer.innerHTML = `
-                <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
-                <p>Classification: ${this.getClassification(score)}</p>
-                <div class="choiceButtons" id="choiceButtons">
-                    <button id="answers">View Your Answers</button>
-                    <button id="report">Read Full Report</button>
-                </div>
-                <div id="results-table"></div>
-             `;
-            document.getElementById("choiceButtons").style.display = "none"
-            // Set up button interactions
-            document.getElementById("answers").addEventListener("click", () => {
-                this.showLoadingMessage("Compiling your answers...");
-                setTimeout(() => {
-                    this.renderResultsTable();
-                }, 50); // Small delay to allow loading message to render
-            });
-            document.getElementById("report").addEventListener("click", () => {
-                this.showLoadingMessage("Finalizing your report...");
-                setTimeout(() => {
-                    document.getElementById("results-table").innerHTML = `
-                        <h3>Detailed Analysis</h3>
-                        <div class="report-content">${finalReport}</div>
-                    `;
-                }, 50);
-            });
-        } catch (error) {
-            console.error("Error displaying results:", error);
-            loadingIndicator.style.display = "none";
-            resultContainer.innerHTML = `
-                <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
-                <p class="error">We couldn't generate the full report. Please try again later.</p>
-                <div id="results-table">
-                    <button id="answers">View Your Answers</button>
-                </div>
-            `;
+    //         // Display final results with classification and buttons
+    //         resultContainer.innerHTML = `
+    //             <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
+    //             <p>Classification: ${this.getClassification(score)}</p>
+    //             <div class="choiceButtons" id="choiceButtons">
+    //                 <button id="answers">View Your Answers</button>
+    //                 <button id="report">Read Full Report</button>
+    //             </div>
+    //             <div id="results-table"></div>
+    //          `;
+    //         document.getElementById("choiceButtons").style.display = "none"
+    //         // Set up button interactions
+    //         document.getElementById("answers").addEventListener("click", () => {
+    //             this.showLoadingMessage("Compiling your answers...");
+    //             setTimeout(() => {
+    //                 this.renderResultsTable();
+    //             }, 50); // Small delay to allow loading message to render
+    //         });
+    //         document.getElementById("report").addEventListener("click", () => {
+    //             this.showLoadingMessage("Finalizing your report...");
+    //             setTimeout(() => {
+    //                 document.getElementById("results-table").innerHTML = `
+    //                     <h3>Detailed Analysis</h3>
+    //                     <div class="report-content">${finalReport}</div>
+    //                 `;
+    //             }, 50);
+    //         });
+    //     } catch (error) {
+    //         console.error("Error displaying results:", error);
+    //         loadingIndicator.style.display = "none";
+    //         resultContainer.innerHTML = `
+    //             <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
+    //             <p class="error">We couldn't generate the full report. Please try again later.</p>
+    //             <div id="results-table">
+    //                 <button id="answers">View Your Answers</button>
+    //             </div>
+    //         `;
             
-            document.getElementById("answers").addEventListener("click", () => {
-                this.renderResultsTable();
-            });
+    //         document.getElementById("answers").addEventListener("click", () => {
+    //             this.renderResultsTable();
+    //         });
+    //     }
+    // }
+
+    async displayResults(score) {
+    // Get DOM elements
+    const quizContainer = document.getElementById("quiz-container");
+    const resultContainer = document.getElementById("result");
+    const loadingIndicator = document.getElementById("loading-indicator");
+
+    quizContainer.style.display = "none";
+    resultContainer.style.display = "block";
+    loadingIndicator.style.display = "block";
+
+    try {
+        const finalReport = await this.generateComprehensiveReport();
+        loadingIndicator.style.display = "none";
+
+        // Display final results with classification and buttons
+        resultContainer.innerHTML = `
+            <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
+            <p>Classification: ${this.getClassification(score)}</p>
+            <div class="choiceButtons" id="choiceButtons">
+                <button id="answers">View Your Answers</button>
+                <button id="report">Read Full Report</button>
+            </div>
+            <div id="results-table"></div>
+         `;
+
+        // Save results to Firebase
+        try {
+            const auth = firebase.auth();
+            const user = auth.currentUser;
+            
+            if (user) {
+                const db = firebase.firestore();
+                const resultsRef = db.collection('userResults').doc(user.uid);
+                
+                // Prepare data to save
+                const resultData = {
+                    score: score.toFixed(2),
+                    classification: this.getClassification(score),
+                    answers: this.userAnswers, // Assuming this contains user answers
+                    report: finalReport,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await resultsRef.set(resultData, { merge: true });
+                console.log("Results saved to Firebase");
+            } else {
+                console.log("No user logged in, skipping Firebase save");
+            }
+        } catch (firebaseError) {
+            console.error("Error saving to Firebase:", firebaseError);
+            // Don't show error to user, just log it
         }
+
+        // Set up button interactions
+        document.getElementById("answers").addEventListener("click", () => {
+            this.showLoadingMessage("Compiling your answers...");
+            setTimeout(() => {
+                this.renderResultsTable();
+            }, 50); // Small delay to allow loading message to render
+        });
+        document.getElementById("report").addEventListener("click", () => {
+            this.showLoadingMessage("Finalizing your report...");
+            setTimeout(() => {
+                document.getElementById("results-table").innerHTML = `
+                    <h3>Detailed Analysis</h3>
+                    <div class="report-content">${finalReport}</div>
+                `;
+            }, 50);
+        });
+    } catch (error) {
+        console.error("Error displaying results:", error);
+        loadingIndicator.style.display = "none";
+        resultContainer.innerHTML = `
+            <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
+            <p class="error">We couldn't generate the full report. Please try again later.</p>
+            <div id="results-table">
+                <button id="answers">View Your Answers</button>
+            </div>
+        `;
+        
+        document.getElementById("answers").addEventListener("click", () => {
+            this.renderResultsTable();
+        });
     }
+}
     
     renderResultsTable() {
         // First verify we have all responses
