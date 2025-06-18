@@ -1,5 +1,5 @@
 import { initializeFirebase } from './auth.js';
-
+await initializeFirebase();
 let auth, db;
 
 const totalQuestions = 44;
