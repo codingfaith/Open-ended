@@ -225,20 +225,13 @@ function setupAuthStateListener() {
       if (user) {
         if (!isDashboard) {
           console.log('Redirecting to dashboard...');
-          // Use replaceState to avoid adding to browser history
-          window.history.replaceState(null, '', '/dashboard');
-          // Force reload only if necessary
-          if (window.location.pathname !== '/dashboard') {
-            window.location.href = '/dashboard';
-          }
+          // Directly use window.location.replace() which will both change the URL and reload
+          window.location.replace('/dashboard');
         }
       } else {
         if (isDashboard) {
           console.log('Redirecting to login...');
-          window.history.replaceState(null, '', '/index');
-          if (window.location.pathname !== '/index') {
-            window.location.href = '/index';
-          }
+          window.location.replace('/index');
         }
       }
     } catch (error) {
@@ -250,13 +243,6 @@ function setupAuthStateListener() {
       }, 1000);
     }
   });
-
-  // Add timeout for auth check
-  setTimeout(() => {
-    if (!authChecked) {
-      console.warn('Auth state check is taking too long...');
-    }
-  }, 3000);
 }
 
 function disableForms() {
