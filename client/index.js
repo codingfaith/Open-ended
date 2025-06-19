@@ -563,7 +563,7 @@ class UbuntexIndex {
 
     try {
         let finalReport = await this.generateComprehensiveReport();
-        finalReport.replace(/^## (.+)$/gm, (_, match) => `**${match}**\n`)
+        finalReport = finalReport.replace(/^## (.+)$/gm, (_, match) => `**${match}**\n`)
             .replace(/\*\*(.+?)\*\*/g, (_, match) => `**${match}**`);
         loadingIndicator.style.display = "none";
 
