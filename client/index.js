@@ -563,7 +563,7 @@ class UbuntexIndex {
 
     try {
         const finalReport = await this.generateComprehensiveReport();
-        
+        console.log(typeof finalReport);
         loadingIndicator.style.display = "none";
 
         // Display final results with classification and buttons
