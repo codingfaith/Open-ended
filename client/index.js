@@ -562,8 +562,9 @@ class UbuntexIndex {
     loadingIndicator.style.display = "block";
 
     try {
-        const finalReport = await this.generateComprehensiveReport();
-        console.log(typeof finalReport);
+        let finalReport = await this.generateComprehensiveReport();
+        finalReport.replace(/^## (.+)$/gm, (_, match) => `**${match}**\n`)
+            .replace(/\*\*(.+?)\*\*/g, (_, match) => `**${match}**`);
         loadingIndicator.style.display = "none";
 
         // Display final results with classification and buttons
