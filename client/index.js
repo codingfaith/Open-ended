@@ -648,8 +648,7 @@ class UbuntexIndex {
         });
         //Remove colon from string
         formatted = formatted.replace(/:/g, "");
-        formatted = formatted.replace(/-/g, "")
-        return formatted;
+        return formatted.replace(/-/g, "");
     }
 
     renderResultsTable() {
