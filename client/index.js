@@ -616,7 +616,7 @@ class UbuntexIndex {
             setTimeout(() => {
                 document.getElementById("results-table").innerHTML = `
                     <h3>Detailed Analysis</h3>
-                    <div class="report-content">${formatText(finalReport)}</div>
+                    <div class="report-content">${this.formatText(finalReport)}</div>
                 `;
             }, 50);
         });
