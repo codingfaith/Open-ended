@@ -616,7 +616,7 @@ class UbuntexIndex {
             setTimeout(() => {
                 document.getElementById("results-table").innerHTML = `
                     <h3>Detailed Analysis</h3>
-                    <div class="report-content">${finalReport}</div>
+                    <div class="report-content">${formatText(finalReport)}</div>
                 `;
             }, 50);
         });
@@ -637,6 +637,21 @@ class UbuntexIndex {
     }
 }
     
+    formatText(input) {
+        // Process ## sections
+        let formatted = input.replace(/##(.*?)-/g, (match, group) => {
+            return `<br><br><strong>${group.trim()}</strong>`;
+        });
+        // Process ** sections
+        formatted = formatted.replace(/\*\*(.*?)\*\*/g, (match, group) => {
+            return `<br><br><strong>${group.trim()}</strong><br>`;
+        });
+        //Remove colon from string
+        formatted = formatted.replace(/:/g, "");
+        formatted = formatted.replace(/-/g, "")
+        return formatted;
+    }
+
     renderResultsTable() {
         // First verify we have all responses
         if (this.quizResults.responses.length !== this.questions.length) {
