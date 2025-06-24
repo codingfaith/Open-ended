@@ -22,49 +22,74 @@ previousBtn.addEventListener("click",()=>{
     } 
 })
 
+import { initializeFirebase } from './auth.js';
+
+// Initialize Firebase first (crucial!)
+initializeFirebase(); // Make sure this runs before any Firebase operations
+
 async function getUserAttemptsWithProfile(userId) {
   const db = firebase.firestore();
   
-  // Fetch user profile and attempts simultaneously
-  const [userDoc, attemptsSnapshot] = await Promise.all([
-    db.collection("users").doc(userId).get(),
-    db.collection("userResults").doc(userId)
-      .collection("attempts")
-      .orderBy("timestamp", "desc")
-      .get()
-  ]);
+  try {
+    // Fetch user profile and attempts simultaneously
+    const [userDoc, attemptsSnapshot] = await Promise.all([
+      db.collection("users").doc(userId).get(),
+      db.collection("userResults").doc(userId)
+        .collection("attempts")
+        .orderBy("timestamp", "desc")
+        .get()
+    ]);
 
-  if (!userDoc.exists) {
-    throw new Error("User profile not found");
+    if (!userDoc.exists) {
+      throw new Error("User profile not found");
+    }
+
+    return {
+      userProfile: {
+        firstName: userDoc.data().firstName,
+        lastName: userDoc.data().lastName // Added lastName as example
+      },
+      attempts: attemptsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        // Convert timestamp to readable date
+        date: doc.data().timestamp?.toDate().toLocaleString()
+      }))
+    };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error; // Re-throw for calling code to handle
   }
-
-  return {
-    userProfile: {
-      firstName: userDoc.data().firstName
-    },
-    attempts: attemptsSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-      // Convert timestamp to readable date
-      date: doc.data().timestamp?.toDate().toLocaleString()
-    }))
-  };
 }
 
-const auth = firebase.auth();
-const user = auth.currentUser;
+// Wrap in async function since top-level await isn't always available
+async function displayUserData() {
+  const auth = firebase.auth();
+  const user = auth.currentUser;
 
-if (user) {
-  const data = await getUserAttemptsWithProfile(user.uid);
-  console.log("User:", data.userProfile);
-  console.log("Attempts:", data.attempts);
-  
-  // Display in UI
-  data.attempts.forEach(attempt => {
-    console.log(`
-      ${data.userProfile.firstName}'s Attempt (${attempt.date}):
-      Score: ${attempt.score}%
-      Classification: ${attempt.classification}
-    `);
-  });
+  if (user) {
+    try {
+      const data = await getUserAttemptsWithProfile(user.uid);
+      console.log("User:", data.userProfile);
+      console.log("Attempts:", data.attempts);
+      
+      // Display in UI
+      data.attempts.forEach(attempt => {
+        console.log(`
+          ${data.userProfile.firstName}'s Attempt (${attempt.date}):
+          Score: ${attempt.score}%
+          Classification: ${attempt.classification}
+        `);
+      });
+    } catch (error) {
+      console.error("Failed to load user data:", error);
+      // Show error to user in your UI
+    }
+  } else {
+    console.log("No user logged in");
+    // Handle logged-out state
+  }
 }
+
+// Execute
+displayUserData();
