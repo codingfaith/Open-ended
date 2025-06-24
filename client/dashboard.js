@@ -43,7 +43,8 @@ async function getUserAttemptsWithProfile(userId) {
 
     return {
       userProfile: {
-        firstName: userDoc.data().firstName
+        firstName: userDoc.data().firstName,
+        lastName: userDoc.data().lastName // Added lastName as example
       },
       attempts: attemptsSnapshot.docs.map(doc => ({
         id: doc.id,
