@@ -639,10 +639,10 @@ class UbuntexIndex {
     
     formatText(input) {
         // Process ## sections
-        let formatted = input.replace(/^## ([^-]+?) - (.+)$/gm, '<h1>$1</h1> - $2');
+        let formatted = input.replace(/^## (Key Insights|Strengths|Growth Areas|Recommendations)$/gm, '<h1>$1</h1>');
         // Process ** sections
-        formatted = formatted.replace(/\*\*(.*?)\*\*/g, (match, group) => {
-            return `<br><br><strong>${group.trim()}</strong><br>`;
+        formatted.replace(/\*\*(.*?)\*\*/g, (match, group) => {
+            return `<h3>${group.trim()}</h3>`;
         });
         //Remove colon from string
         formatted = formatted.replace(/:/g, "");
