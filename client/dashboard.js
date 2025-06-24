@@ -11,7 +11,7 @@ previousBtn.addEventListener("click", () => {
         if (dashboardResult.classList.contains("hide")) {
         dashboardResult.classList.remove("hide");
         dashboardResult.classList.add("show");
-        document.getElementById('results-btnTxt').textContent = "Hide previous results";
+        document.getElementById('results-btnTxt').textContent = "← Back";
         
     } else {
         dashboardResult.classList.remove("show");
