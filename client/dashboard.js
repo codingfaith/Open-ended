@@ -47,7 +47,7 @@ async function initDashboard() {
   } catch (error) {
     console.error('Dashboard initialization failed:', error);
     // Show error to user
-    document.getElementById('error-message').textContent = 
+    document.getElementById('dashboard-error-message').textContent = 
       'Failed to load dashboard. Please refresh or try again later.';
   }
 }

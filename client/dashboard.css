@@ -60,3 +60,11 @@
 #auth-error {
   color: orange; /* Default error color */
 }
+#dashboard-error-message {
+  width: 100%;
+  color: orange;
+  margin-top: 10px;
+  text-align: center;
+  font-size: smaller;
+  font-style: italic; 
+}
