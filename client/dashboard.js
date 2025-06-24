@@ -89,7 +89,7 @@ async function getUserAttemptsWithProfile(userId, db) {
 
 // Display function with empty state handling
 function displayData(data) {
-  document.getElementById('greeting').innerHTML = `<h1>Welcome, ${data.userProfile.firstName}!</h1>`
+  document.getElementById('greeting').innerHTML = `<h2>Hello, ${data.userProfile.firstName}!</h2>`
   const container = document.getElementById('previous-results-details');
   const hasAttempts = data.attempts && data.attempts.length > 0;
   
@@ -99,9 +99,10 @@ function displayData(data) {
       <div class="attempts-list">
         ${hasAttempts ? data.attempts.map(attempt => `
           <div class="attempt-card">
-            <span class="attempt-date">${attempt.date}</span >
+            <span class="attempt-date">${attempt.date}</span>
             <span  class="attempt-score">Score: ${attempt.score}%</span>
             <span  class="attempt-class">${attempt.classification}</span>
+            <button id="see-last-report">See report</button><br><br>
           </div>
         `).join('') : `
           <div class="no-attempts">
