@@ -1,31 +1,24 @@
 import { initializeFirebase } from './auth.js';
 
-//grab html elements
-const dashboardImg = document.getElementById("dashboard-img")
-const previousBtn = document.getElementById("dashboard-results")
-const dashboardResult = document.getElementById("previous-results")
+// DOM elements
+const dashboardImg = document.getElementById("dashboard-img");
+const previousBtn = document.getElementById("dashboard-results");
+const dashboardResult = document.getElementById("previous-results");
+const dashboardErrorMessage = document.getElementById("dashboard-error-message");
 
-previousBtn.addEventListener("click",()=>{
-    if (dashboardResult.classList.contains("hide")) {
-        dashboardResult.classList.remove("hide");
-        dashboardResult.classList.add("show");
-    } else {
-        dashboardResult.classList.remove("show");
-        dashboardResult.classList.add("hide");
-    }
-
-    if (dashboardImg.classList.contains("hide")) {
-        dashboardImg.classList.remove("hide");
-        dashboardImg.classList.add("show");
-    } else {
-        dashboardImg.classList.remove("show");
-        dashboardImg.classList.add("hide");
-    } 
-})
+// Toggle dashboard visibility
+previousBtn.addEventListener("click", () => {
+    dashboardResult.classList.toggle("hide");
+    dashboardResult.classList.toggle("show");
+    dashboardImg.classList.toggle("hide");
+    dashboardImg.classList.toggle("show");
+});
 
 // Main execution wrapper
 async function initDashboard() {
   try {
+    showLoading(true);
+    
     // 1. Initialize Firebase first
     const { auth, db } = await initializeFirebase();
     console.log('Firebase initialized, starting dashboard...');
@@ -33,8 +26,7 @@ async function initDashboard() {
     // 2. Check authentication state
     const user = auth.currentUser;
     if (!user) {
-      console.log('No user logged in');
-      // Redirect to login or show login UI
+      showError('Please log in to view your results');
       return;
     }
 
@@ -46,13 +38,13 @@ async function initDashboard() {
     displayData(data);
   } catch (error) {
     console.error('Dashboard initialization failed:', error);
-    // Show error to user
-    document.getElementById('dashboard-error-message').textContent = 
-      'Failed to load dashboard. Please refresh or try again later.';
+    showError('Failed to load dashboard. Please refresh or try again later.');
+  } finally {
+    showLoading(false);
   }
 }
 
-// Modified data fetching function
+// Data fetching function with enhanced error handling
 async function getUserAttemptsWithProfile(userId, db) {
   try {
     const [userDoc, attemptsSnapshot] = await Promise.all([
@@ -77,32 +69,53 @@ async function getUserAttemptsWithProfile(userId, db) {
     };
   } catch (error) {
     console.error("Error fetching user attempts:", error);
+    if (error.code === 'permission-denied') {
+      throw new Error("You don't have permission to view these results");
+    }
     throw error;
   }
 }
 
-// Display function
+// Display function with empty state handling
 function displayData(data) {
-  document.getElementById('previous-results').innerHTML = `<h1>Welcome, ${data.userProfile.firstName}!</h1>`;
   const container = document.getElementById('previous-results-details');
   const hasAttempts = data.attempts && data.attempts.length > 0;
   
-  container.innerHTML = `
-    <h3>Your Quiz Attempts</h3>
-    <div class="attempts-list">
-      ${hasAttempts ? data.attempts.map(attempt => `
-        <div class="attempt-card">
-          <p class="attempt-date">${attempt.date}</p>
-          <p class="attempt-score">Score: ${attempt.score}%</p>
-          <p class="attempt-class">${attempt.classification}</p>
-        </div>
-      `).join('') : `
-        <div class="no-attempts">
-          <p>You have no results to show yet.</p>
-          <p>Complete your first quiz to see your results here! 😊</p>
-        </div>
-      `}
+  dashboardResult.innerHTML = `
+    <h1>Welcome, ${data.userProfile.firstName}!</h1>
+    <div id="previous-results-content">
+      <h3>Your Quiz Attempts</h3>
+      <div class="attempts-list">
+        ${hasAttempts ? data.attempts.map(attempt => `
+          <div class="attempt-card">
+            <p class="attempt-date">${attempt.date}</p>
+            <p class="attempt-score">Score: ${attempt.score}%</p>
+            <p class="attempt-class">${attempt.classification}</p>
+          </div>
+        `).join('') : `
+          <div class="no-attempts">
+            <p>You have no results to show yet.</p>
+            <p>Complete your first quiz to see your results here! 😊</p>
+          </div>
+        `}
+      </div>
     </div>`;
+}
+
+// UI Helper functions
+function showLoading(show) {
+  const loader = document.getElementById('dashboard-loader');
+  if (loader) {
+    loader.style.display = show ? 'block' : 'none';
+  }
+}
+
+function showError(message) {
+  dashboardErrorMessage.textContent = message;
+  dashboardErrorMessage.style.display = 'block';
+  setTimeout(() => {
+    dashboardErrorMessage.style.display = 'none';
+  }, 5000);
 }
 
 // Start the dashboard when DOM is ready
