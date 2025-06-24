@@ -11,11 +11,12 @@ previousBtn.addEventListener("click", () => {
         if (dashboardResult.classList.contains("hide")) {
         dashboardResult.classList.remove("hide");
         dashboardResult.classList.add("show");
-        document.getElementById('results-btnTxt').textContent = "See previous results"
+        document.getElementById('results-btnTxt').textContent = "Hide previous results";
+        
     } else {
         dashboardResult.classList.remove("show");
         dashboardResult.classList.add("hide");
-        document.getElementById('results-btnTxt').textContent = "Hide previous results"
+        document.getElementById('results-btnTxt').textContent = "See previous results";
     }
 
     if (dashboardImg.classList.contains("hide")) {
@@ -91,7 +92,7 @@ async function getUserAttemptsWithProfile(userId, db) {
 
 // Display function with empty state handling
 function displayData(data) {
-  document.getElementById('greeting').textContent = `Hello, ${data.userProfile.firstName}!`
+  document.getElementById('greeting').textContent += `Hello, ${data.userProfile.firstName}!`
   const container = document.getElementById('previous-results-details');
   const hasAttempts = data.attempts && data.attempts.length > 0;
   
