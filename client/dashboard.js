@@ -8,10 +8,21 @@ const dashboardErrorMessage = document.getElementById("dashboard-error-message")
 
 // Toggle dashboard visibility
 previousBtn.addEventListener("click", () => {
-    dashboardResult.classList.toggle("hide");
-    dashboardResult.classList.toggle("show");
-    dashboardImg.classList.toggle("hide");
-    dashboardImg.classList.toggle("show");
+        if (dashboardResult.classList.contains("hide")) {
+        dashboardResult.classList.remove("hide");
+        dashboardResult.classList.add("show");
+    } else {
+        dashboardResult.classList.remove("show");
+        dashboardResult.classList.add("hide");
+    }
+
+    if (dashboardImg.classList.contains("hide")) {
+        dashboardImg.classList.remove("hide");
+        dashboardImg.classList.add("show");
+    } else {
+        dashboardImg.classList.remove("show");
+        dashboardImg.classList.add("hide");
+    } 
 });
 
 // Main execution wrapper
@@ -78,24 +89,24 @@ async function getUserAttemptsWithProfile(userId, db) {
 
 // Display function with empty state handling
 function displayData(data) {
+  document.getElementById('greeting').innerHTML = `<h1>Welcome, ${data.userProfile.firstName}!</h1>`
   const container = document.getElementById('previous-results-details');
   const hasAttempts = data.attempts && data.attempts.length > 0;
   
   dashboardResult.innerHTML = `
-    <h1>Welcome, ${data.userProfile.firstName}!</h1>
     <div id="previous-results-content">
       <h3>Your Quiz Attempts</h3>
       <div class="attempts-list">
         ${hasAttempts ? data.attempts.map(attempt => `
           <div class="attempt-card">
-            <p class="attempt-date">${attempt.date}</p>
-            <p class="attempt-score">Score: ${attempt.score}%</p>
-            <p class="attempt-class">${attempt.classification}</p>
+            <span class="attempt-date">${attempt.date}</span >
+            <span  class="attempt-score">Score: ${attempt.score}%</span>
+            <span  class="attempt-class">${attempt.classification}</span>
           </div>
         `).join('') : `
           <div class="no-attempts">
-            <p>You have no results to show yet.</p>
-            <p>Complete your first quiz to see your results here! 😊</p>
+            <span>You have no results to show yet.</span>
+            <span>Complete your first quiz to see your results here! 😊</span >
           </div>
         `}
       </div>
