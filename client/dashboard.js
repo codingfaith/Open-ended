@@ -1,5 +1,4 @@
 import { initializeFirebase } from './auth.js';
-initializeFirebase(); // Runs before any Firebase operations
 
 //grab html elements
 const dashboardImg = document.getElementById("dashboard-img")
@@ -23,8 +22,6 @@ previousBtn.addEventListener("click",()=>{
         dashboardImg.classList.add("hide");
     } 
 })
-
-import { initializeFirebase } from './auth.js';
 
 // Main execution wrapper
 async function initDashboard() {
