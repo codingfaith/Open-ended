@@ -92,7 +92,7 @@ async function getUserAttemptsWithProfile(userId, db) {
 
 // Display function with empty state handling
 function displayData(data) {
-  document.getElementById('greeting').textContent += `Hello, ${data.userProfile.firstName}!`
+  document.getElementById('greeting').textContent += `${data.userProfile.firstName}!`
   const container = document.getElementById('previous-results-details');
   const hasAttempts = data.attempts && data.attempts.length > 0;
   
