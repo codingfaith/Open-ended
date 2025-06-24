@@ -24,11 +24,40 @@ previousBtn.addEventListener("click",()=>{
     } 
 })
 
-async function getUserAttemptsWithProfile(userId) {
-  const db = firebase.firestore();
-  
+import { initializeFirebase } from './auth.js';
+
+// Main execution wrapper
+async function initDashboard() {
   try {
-    // Fetch user profile and attempts simultaneously
+    // 1. Initialize Firebase first
+    const { auth, db } = await initializeFirebase();
+    console.log('Firebase initialized, starting dashboard...');
+
+    // 2. Check authentication state
+    const user = auth.currentUser;
+    if (!user) {
+      console.log('No user logged in');
+      // Redirect to login or show login UI
+      return;
+    }
+
+    // 3. Get user data
+    const data = await getUserAttemptsWithProfile(user.uid, db);
+    console.log('User data loaded:', data);
+    
+    // 4. Display data
+    displayData(data);
+  } catch (error) {
+    console.error('Dashboard initialization failed:', error);
+    // Show error to user
+    document.getElementById('error-message').textContent = 
+      'Failed to load dashboard. Please refresh or try again later.';
+  }
+}
+
+// Modified data fetching function
+async function getUserAttemptsWithProfile(userId, db) {
+  try {
     const [userDoc, attemptsSnapshot] = await Promise.all([
       db.collection("users").doc(userId).get(),
       db.collection("userResults").doc(userId)
@@ -42,51 +71,35 @@ async function getUserAttemptsWithProfile(userId) {
     }
 
     return {
-      userProfile: {
-        firstName: userDoc.data().firstName,
-        lastName: userDoc.data().lastName // Added lastName as example
-      },
+      userProfile: userDoc.data(),
       attempts: attemptsSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
-        // Convert timestamp to readable date
         date: doc.data().timestamp?.toDate().toLocaleString()
       }))
     };
   } catch (error) {
-    console.error("Error fetching data:", error);
-    throw error; // Re-throw for calling code to handle
+    console.error("Error fetching user attempts:", error);
+    throw error;
   }
 }
-
-// Wrap in async function since top-level await isn't always available
-async function displayUserData() {
-  const auth = firebase.auth();
-  const user = auth.currentUser;
-
-  if (user) {
-    try {
-      const data = await getUserAttemptsWithProfile(user.uid);
-      console.log("User:", data.userProfile);
-      console.log("Attempts:", data.attempts);
-      
-      // Display in UI
-      data.attempts.forEach(attempt => {
-        console.log(`
-          ${data.userProfile.firstName}'s Attempt (${attempt.date}):
-          Score: ${attempt.score}%
-          Classification: ${attempt.classification}
-        `);
-      });
-    } catch (error) {
-      console.error("Failed to load user data:", error);
-      // Show error to user in your UI
-    }
-  } else {
-    console.log("No user logged in");
-    // Handle logged-out state
-  }
+dashboardResult.innerHTML = `<h1>Welcome, ${data.userProfile.firstName}!</h1>`
+// Display function
+function displayData(data) {
+  const container = document.getElementById('previous-results');
+  container.innerHTML = `
+    <h3>Your Quiz Attempts</h3>
+    <div class="attempts-list">
+      ${data.attempts.map(attempt => `
+        <div class="attempt-card">
+          <p class="attempt-date">${attempt.date}</p>
+          <p class="attempt-score">Score: ${attempt.score}%</p>
+          <p class="attempt-class">${attempt.classification}</p>
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
-// Execute
-displayUserData();
+// Start the dashboard when DOM is ready
+document.addEventListener('DOMContentLoaded', initDashboard);
