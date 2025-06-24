@@ -86,20 +86,26 @@ async function getUserAttemptsWithProfile(userId, db) {
 
 // Display function
 function displayData(data) {
-  dashboardResult.innerHTML = `<h1>Welcome, ${data.userProfile.firstName}!</h1>`
-  const container = document.getElementById('previous-results');
+  document.getElementById('previous-results').innerHTML = `<h1>Welcome, ${data.userProfile.firstName}!</h1>`;
+  const container = document.getElementById('previous-results-details');
+  const hasAttempts = data.attempts && data.attempts.length > 0;
+  
   container.innerHTML = `
     <h3>Your Quiz Attempts</h3>
     <div class="attempts-list">
-      ${data.attempts.map(attempt => `
+      ${hasAttempts ? data.attempts.map(attempt => `
         <div class="attempt-card">
           <p class="attempt-date">${attempt.date}</p>
           <p class="attempt-score">Score: ${attempt.score}%</p>
           <p class="attempt-class">${attempt.classification}</p>
         </div>
-      `).join('')}
-    </div>
-  `;
+      `).join('') : `
+        <div class="no-attempts">
+          <p>You have no results to show yet.</p>
+          <p>Complete your first quiz to see your results here! 😊</p>
+        </div>
+      `}
+    </div>`;
 }
 
 // Start the dashboard when DOM is ready
