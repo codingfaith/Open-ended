@@ -1,4 +1,6 @@
 import { initializeFirebase } from './auth.js';
+initializeFirebase(); // Runs before any Firebase operations
+
 //grab html elements
 const dashboardImg = document.getElementById("dashboard-img")
 const previousBtn = document.getElementById("dashboard-results")
@@ -22,11 +24,6 @@ previousBtn.addEventListener("click",()=>{
     } 
 })
 
-import { initializeFirebase } from './auth.js';
-
-// Initialize Firebase first (crucial!)
-initializeFirebase(); // Make sure this runs before any Firebase operations
-
 async function getUserAttemptsWithProfile(userId) {
   const db = firebase.firestore();
   
@@ -46,8 +43,7 @@ async function getUserAttemptsWithProfile(userId) {
 
     return {
       userProfile: {
-        firstName: userDoc.data().firstName,
-        lastName: userDoc.data().lastName // Added lastName as example
+        firstName: userDoc.data().firstName
       },
       attempts: attemptsSnapshot.docs.map(doc => ({
         id: doc.id,
