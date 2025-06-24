@@ -639,9 +639,7 @@ class UbuntexIndex {
     
     formatText(input) {
         // Process ## sections
-        let formatted = input.replace(/## (.*?) -/g, (match, group) => {
-            return `<br><br><strong>${group.trim()}</strong>`;
-        });
+        let formatted = input.replace(/^## ([^-]+?) - (.+)$/gm, '<h1>$1</h1> - $2');
         // Process ** sections
         formatted = formatted.replace(/\*\*(.*?)\*\*/g, (match, group) => {
             return `<br><br><strong>${group.trim()}</strong><br>`;
