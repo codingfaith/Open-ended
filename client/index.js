@@ -639,7 +639,7 @@ class UbuntexIndex {
     
     formatText(input) {
         let formatted = input.replace(/## (Key Insights|Strengths|Growth Areas|Recommendations)/g, '<h2>$1</h2>')
-            .replace(/\*\*(.*?)\*\*/g, (_, group) => `<h3>${group.trim()}</h3>`)
+            .replace(/\*\*(.*?)\*\*/g, (_, group) => `<strong><em>${group.trim()}</em></strong>`)
             .replace(/[:\-]/g, "");
         return formatted;
     }
