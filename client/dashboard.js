@@ -83,9 +83,10 @@ async function getUserAttemptsWithProfile(userId, db) {
     throw error;
   }
 }
-dashboardResult.innerHTML = `<h1>Welcome, ${data.userProfile.firstName}!</h1>`
+
 // Display function
 function displayData(data) {
+  dashboardResult.innerHTML = `<h1>Welcome, ${data.userProfile.firstName}!</h1>`
   const container = document.getElementById('previous-results');
   container.innerHTML = `
     <h3>Your Quiz Attempts</h3>
