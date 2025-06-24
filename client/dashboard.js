@@ -11,9 +11,11 @@ previousBtn.addEventListener("click", () => {
         if (dashboardResult.classList.contains("hide")) {
         dashboardResult.classList.remove("hide");
         dashboardResult.classList.add("show");
+        document.getElementById('results-btnTxt').textContent = "See previous results"
     } else {
         dashboardResult.classList.remove("show");
         dashboardResult.classList.add("hide");
+        document.getElementById('results-btnTxt').textContent = "Hide previous results"
     }
 
     if (dashboardImg.classList.contains("hide")) {
@@ -89,7 +91,7 @@ async function getUserAttemptsWithProfile(userId, db) {
 
 // Display function with empty state handling
 function displayData(data) {
-  document.getElementById('greeting').innerHTML = `<h2>Hello, ${data.userProfile.firstName}!</h2>`
+  document.getElementById('greeting').textContent = `<h1>Hello, ${data.userProfile.firstName}!</h1>`
   const container = document.getElementById('previous-results-details');
   const hasAttempts = data.attempts && data.attempts.length > 0;
   
@@ -102,6 +104,7 @@ function displayData(data) {
             <span class="attempt-date">${attempt.date}</span>
             <span  class="attempt-score">Score: ${attempt.score}%</span>
             <span  class="attempt-class">${attempt.classification}</span>
+            <span  class="attempt-report hide">${attempt.report}</span>
             <button id="see-last-report">See report</button><br><br>
           </div>
         `).join('') : `
