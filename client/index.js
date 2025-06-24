@@ -577,31 +577,34 @@ class UbuntexIndex {
          `;
 
         // Save results to Firebase
-        try {
+       try {
             const auth = firebase.auth();
             const user = auth.currentUser;
             
             if (user) {
                 const db = firebase.firestore();
-                const resultsRef = db.collection('userResults').doc(user.uid);
+                const userResultsRef = db.collection('userResults').doc(user.uid);
+                const attemptsRef = userResultsRef.collection('attempts');
                 
-                // Prepare data to save
-                const resultData = {
+                // Prepare data for this attempt
+                const attemptData = {
                     score: score.toFixed(2),
                     classification: this.getClassification(score),
                     answers: this.quizResults.responses,
                     report: finalReport,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    attemptNumber: (await attemptsRef.get()).size + 1  // Auto-increment attempt count
                 };
                 
-                await resultsRef.set(resultData, { merge: true });
-                console.log("Results saved to Firebase");
+                // Save as a new document in the 'attempts' subcollection
+                await attemptsRef.add(attemptData);
+                
+                console.log(`Attempt #${attemptData.attemptNumber} saved to Firebase`);
             } else {
                 console.log("No user logged in, skipping Firebase save");
             }
         } catch (firebaseError) {
             console.error("Error saving to Firebase:", firebaseError);
-            // Don't show error to user, just log it
         }
 
         // Set up button interactions
@@ -757,9 +760,7 @@ class UbuntexIndex {
     - Include practical exercises or mindset shifts
     
     Formatting Requirements:
-    - Use proper markdown headers (##) in bold for each section
-    - Use bullet points for lists
-    - Use paragraphs to separate sections
+    - Use proper markdown headers (##) for each section
     - Bold important terms like "empathy" or "communal responsibility"
     - Include specific examples from responses when possible
     - Tone of report should address the individual quiz taker directly (using the word "you") not generalise.
