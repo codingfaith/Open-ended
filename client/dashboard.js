@@ -115,7 +115,7 @@ function displayData(data) {
             <span  class="attempt-class">${attempt.classification}</span>
             <button class="last-reportBtn">See report</button><br><br>
           </div>
-          <div id="show-dash-report">${formatText(attempt.report)}</div>
+          <div class="show-dash-report">${formatText(attempt.report)}</div>
         `).join('') : `
           <div class="no-attempts">
             <span>You have no results to show yet.</span>
