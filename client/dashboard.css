@@ -85,3 +85,6 @@
   border-radius: 5px;
   background:#ffffff;  
 }
+.show-dash-report {
+    border: 1px solid red;
+}
