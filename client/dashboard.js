@@ -91,6 +91,13 @@ async function getUserAttemptsWithProfile(userId, db) {
   }
 }
 
+function formatText(input) {
+    let formatted = input.replace(/## (Key Insights|Strengths|Growth Areas|Recommendations)/g, '<h2>$1</h2>')
+        .replace(/\*\*(.*?)\*\*/g, (_, group) => `<strong><em>${group.trim()}</em></strong>`)
+        .replace(/[:\-]/g, "");
+    return formatted;
+}
+
 // Display function with empty state handling
 function displayData(data) {
   document.getElementById('greeting').textContent += `${data.userProfile.firstName}!`
@@ -106,8 +113,8 @@ function displayData(data) {
             <span class="attempt-date">${attempt.date}</span>
             <span  class="attempt-score">Score: ${attempt.score}%</span>
             <span  class="attempt-class">${attempt.classification}</span>
-            <span  class="attempt-report hide">${attempt.report}</span>
             <button class="last-reportBtn">See report</button><br><br>
+            <div id="show-dash-report">${formatText(attempt.report)}</div>
           </div>
         `).join('') : `
           <div class="no-attempts">
