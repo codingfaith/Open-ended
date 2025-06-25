@@ -93,8 +93,10 @@
     left: 0;
     right: 0;
     bottom: 0;
+    width:200px;
     color:aqua;
     margin: auto;
+    height:200px;
     padding: 1rem;
     position: fixed;
     text-align: center;
