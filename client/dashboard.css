@@ -69,6 +69,15 @@
   font-size: smaller;
   font-style: italic; 
 }
-.attempts-list {
+.attempts-list,
+.last-reportBtn {
   font-size: smaller;  
+}
+#previous-results-details {
+  text-align: center;
+}
+.last-reportBtn {
+  padding: 5px;
+  color:#4c5582;
+  background:#ffffff; 
 }
