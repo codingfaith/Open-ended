@@ -100,7 +100,7 @@ function formatText(input) {
 
 // Display function with empty state handling
 function displayData(data) {
-  document.getElementById('greeting').textContent += `${data.userProfile.firstName}!`
+  document.getElementById('greeting').textContent += `${data.userProfile.firstName}!`;
   const container = document.getElementById('previous-results-details');
   const hasAttempts = data.attempts && data.attempts.length > 0;
   
@@ -108,22 +108,39 @@ function displayData(data) {
     <div id="previous-results-content">
       <h3>Your Quiz Attempts</h3>
       <div class="attempts-list">
-        ${hasAttempts ? data.attempts.map(attempt => `
+        ${hasAttempts ? data.attempts.map((attempt, index) => `
           <div class="attempt-card">
             <span class="attempt-date">${attempt.date}</span>
-            <span  class="attempt-score">Score: ${attempt.score}%</span>
-            <span  class="attempt-class">${attempt.classification}</span>
-            <button class="last-reportBtn">See report</button><br><br>
+            <span class="attempt-score">Score: ${attempt.score}%</span>
+            <span class="attempt-class">${attempt.classification}</span>
+            <button class="last-reportBtn" data-index="${index}">See report</button><br><br>
           </div>
-          <div class="show-dash-report hide">${formatText(attempt.report)}</div>
+          <div class="show-dash-report hide" id="report-${index}">${formatText(attempt.report)}</div>
         `).join('') : `
           <div class="no-attempts">
             <span>You have no results to show yet.</span>
-            <span>Complete your first quiz to see your results here! 😊</span >
+            <span>Complete your first quiz to see your results here! 😊</span>
           </div>
         `}
       </div>
     </div>`;
+
+  // Add event listeners to all report buttons
+  if (hasAttempts) {
+    const reportButtons = document.querySelectorAll('.last-reportBtn');
+    reportButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const index = this.getAttribute('data-index');
+        const reportDiv = document.getElementById(`report-${index}`);
+        
+        // Toggle the display of the report
+        reportDiv.classList.toggle('hide');
+        
+        // Change button text based on state
+        this.textContent = reportDiv.classList.contains('hide') ? 'See report' : 'Hide report';
+      });
+    });
+  }
 }
 
 // UI Helper functions
