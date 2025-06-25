@@ -77,7 +77,9 @@
   text-align: center;
 }
 .last-reportBtn {
-  padding: 5px;
+  border: none;
+  outline: none;
   color:#4c5582;
-  background:#ffffff; 
+  padding: 10px 5px;
+  background:#ffffff;  
 }
