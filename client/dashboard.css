@@ -98,4 +98,5 @@
     padding: 1rem;
     position: fixed;
     text-align: center;
+    border: 1px solid red;
 }
