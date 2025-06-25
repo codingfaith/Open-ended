@@ -88,3 +88,7 @@
 .show-dash-report {
    text-align: left;
 }
+#dashboard-loader {
+  text-align: center;
+  padding: 1rem;
+}
