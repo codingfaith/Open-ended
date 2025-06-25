@@ -17,6 +17,7 @@
     z-index: 9999;
 }
 #logout-btn:hover,
+.last-reportBtn:hover,
 #dashboard-results:hover {
     color: #ffffff;
     background: skyblue;
@@ -73,7 +74,7 @@
 .last-reportBtn {
   font-size: smaller;  
 }
-#previous-results-details {
+#previous-results {
   text-align: center;
 }
 .last-reportBtn {

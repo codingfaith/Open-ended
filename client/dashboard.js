@@ -12,15 +12,11 @@ previousBtn.addEventListener("click", () => {
         if (dashboardResult.classList.contains("hide")) {
         dashboardResult.classList.remove("hide");
         dashboardResult.classList.add("show");
-        startAssessment.classList.remove("show");
-        startAssessment.classList.add("hide");
         document.getElementById('results-btnTxt').textContent = "←Go back";
         
     } else {
         dashboardResult.classList.remove("show");
         dashboardResult.classList.add("hide");
-        startAssessment.classList.remove("hide");
-        startAssessment.classList.add("show");
         document.getElementById('results-btnTxt').textContent = "See previous results";
     }
 
