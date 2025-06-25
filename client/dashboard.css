@@ -89,6 +89,13 @@
    text-align: left;
 }
 #dashboard-loader {
-  text-align: center;
-  padding: 1rem;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    color:aqua;
+    margin: auto;
+    padding: 1rem;
+    position: fixed;
+    text-align: center;
 }
