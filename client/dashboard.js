@@ -106,7 +106,7 @@ function displayData(data) {
   
   dashboardResult.innerHTML = `
     <div id="previous-results-content">
-      <h3>Your Quiz Attempts</h3>
+      <h3>Your Test Attempts</h3>
       <div class="attempts-list">
         ${hasAttempts ? data.attempts.map((attempt, index) => `
           <div class="attempt-card">
