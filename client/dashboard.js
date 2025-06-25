@@ -3,6 +3,7 @@ import { initializeFirebase } from './auth.js';
 // DOM elements
 const dashboardImg = document.getElementById("dashboard-img");
 const previousBtn = document.getElementById("dashboard-results");
+const startAssessment = document.getElementById("redirect-link");
 const dashboardResult = document.getElementById("previous-results");
 const dashboardErrorMessage = document.getElementById("dashboard-error-message");
 
@@ -11,11 +12,13 @@ previousBtn.addEventListener("click", () => {
         if (dashboardResult.classList.contains("hide")) {
         dashboardResult.classList.remove("hide");
         dashboardResult.classList.add("show");
+        startAssessment.classList.add("hide");
         document.getElementById('results-btnTxt').textContent = "←Go back";
         
     } else {
         dashboardResult.classList.remove("show");
         dashboardResult.classList.add("hide");
+        startAssessment.classList.remove("hide");
         document.getElementById('results-btnTxt').textContent = "See previous results";
     }
 
