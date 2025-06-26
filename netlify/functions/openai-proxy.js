@@ -1,54 +1,94 @@
 const axios = require('axios');
 
-// Common OpenAI request configuration
+// Enhanced OpenAI request configuration with better error handling
 const makeOpenAIRequest = async (prompt, isReport = false) => {
-    return axios.post(
-        'https://api.openai.com/v1/chat/completions',
-        {
-            model: "gpt-3.5-turbo",
-            messages: [
-                {
-                    role: "system",
-                    content: isReport 
-                        ? "You are an Ubuntu principles analyst. Provide detailed feedback in markdown format." 
-                        : "You are a scoring tool. Return ONLY a number from 0-10."
-                },
-                { role: "user", content: prompt }
-            ],
-            temperature: isReport ? 0.5 : 0.2,
-            max_tokens: isReport ? 500 : 3
-        },
-        {
-            headers: {
-                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-                'Content-Type': 'application/json'
+    try {
+        const response = await axios.post(
+            'https://api.openai.com/v1/chat/completions',
+            {
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "system",
+                        content: isReport 
+                            ? "You are an Ubuntu principles analyst. Provide detailed feedback in markdown format." 
+                            : "You are a scoring tool. Return ONLY a number from 0-10."
+                    },
+                    { role: "user", content: prompt }
+                ],
+                temperature: isReport ? 0.5 : 0.2,
+                max_tokens: isReport ? 500 : 3
             },
-            timeout: isReport ? 10000 : 5000
-        }
-    );
+            {
+                headers: {
+                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json' // Explicitly accept JSON
+                },
+                timeout: isReport ? 15000 : 8000, // Increased timeouts
+                // Add axios-retry options here if needed
+            }
+        );
+        
+        return response;
+    } catch (error) {
+        console.error('OpenAI API Error:', {
+            message: error.message,
+            code: error.code,
+            response: error.response?.data,
+            stack: error.stack
+        });
+        throw error; // Re-throw for the handler to process
+    }
 };
 
-// Scoring endpoint
+// Enhanced handler with better iPhone support
 exports.handler = async (event) => {
-    // Handle both scoring and report generation based on path
-    const path = event.path.split('/').pop();
-    
-    if (path === 'openai-proxy' && event.httpMethod === 'POST') {
-        try {
-            const body = JSON.parse(event.body);
-            
+    // Set CORS headers for all responses
+    const baseHeaders = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+    };
+
+    // Handle OPTIONS request for CORS preflight
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 204,
+            headers: baseHeaders,
+            body: ''
+        };
+    }
+
+    try {
+        const path = event.path.split('/').pop();
+        
+        if (path === 'openai-proxy' && event.httpMethod === 'POST') {
+            // Parse body safely
+            let body;
+            try {
+                body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
+            } catch (e) {
+                return {
+                    statusCode: 400,
+                    headers: baseHeaders,
+                    body: JSON.stringify({ error: 'Invalid JSON format' })
+                };
+            }
+
             if (body.prompt) {
-                // This is a report generation request
+                // Report generation request
                 const response = await makeOpenAIRequest(body.prompt, true);
                 const report = response.data.choices[0]?.message?.content;
                 
                 return {
                     statusCode: 200,
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: baseHeaders,
                     body: JSON.stringify({ report })
                 };
             } else if (body.userResponse && body.expectations) {
-                // This is a scoring request
+                // Scoring request
                 const prompt = `Evaluate this response on a 0-10 scale. Expectations: ${body.expectations}\nResponse: ${body.userResponse}\n\nScore based on:
                 • Alignment with Ubuntu principles (empathy, respect, dignity, communal responsibility, originality)
                 • Relevance to the question
@@ -62,29 +102,46 @@ exports.handler = async (event) => {
 
                 return {
                     statusCode: 200,
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: baseHeaders,
                     body: JSON.stringify({ score })
                 };
             } else {
                 return {
                     statusCode: 400,
+                    headers: baseHeaders,
                     body: JSON.stringify({ error: 'Invalid request format' })
                 };
             }
-        } catch (error) {
-            console.error('Error:', error);
-            return {
-                statusCode: 500,
-                body: JSON.stringify({
-                    error: 'Internal server error',
-                    details: error.message
-                })
-            };
         }
-    }
 
-    return {
-        statusCode: 404,
-        body: JSON.stringify({ error: 'Not found' })
-    };
+        return {
+            statusCode: 404,
+            headers: baseHeaders,
+            body: JSON.stringify({ error: 'Not found' })
+        };
+    } catch (error) {
+        console.error('Handler Error:', {
+            error: error.message,
+            stack: error.stack,
+            event: {
+                path: event.path,
+                method: event.httpMethod,
+                headers: event.headers
+            }
+        });
+
+        // Return more detailed error information
+        return {
+            statusCode: error.response?.status || 500,
+            headers: baseHeaders,
+            body: JSON.stringify({
+                error: 'Internal server error',
+                message: error.message,
+                ...(process.env.NODE_ENV === 'development' && {
+                    stack: error.stack,
+                    details: error.response?.data
+                })
+            })
+        };
+    }
 };
