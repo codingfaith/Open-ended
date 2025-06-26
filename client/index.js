@@ -331,26 +331,65 @@ class UbuntexIndex {
             <p>You have already completed the test on this device.</p>`;
     }
 
-    async fetchScoreFromOpenAI(userResponse, expectations) {
-        try {
-            const response = await fetch("/api/openai-proxy", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userResponse, expectations })
-            });
+    // async fetchScoreFromOpenAI(userResponse, expectations) {
+    //     try {
+    //         const response = await fetch("/api/openai-proxy", {
+    //             method: "POST",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify({ userResponse, expectations })
+    //         });
 
-            if (!response.ok) {
-                throw new Error(`API error: ${response.status}`);
-            }
+    //         if (!response.ok) {
+    //             throw new Error(`API error: ${response.status}`);
+    //         }
 
-            const { score } = await response.json();
+    //         const { score } = await response.json();
  
-            return score;
-        } catch (error) {
-            console.error("Scoring error:", error);
-            return 5; // Fallback score
+    //         return score;
+    //     } catch (error) {
+    //         console.error("Scoring error:", error);
+    //         return 5; // Fallback score
+    //     }
+    // }
+
+    async fetchScoreFromOpenAI(userResponse, expectations) {
+    try {
+        // iOS sometimes has issues with request timeouts, so we'll add a timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+        const response = await fetch("/api/openai-proxy", {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json" // Explicitly accept JSON
+            },
+            body: JSON.stringify({ userResponse, expectations }),
+            signal: controller.signal,
+            credentials: 'same-origin' // Handle cookies properly
+        });
+
+        clearTimeout(timeoutId); // Clear the timeout if request completes
+
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
         }
+
+        const data = await response.json();
+        const score = data?.score ?? 5; // Use nullish coalescing for fallback
+
+        return score;
+    } catch (error) {
+        console.error("Scoring error:", error);
+        // Provide more detailed error information
+        if (error.name === 'AbortError') {
+            console.warn("Request timed out");
+        } else if (error instanceof TypeError) {
+            console.warn("Network error occurred");
+        }
+        return 5; // Fallback score
     }
+}
 
     startQuiz() {
         this.showQuestion();
