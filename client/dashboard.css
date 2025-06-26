@@ -101,3 +101,14 @@
   position: fixed;
   text-align: center;
 }
+/* iPhone fixes */
+/* Prevent touch highlights */
+* {
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Fix for Safari rendering */
+.attempt-card {
+  transform: translateZ(0);
+}
