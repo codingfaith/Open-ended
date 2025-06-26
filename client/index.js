@@ -353,42 +353,64 @@ class UbuntexIndex {
     // }
 
     async fetchScoreFromOpenAI(userResponse, expectations) {
-    try {
-        // iOS sometimes has issues with request timeouts, so we'll add a timeout
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        try {
+            // Create a clean, simple payload
+            const payload = {
+                userResponse: typeof userResponse === 'string' ? userResponse.trim() : '',
+                expectations: typeof expectations === 'string' ? expectations.trim() : ''
+            };
 
-        const response = await fetch("/api/openai-proxy", {
-            method: "POST",
-            headers: { 
-                "Content-Type": "application/json",
-                "Accept": "application/json" // Explicitly accept JSON
-            },
-            body: JSON.stringify({ userResponse, expectations }),
-            signal: controller.signal,
-            credentials: 'same-origin' // Handle cookies properly
-        });
+            // iOS-specific configuration
+            const fetchOptions = {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(payload),
+                credentials: 'same-origin',
+                cache: 'no-store' // iOS sometimes caches POST requests strangely
+            };
 
-        clearTimeout(timeoutId); // Clear the timeout if request completes
+            // First try with timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
+            fetchOptions.signal = controller.signal;
 
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
+            let response = await fetch("/api/openai-proxy", fetchOptions);
+            clearTimeout(timeoutId);
+
+            // Special iOS check - sometimes the first request fails but retry works
+            if (!response.ok && /iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                console.log('Initial request failed, retrying...');
+                response = await fetch("/api/openai-proxy", {
+                    ...fetchOptions,
+                    signal: null // Don't abort the retry
+                });
+            }
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (typeof data?.score !== 'number') {
+                throw new Error('Invalid score format in response');
+            }
+
+            return data.score;
+        } catch (error) {
+            console.error("Scoring error:", {
+                error: error.message,
+                type: error.name,
+                stack: error.stack,
+                platform: navigator?.platform,
+                userAgent: navigator?.userAgent
+            });
+            
+            // Return different fallback values based on error type
+            return error.name === 'AbortError' ? 3 : 5; // Lower score for timeout
         }
-
-        const data = await response.json();
-        const score = data?.score ?? 5; // Use nullish coalescing for fallback
-
-        return score;
-    } catch (error) {
-        console.error("Scoring error:", error);
-        // Provide more detailed error information
-        if (error.name === 'AbortError') {
-            console.warn("Request timed out");
-        } else if (error instanceof TypeError) {
-            console.warn("Network error occurred");
-        }
-        return 5; // Fallback score
-    }
 }
 
     startQuiz() {
