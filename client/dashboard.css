@@ -109,6 +109,11 @@
 }
 
 /* Fix for Safari rendering */
-.attempt-card {
+.attempt-card, .show-dash-report {
   transform: translateZ(0);
+}
+
+/* Better button styling for iOS */
+.last-reportBtn {
+  border-radius: 0;
 }
