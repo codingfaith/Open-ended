@@ -27,8 +27,13 @@ addIOSSafeListener(previousBtn, "click", () => {
     resultsBtnTxt.textContent = "See previous results";
   }
 
-  dashboardImg.classList.toggle("hide");
-  dashboardImg.classList.toggle("show");
+  if (dashboardImg.classList.contains("hide")) {
+    dashboardImg.classList.remove("hide");
+    dashboardImg.classList.add("show");
+  } else {
+    dashboardImg.classList.remove("show");
+    dashboardImg.classList.add("hide");
+  } 
 });
 
 // Main execution wrapper with iOS timers
