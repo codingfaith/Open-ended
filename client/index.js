@@ -331,27 +331,6 @@ class UbuntexIndex {
             <p>You have already completed the test on this device.</p>`;
     }
 
-    // async fetchScoreFromOpenAI(userResponse, expectations) {
-    //     try {
-    //         const response = await fetch("/api/openai-proxy", {
-    //             method: "POST",
-    //             headers: { "Content-Type": "application/json" },
-    //             body: JSON.stringify({ userResponse, expectations })
-    //         });
-
-    //         if (!response.ok) {
-    //             throw new Error(`API error: ${response.status}`);
-    //         }
-
-    //         const { score } = await response.json();
- 
-    //         return score;
-    //     } catch (error) {
-    //         console.error("Scoring error:", error);
-    //         return 5; // Fallback score
-    //     }
-    // }
-
     async fetchScoreFromOpenAI(userResponse, expectations) {
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     const apiUrl = '/api/openai-proxy';
