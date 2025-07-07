@@ -639,11 +639,22 @@ class UbuntexIndex {
                 const db = firebase.firestore();
                 const userResultsRef = db.collection('userResults').doc(user.uid);
                 const attemptsRef = userResultsRef.collection('attempts');
-                
+
+                const searchTerms = [
+                    user.email.toLowerCase(),
+                    user.firstName.toLowerCase(),
+                    user.lastName.toLowerCase(),
+                    `${user.firstName} ${user.lastName}`.toLowerCase()
+                ];
+                await db.collection("users").doc(user.uid).set({
+                ...userData,
+                isAdmin: false,
+                searchTerms,
+                }, { merge: true });
+             
                 // Prepare data for this attempt
                 const attemptData = {
                     score: score.toFixed(2),
-                    isAdmin: false,
                     classification: this.getClassification(score),
                     answers: this.quizResults.responses,
                     report: finalReport,
@@ -653,7 +664,6 @@ class UbuntexIndex {
                 
                 // Save as a new document in the 'attempts' subcollection
                 await attemptsRef.add(attemptData);
-                
                 console.log(`Attempt #${attemptData.attemptNumber} saved to Firebase`);
             } else {
                 console.log("No user logged in, skipping Firebase save");
