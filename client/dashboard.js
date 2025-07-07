@@ -6,9 +6,6 @@ const previousBtn = document.getElementById("dashboard-results");
 const dashboardResult = document.getElementById("previous-results");
 const dashboardErrorMessage = document.getElementById("dashboard-error-message") || document.createElement('div');
 const resultsBtnTxt = document.getElementById('results-btnTxt') || document.createElement('span');
-const adminToggle = document.getElementById("admin-toggle") || document.createElement('div');
-const adminView = document.getElementById("admin-view") || document.createElement('div');
-const userSearch = document.getElementById("user-search") || document.createElement('input');
 
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
@@ -44,11 +41,13 @@ async function initDashboard() {
   try {
     showLoading(true);
     
+    // iOS workaround for Firebase init timing
     await new Promise(resolve => setTimeout(resolve, 100));
     
     const { auth, db } = await initializeFirebase();
     console.log('Firebase initialized');
 
+    // iOS-specific auth check
     const user = await new Promise((resolve) => {
       const unsubscribe = auth.onAuthStateChanged(user => {
         unsubscribe();
@@ -61,20 +60,11 @@ async function initDashboard() {
       return;
     }
 
-    // Check if user is admin
-    const userDoc = await db.collection("users").doc(user.uid).get();
-    const isAdmin = userDoc.exists && userDoc.data().isAdmin;
+    const data = await getUserAttemptsWithProfile(user.uid, db);
+    console.log('User data loaded');
     
-    if (isAdmin) {
-      // Initialize admin view
-      setupAdminView(db);
-    } else {
-      // Regular user flow
-      const data = await getUserAttemptsWithProfile(user.uid, db);
-      console.log('User data loaded');
-      requestAnimationFrame(() => displayData(data));
-    }
-
+    // iOS-safe DOM update
+    requestAnimationFrame(() => displayData(data));
   } catch (error) {
     console.error('Dashboard failed:', error);
     showError(iOSErrorMessage(error));
@@ -82,58 +72,6 @@ async function initDashboard() {
     showLoading(false);
   }
 }
-
-// Admin functionality
-function setupAdminView(db) {
-  // Show admin controls
-  adminToggle.style.display = 'block';
-  adminView.style.display = 'block';
-  userSearch.style.display = 'block';
-  
-  // Set up admin toggle
-  addIOSSafeListener(adminToggle, 'click', () => {
-    adminView.classList.toggle('hide');
-  });
-
-  // Set up user search
-  // addIOSSafeListener(userSearch, 'input', async (e) => {
-  //   const searchTerm = e.target.value.trim();
-  //   if (searchTerm.length < 2) return;
-    
-  //   try {
-  //     showLoading(true);
-  //     const usersSnapshot = await db.collection("users")
-  //       .where("searchTerms", "array-contains", searchTerm.toLowerCase())
-  //       .limit(10)
-  //       .get();
-      
-  //     displayUserResults(usersSnapshot.docs);
-  //   } catch (error) {
-  //     showError("Failed to search users");
-  //   } finally {
-  //     showLoading(false);
-  //   }
-  // });
-
-  // Initial load of recent users
-  // loadRecentUsers(db);
-}
-
-// async function loadRecentUsers(db) {
-//   try {
-//     showLoading(true);
-//     const usersSnapshot = await db.collection("users")
-//       .orderBy("lastLogin", "desc")
-//       .limit(10)
-//       .get();
-    
-//     displayUserResults(usersSnapshot.docs);
-//   } catch (error) {
-//     showError("Failed to load recent users");
-//   } finally {
-//     showLoading(false);
-//   }
-// }
 
 // iOS-specific error messaging
 function iOSErrorMessage(error) {
@@ -143,7 +81,7 @@ function iOSErrorMessage(error) {
   return 'Failed to load. Please try again.';
 }
 
-// Modified getUserAttemptsWithProfile to work with any user ID
+// Data fetching with iOS timeout
 async function getUserAttemptsWithProfile(userId, db) {
   try {
     const controller = new AbortController();
@@ -184,50 +122,13 @@ function formatText(input) {
     return formatted;
 }
 
-function displayUserResults(userDocs) {
-  const container = document.getElementById('admin-results-container');
-  if (!container) return;
-  
-  container.innerHTML = userDocs.map(doc => {
-    const user = doc.data();
-    return `
-      <div class="admin-user-card" data-uid="${doc.id}">
-        <h4>${user.firstName} ${user.lastName}</h4>
-        <p>Email: ${user.email}</p>
-        <p>Last login: ${user.lastLogin?.toDate().toLocaleString() || 'Unknown'}</p>
-        <button class="view-user-btn">View Results</button>
-      </div>
-    `;
-  }).join('');
-  
-  // Add event listeners to view buttons
-  document.querySelectorAll('.view-user-btn').forEach(btn => {
-    addIOSSafeListener(btn, 'click', async function() {
-      const uid = this.closest('.admin-user-card').getAttribute('data-uid');
-      try {
-        showLoading(true);
-        const data = await getUserAttemptsWithProfile(uid, db);
-        displayData(data, true); // Pass true to indicate admin view
-      } catch (error) {
-        showError("Failed to load user data");
-      } finally {
-        showLoading(false);
-      }
-    });
-  });
-}
-
 // Display function with iOS-safe DOM operations
-function displayData(data,isAdminView = false) {
+function displayData(data) {
   if (!dashboardResult) return;
   
   const greeting = document.getElementById('greeting');
   if (greeting) {
-    if (isAdminView) {
-      greeting.textContent = `Viewing results for ${data.userProfile?.firstName || 'User'} ${data.userProfile?.lastName || ''}`;
-    } else {
-      greeting.textContent = `Welcome back ${data.userProfile?.firstName || 'User'}!`;
-    }
+    greeting.textContent += `${data.userProfile?.firstName || 'User'}!`;
   }
   
   const container = document.getElementById('previous-results-details');
