@@ -9,6 +9,7 @@ const resultsBtnTxt = document.getElementById('results-btnTxt') || document.crea
 const adminToggle = document.getElementById("admin-toggle") || document.createElement('div');
 const adminView = document.getElementById("admin-view") || document.createElement('div');
 const userSearch = document.getElementById("user-search") || document.createElement('input');
+const adminResultsContainer = document.getElementById('admin-results-container');
 
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
@@ -119,6 +120,97 @@ function setupAdminView(db) {
   loadRecentUsers(db);
 }
 
+// async function loadRecentUsers(db) {
+//   try {
+//     showLoading(true);
+//     const usersSnapshot = await db.collection("users")
+//       .orderBy("lastLogin", "desc")
+//       .limit(10)
+//       .get();
+    
+//     displayUserResults(usersSnapshot.docs);
+//   } catch (error) {
+//     showError("Failed to load recent users");
+//   } finally {
+//     showLoading(false);
+//   }
+// }
+
+// function displayUserResults(userDocs,db) {
+//   const container = document.getElementById('admin-results-container');
+//    if (!adminResultsContainer) return;
+  
+//   container.innerHTML = userDocs.map(doc => {
+//     const user = doc.data();
+//     return `
+//       <div class="admin-user-card" data-uid="${doc.id}">
+//         <h4>${user.firstName} ${user.lastName}</h4>
+//         <p>Email: ${user.email}</p>
+//         <p>Last login: ${user.lastLogin?.toDate().toLocaleString() || 'Unknown'}</p>
+//         <button class="view-user-btn">View Results</button>
+//       </div>
+//     `;
+//   }).join('');
+  
+//   // Add event listeners to view buttons
+//   document.querySelectorAll('.view-user-btn').forEach(btn => {
+//     addIOSSafeListener(btn, 'click', async function() {
+//       const uid = this.closest('.admin-user-card').getAttribute('data-uid');
+//       try {
+//         showLoading(true);
+//         const data = await getUserAttemptsWithProfile(uid, db);
+//         displayData(data, true); // Pass true to indicate admin view
+//       } catch (error) {
+//         showError("Failed to load user data");
+//       } finally {
+//         showLoading(false);
+//       }
+//     });
+//   });
+// }
+
+// Modified displayUserResults to accept db as parameter
+
+function displayUserResults(userDocs, db) {
+  if (!adminResultsContainer) return;
+  
+  // Clear existing content safely
+  while (adminResultsContainer.firstChild) {
+    adminResultsContainer.removeChild(adminResultsContainer.firstChild);
+  }
+
+  userDocs.forEach(doc => {
+    const user = doc.data();
+    const userCard = document.createElement('div');
+    userCard.className = 'admin-user-card';
+    userCard.setAttribute('data-uid', doc.id);
+    userCard.innerHTML = `
+      <h4>${user.firstName || ''} ${user.lastName || ''}</h4>
+      <p>Email: ${user.email || 'No email'}</p>
+      <p>Last login: ${user.lastLogin?.toDate().toLocaleString() || 'Unknown'}</p>
+      <button class="view-user-btn" aria-label="View results for ${user.firstName || 'user'}">View Results</button>
+    `;
+    
+    const viewBtn = userCard.querySelector('.view-user-btn');
+    if (viewBtn) {
+      addIOSSafeListener(viewBtn, 'click', async function() {
+        try {
+          showLoading(true);
+          const data = await getUserAttemptsWithProfile(doc.id, db);
+          displayData(data, true);
+        } catch (error) {
+          showError("Failed to load user data");
+        } finally {
+          showLoading(false);
+        }
+      });
+    }
+    
+    adminResultsContainer.appendChild(userCard);
+  });
+}
+
+// Update loadRecentUsers call in setupAdminView:
 async function loadRecentUsers(db) {
   try {
     showLoading(true);
@@ -127,47 +219,39 @@ async function loadRecentUsers(db) {
       .limit(10)
       .get();
     
-    displayUserResults(usersSnapshot.docs);
+    displayUserResults(usersSnapshot.docs, db); // Pass db here
   } catch (error) {
     showError("Failed to load recent users");
+    console.error("Error loading recent users:", error);
   } finally {
     showLoading(false);
   }
 }
 
-function displayUserResults(userDocs) {
-  const container = document.getElementById('admin-results-container');
-  if (!container) return;
-  
-  container.innerHTML = userDocs.map(doc => {
-    const user = doc.data();
-    return `
-      <div class="admin-user-card" data-uid="${doc.id}">
-        <h4>${user.firstName} ${user.lastName}</h4>
-        <p>Email: ${user.email}</p>
-        <p>Last login: ${user.lastLogin?.toDate().toLocaleString() || 'Unknown'}</p>
-        <button class="view-user-btn">View Results</button>
-      </div>
-    `;
-  }).join('');
-  
-  // Add event listeners to view buttons
-  document.querySelectorAll('.view-user-btn').forEach(btn => {
-    addIOSSafeListener(btn, 'click', async function() {
-      const uid = this.closest('.admin-user-card').getAttribute('data-uid');
-      try {
-        showLoading(true);
-        const data = await getUserAttemptsWithProfile(uid, db);
-        displayData(data, true); // Pass true to indicate admin view
-      } catch (error) {
-        showError("Failed to load user data");
-      } finally {
-        showLoading(false);
-      }
-    });
-  });
+// Add this helper function for better error messages
+function getFriendlyErrorMessage(error) {
+  if (error.message.includes('network')) {
+    return 'Network error. Please check your internet connection.';
+  }
+  if (error.message.includes('permission')) {
+    return 'You don\'t have permission to view this content.';
+  }
+  return 'An unexpected error occurred. Please try again.';
 }
 
+// Update your error handling to use this:
+function showError(message) {
+  if (!dashboardErrorMessage) return;
+  
+  dashboardErrorMessage.textContent = getFriendlyErrorMessage(
+    typeof message === 'string' ? { message } : message
+  );
+  dashboardErrorMessage.style.display = 'block';
+  
+  setTimeout(() => {
+    dashboardErrorMessage.style.display = 'none';
+  }, 5000);
+}
 // Modified displayData to handle admin view
 function displayData(data, isAdminView = false) {
   if (!dashboardResult) return;
