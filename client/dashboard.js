@@ -60,11 +60,19 @@ async function initDashboard() {
       return;
     }
 
-    const data = await getUserAttemptsWithProfile(user.uid, db);
-    console.log('User data loaded');
+     // Check if user is admin
+    const userDoc = await db.collection("users").doc(user.uid).get();
+    const isAdmin = userDoc.exists && userDoc.data().isAdmin;
     
-    // iOS-safe DOM update
-    requestAnimationFrame(() => displayData(data));
+    if (isAdmin) {
+      // Initialize admin view
+      setupAdminView(db);
+    } else {
+      // Regular user flow
+      const data = await getUserAttemptsWithProfile(user.uid, db);
+      console.log('User data loaded');
+      requestAnimationFrame(() => displayData(data));
+    }
   } catch (error) {
     console.error('Dashboard failed:', error);
     showError(iOSErrorMessage(error));
