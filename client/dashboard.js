@@ -151,24 +151,24 @@ function setupAdminView(db) {
   });
 
   // Initial load of recent users
-  loadRecentUsers(db);
+  // loadRecentUsers(db);
 }
 
-async function loadRecentUsers(db) {
-  try {
-    showLoading(true);
-    const usersSnapshot = await db.collection("users")
-      .orderBy("lastLogin", "desc")
-      .limit(10)
-      .get();
+// async function loadRecentUsers(db) {
+//   try {
+//     showLoading(true);
+//     const usersSnapshot = await db.collection("users")
+//       .orderBy("lastLogin", "desc")
+//       .limit(10)
+//       .get();
     
-    displayUserResults(usersSnapshot.docs);
-  } catch (error) {
-    showError("Failed to load recent users");
-  } finally {
-    showLoading(false);
-  }
-}
+//     displayUserResults(usersSnapshot.docs);
+//   } catch (error) {
+//     showError("Failed to load recent users");
+//   } finally {
+//     showLoading(false);
+//   }
+// }
 
 // iOS-specific error messaging
 function iOSErrorMessage(error) {
