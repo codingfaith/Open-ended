@@ -376,15 +376,15 @@ function showLoading(show) {
   loader.style.display = show ? 'block' : 'none';
 }
 
-function showError(message) {
-  dashboardErrorMessage.textContent = message;
-  dashboardErrorMessage.style.display = 'block';
-  setTimeout(() => {
-    if (dashboardErrorMessage) {
-      dashboardErrorMessage.style.display = 'none';
-    }
-  }, 5000);
-}
+// function showError(message) {
+//   dashboardErrorMessage.textContent = message;
+//   dashboardErrorMessage.style.display = 'block';
+//   setTimeout(() => {
+//     if (dashboardErrorMessage) {
+//       dashboardErrorMessage.style.display = 'none';
+//     }
+//   }, 5000);
+// }
 
 // iOS-safe DOM ready check
 if (document.readyState !== 'loading') {
