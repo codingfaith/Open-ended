@@ -643,6 +643,7 @@ class UbuntexIndex {
                 // Prepare data for this attempt
                 const attemptData = {
                     score: score.toFixed(2),
+                    isAdmin: false,
                     classification: this.getClassification(score),
                     answers: this.quizResults.responses,
                     report: finalReport,
