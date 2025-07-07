@@ -6,6 +6,9 @@ const previousBtn = document.getElementById("dashboard-results");
 const dashboardResult = document.getElementById("previous-results");
 const dashboardErrorMessage = document.getElementById("dashboard-error-message") || document.createElement('div');
 const resultsBtnTxt = document.getElementById('results-btnTxt') || document.createElement('span');
+const adminToggle = document.getElementById("admin-toggle") || document.createElement('div');
+const adminView = document.getElementById("admin-view") || document.createElement('div');
+const userSearch = document.getElementById("user-search") || document.createElement('input');
 
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
@@ -37,17 +40,50 @@ addIOSSafeListener(previousBtn, "click", () => {
 });
 
 // Main execution wrapper with iOS timers
+// async function initDashboard() {
+//   try {
+//     showLoading(true);
+    
+//     // iOS workaround for Firebase init timing
+//     await new Promise(resolve => setTimeout(resolve, 100));
+    
+//     const { auth, db } = await initializeFirebase();
+//     console.log('Firebase initialized');
+
+//     // iOS-specific auth check
+//     const user = await new Promise((resolve) => {
+//       const unsubscribe = auth.onAuthStateChanged(user => {
+//         unsubscribe();
+//         resolve(user);
+//       });
+//     });
+
+//     if (!user) {
+//       showError('Please log in to view your results');
+//       return;
+//     }
+
+//     const data = await getUserAttemptsWithProfile(user.uid, db);
+//     console.log('User data loaded');
+    
+//     // iOS-safe DOM update
+//     requestAnimationFrame(() => displayData(data));
+//   } catch (error) {
+//     console.error('Dashboard failed:', error);
+//     showError(iOSErrorMessage(error));
+//   } finally {
+//     showLoading(false);
+//   }
+// }
 async function initDashboard() {
   try {
     showLoading(true);
     
-    // iOS workaround for Firebase init timing
     await new Promise(resolve => setTimeout(resolve, 100));
     
     const { auth, db } = await initializeFirebase();
     console.log('Firebase initialized');
 
-    // iOS-specific auth check
     const user = await new Promise((resolve) => {
       const unsubscribe = auth.onAuthStateChanged(user => {
         unsubscribe();
@@ -60,14 +96,75 @@ async function initDashboard() {
       return;
     }
 
-    const data = await getUserAttemptsWithProfile(user.uid, db);
-    console.log('User data loaded');
+    // Check if user is admin
+    const userDoc = await db.collection("users").doc(user.uid).get();
+    const isAdmin = userDoc.exists && userDoc.data().isAdmin;
     
-    // iOS-safe DOM update
-    requestAnimationFrame(() => displayData(data));
+    if (isAdmin) {
+      // Initialize admin view
+      setupAdminView(db);
+    } else {
+      // Regular user flow
+      const data = await getUserAttemptsWithProfile(user.uid, db);
+      console.log('User data loaded');
+      requestAnimationFrame(() => displayData(data));
+    }
+
   } catch (error) {
     console.error('Dashboard failed:', error);
     showError(iOSErrorMessage(error));
+  } finally {
+    showLoading(false);
+  }
+}
+
+// Admin functionality
+function setupAdminView(db) {
+  // Show admin controls
+  adminToggle.style.display = 'block';
+  adminView.style.display = 'block';
+  userSearch.style.display = 'block';
+  
+  // Set up admin toggle
+  addIOSSafeListener(adminToggle, 'click', () => {
+    adminView.classList.toggle('hide');
+  });
+
+  // Set up user search
+  addIOSSafeListener(userSearch, 'input', async (e) => {
+    const searchTerm = e.target.value.trim();
+    if (searchTerm.length < 2) return;
+    
+    try {
+      showLoading(true);
+      const usersSnapshot = await db.collection("users")
+        .where("searchTerms", "array-contains", searchTerm.toLowerCase())
+        .limit(10)
+        .get();
+      
+      displayUserResults(usersSnapshot.docs);
+    } catch (error) {
+      showError("Failed to search users");
+    } finally {
+      showLoading(false);
+    }
+  });
+
+  // Initial load of recent users
+  loadRecentUsers(db);
+}
+
+async function loadRecentUsers(db) {
+  try {
+    showLoading(true);
+    const usersSnapshot = await db.collection("users")
+      .orderBy("lastLogin", "desc")
+      .limit(10)
+      .get();
+    
+    displayUserResults(usersSnapshot.docs);
+  } catch (error) {
+    showError("Failed to load recent users");
   } finally {
     showLoading(false);
   }
@@ -82,6 +179,39 @@ function iOSErrorMessage(error) {
 }
 
 // Data fetching with iOS timeout
+// async function getUserAttemptsWithProfile(userId, db) {
+//   try {
+//     const controller = new AbortController();
+//     const timeout = setTimeout(() => controller.abort(), 10000);
+    
+//     const [userDoc, attemptsSnapshot] = await Promise.all([
+//       db.collection("users").doc(userId).get({ signal: controller.signal }),
+//       db.collection("userResults").doc(userId)
+//         .collection("attempts")
+//         .orderBy("timestamp", "desc")
+//         .get({ signal: controller.signal })
+//     ]);
+
+//     clearTimeout(timeout);
+
+//     if (!userDoc.exists) throw new Error("User profile not found");
+
+//     return {
+//       userProfile: userDoc.data(),
+//       attempts: attemptsSnapshot.docs.map(doc => ({
+//         id: doc.id,
+//         ...doc.data(),
+//         date: doc.data().timestamp?.toDate().toLocaleString()
+//       }))
+//     };
+//   } catch (error) {
+//     if (error.name === 'AbortError') {
+//       throw new Error('Request timed out');
+//     }
+//     throw error;
+//   }
+// }
+// Modified getUserAttemptsWithProfile to work with any user ID
 async function getUserAttemptsWithProfile(userId, db) {
   try {
     const controller = new AbortController();
@@ -122,13 +252,50 @@ function formatText(input) {
     return formatted;
 }
 
+function displayUserResults(userDocs) {
+  const container = document.getElementById('admin-results-container');
+  if (!container) return;
+  
+  container.innerHTML = userDocs.map(doc => {
+    const user = doc.data();
+    return `
+      <div class="admin-user-card" data-uid="${doc.id}">
+        <h4>${user.firstName} ${user.lastName}</h4>
+        <p>Email: ${user.email}</p>
+        <p>Last login: ${user.lastLogin?.toDate().toLocaleString() || 'Unknown'}</p>
+        <button class="view-user-btn">View Results</button>
+      </div>
+    `;
+  }).join('');
+  
+  // Add event listeners to view buttons
+  document.querySelectorAll('.view-user-btn').forEach(btn => {
+    addIOSSafeListener(btn, 'click', async function() {
+      const uid = this.closest('.admin-user-card').getAttribute('data-uid');
+      try {
+        showLoading(true);
+        const data = await getUserAttemptsWithProfile(uid, db);
+        displayData(data, true); // Pass true to indicate admin view
+      } catch (error) {
+        showError("Failed to load user data");
+      } finally {
+        showLoading(false);
+      }
+    });
+  });
+}
+
 // Display function with iOS-safe DOM operations
-function displayData(data) {
+function displayData(data,isAdminView = false) {
   if (!dashboardResult) return;
   
   const greeting = document.getElementById('greeting');
   if (greeting) {
-    greeting.textContent += `${data.userProfile?.firstName || 'User'}!`;
+    if (isAdminView) {
+      greeting.textContent = `Viewing results for ${data.userProfile?.firstName || 'User'} ${data.userProfile?.lastName || ''}`;
+    } else {
+      greeting.textContent = `Welcome back ${data.userProfile?.firstName || 'User'}!`;
+    }
   }
   
   const container = document.getElementById('previous-results-details');
