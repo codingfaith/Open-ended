@@ -40,41 +40,6 @@ addIOSSafeListener(previousBtn, "click", () => {
 });
 
 // Main execution wrapper with iOS timers
-// async function initDashboard() {
-//   try {
-//     showLoading(true);
-    
-//     // iOS workaround for Firebase init timing
-//     await new Promise(resolve => setTimeout(resolve, 100));
-    
-//     const { auth, db } = await initializeFirebase();
-//     console.log('Firebase initialized');
-
-//     // iOS-specific auth check
-//     const user = await new Promise((resolve) => {
-//       const unsubscribe = auth.onAuthStateChanged(user => {
-//         unsubscribe();
-//         resolve(user);
-//       });
-//     });
-
-//     if (!user) {
-//       showError('Please log in to view your results');
-//       return;
-//     }
-
-//     const data = await getUserAttemptsWithProfile(user.uid, db);
-//     console.log('User data loaded');
-    
-//     // iOS-safe DOM update
-//     requestAnimationFrame(() => displayData(data));
-//   } catch (error) {
-//     console.error('Dashboard failed:', error);
-//     showError(iOSErrorMessage(error));
-//   } finally {
-//     showLoading(false);
-//   }
-// }
 async function initDashboard() {
   try {
     showLoading(true);
@@ -131,44 +96,44 @@ function setupAdminView(db) {
   });
 
   // Set up user search
-  addIOSSafeListener(userSearch, 'input', async (e) => {
-    const searchTerm = e.target.value.trim();
-    if (searchTerm.length < 2) return;
+  // addIOSSafeListener(userSearch, 'input', async (e) => {
+  //   const searchTerm = e.target.value.trim();
+  //   if (searchTerm.length < 2) return;
     
-    try {
-      showLoading(true);
-      const usersSnapshot = await db.collection("users")
-        .where("searchTerms", "array-contains", searchTerm.toLowerCase())
-        .limit(10)
-        .get();
+  //   try {
+  //     showLoading(true);
+  //     const usersSnapshot = await db.collection("users")
+  //       .where("searchTerms", "array-contains", searchTerm.toLowerCase())
+  //       .limit(10)
+  //       .get();
       
-      displayUserResults(usersSnapshot.docs);
-    } catch (error) {
-      showError("Failed to search users");
-    } finally {
-      showLoading(false);
-    }
-  });
+  //     displayUserResults(usersSnapshot.docs);
+  //   } catch (error) {
+  //     showError("Failed to search users");
+  //   } finally {
+  //     showLoading(false);
+  //   }
+  // });
 
   // Initial load of recent users
-  // loadRecentUsers(db);
+  loadRecentUsers(db);
 }
 
-// async function loadRecentUsers(db) {
-//   try {
-//     showLoading(true);
-//     const usersSnapshot = await db.collection("users")
-//       .orderBy("lastLogin", "desc")
-//       .limit(10)
-//       .get();
+async function loadRecentUsers(db) {
+  try {
+    showLoading(true);
+    const usersSnapshot = await db.collection("users")
+      .orderBy("lastLogin", "desc")
+      .limit(10)
+      .get();
     
-//     displayUserResults(usersSnapshot.docs);
-//   } catch (error) {
-//     showError("Failed to load recent users");
-//   } finally {
-//     showLoading(false);
-//   }
-// }
+    displayUserResults(usersSnapshot.docs);
+  } catch (error) {
+    showError("Failed to load recent users");
+  } finally {
+    showLoading(false);
+  }
+}
 
 // iOS-specific error messaging
 function iOSErrorMessage(error) {
@@ -178,39 +143,6 @@ function iOSErrorMessage(error) {
   return 'Failed to load. Please try again.';
 }
 
-// Data fetching with iOS timeout
-// async function getUserAttemptsWithProfile(userId, db) {
-//   try {
-//     const controller = new AbortController();
-//     const timeout = setTimeout(() => controller.abort(), 10000);
-    
-//     const [userDoc, attemptsSnapshot] = await Promise.all([
-//       db.collection("users").doc(userId).get({ signal: controller.signal }),
-//       db.collection("userResults").doc(userId)
-//         .collection("attempts")
-//         .orderBy("timestamp", "desc")
-//         .get({ signal: controller.signal })
-//     ]);
-
-//     clearTimeout(timeout);
-
-//     if (!userDoc.exists) throw new Error("User profile not found");
-
-//     return {
-//       userProfile: userDoc.data(),
-//       attempts: attemptsSnapshot.docs.map(doc => ({
-//         id: doc.id,
-//         ...doc.data(),
-//         date: doc.data().timestamp?.toDate().toLocaleString()
-//       }))
-//     };
-//   } catch (error) {
-//     if (error.name === 'AbortError') {
-//       throw new Error('Request timed out');
-//     }
-//     throw error;
-//   }
-// }
 // Modified getUserAttemptsWithProfile to work with any user ID
 async function getUserAttemptsWithProfile(userId, db) {
   try {
