@@ -120,57 +120,6 @@ function setupAdminView(db) {
   loadRecentUsers(db);
 }
 
-// async function loadRecentUsers(db) {
-//   try {
-//     showLoading(true);
-//     const usersSnapshot = await db.collection("users")
-//       .orderBy("lastLogin", "desc")
-//       .limit(10)
-//       .get();
-    
-//     displayUserResults(usersSnapshot.docs);
-//   } catch (error) {
-//     showError("Failed to load recent users");
-//   } finally {
-//     showLoading(false);
-//   }
-// }
-
-// function displayUserResults(userDocs,db) {
-//   const container = document.getElementById('admin-results-container');
-//    if (!adminResultsContainer) return;
-  
-//   container.innerHTML = userDocs.map(doc => {
-//     const user = doc.data();
-//     return `
-//       <div class="admin-user-card" data-uid="${doc.id}">
-//         <h4>${user.firstName} ${user.lastName}</h4>
-//         <p>Email: ${user.email}</p>
-//         <p>Last login: ${user.lastLogin?.toDate().toLocaleString() || 'Unknown'}</p>
-//         <button class="view-user-btn">View Results</button>
-//       </div>
-//     `;
-//   }).join('');
-  
-//   // Add event listeners to view buttons
-//   document.querySelectorAll('.view-user-btn').forEach(btn => {
-//     addIOSSafeListener(btn, 'click', async function() {
-//       const uid = this.closest('.admin-user-card').getAttribute('data-uid');
-//       try {
-//         showLoading(true);
-//         const data = await getUserAttemptsWithProfile(uid, db);
-//         displayData(data, true); // Pass true to indicate admin view
-//       } catch (error) {
-//         showError("Failed to load user data");
-//       } finally {
-//         showLoading(false);
-//       }
-//     });
-//   });
-// }
-
-// Modified displayUserResults to accept db as parameter
-
 function displayUserResults(userDocs, db) {
   if (!adminResultsContainer) return;
   
@@ -375,16 +324,6 @@ function showLoading(show) {
   if (!loader) return;
   loader.style.display = show ? 'block' : 'none';
 }
-
-// function showError(message) {
-//   dashboardErrorMessage.textContent = message;
-//   dashboardErrorMessage.style.display = 'block';
-//   setTimeout(() => {
-//     if (dashboardErrorMessage) {
-//       dashboardErrorMessage.style.display = 'none';
-//     }
-//   }, 5000);
-// }
 
 // iOS-safe DOM ready check
 if (document.readyState !== 'loading') {
