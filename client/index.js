@@ -640,18 +640,6 @@ class UbuntexIndex {
                 const userResultsRef = db.collection('userResults').doc(user.uid);
                 const attemptsRef = userResultsRef.collection('attempts');
 
-                const searchTerms = [
-                    user.email.toLowerCase(),
-                    user.firstName.toLowerCase(),
-                    user.lastName.toLowerCase(),
-                    `${user.firstName} ${user.lastName}`.toLowerCase()
-                ];
-                await db.collection("users").doc(user.uid).set({
-                ...userData,
-                isAdmin: false,
-                searchTerms,
-                }, { merge: true });
-             
                 // Prepare data for this attempt
                 const attemptData = {
                     score: score.toFixed(2),
