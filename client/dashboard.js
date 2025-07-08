@@ -7,6 +7,22 @@ const dashboardResult = document.getElementById("previous-results");
 const dashboardErrorMessage = document.getElementById("dashboard-error-message") || document.createElement('div');
 const resultsBtnTxt = document.getElementById('results-btnTxt') || document.createElement('span');
 
+async function makeUserAdmin(uid) {
+  const response = await fetch('/.netlify/functions/setAdminClaim', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      // Include auth token if you want to verify permissions
+      'Authorization': `Bearer ${await firebase.auth().currentUser.getIdToken()}`
+    },
+    body: JSON.stringify({ uid })
+  });
+  
+  const result = await response.json();
+  return result;
+}
+
+makeUserAdmin(CuWYY1OYXPSr34jXgvh5MX5nvQi2)
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
   if (!element) return;
