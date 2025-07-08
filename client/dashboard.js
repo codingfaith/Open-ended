@@ -17,7 +17,6 @@ async function makeUserAdmin(uid) {
     },
     body: JSON.stringify({ uid })
   });
-  
   const result = await response.json();
   return result;
 }
