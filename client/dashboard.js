@@ -23,6 +23,7 @@ async function makeUserAdmin(uid) {
 }
 
 makeUserAdmin(CuWYY1OYXPSr34jXgvh5MX5nvQi2)
+
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
   if (!element) return;
