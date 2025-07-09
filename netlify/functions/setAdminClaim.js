@@ -18,8 +18,21 @@ exports.handler = async (event) => {
   }
 
   try {
+    // Verify authorization header exists
+    const authHeader = event.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return { statusCode: 401, body: 'Unauthorized' };
+    }
+
+    const idToken = authHeader.split('Bearer ')[1];
     const { uid } = JSON.parse(event.body);
- 
+
+    // Verify the caller is an admin
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    if (!decodedToken.admin) {
+      return { statusCode: 403, body: 'Forbidden: Only admins can perform this action' };
+    }
+
     // Set custom claim
     await admin.auth().setCustomUserClaims(uid, { admin: true });
     

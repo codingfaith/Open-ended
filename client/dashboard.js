@@ -8,20 +8,39 @@ const dashboardErrorMessage = document.getElementById("dashboard-error-message")
 const resultsBtnTxt = document.getElementById('results-btnTxt') || document.createElement('span');
 
 async function makeUserAdmin(uid) {
-  const response = await fetch('/.netlify/functions/setAdminClaim', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      // Include auth token if you want to verify permissions
-      'Authorization': `Bearer ${await firebase.auth().currentUser.getIdToken()}`
-    },
-    body: JSON.stringify({ uid })
-  });
-  const result = await response.json();
-  return result;
+  try {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+    
+    const response = await fetch('/.netlify/functions/setAdminClaim', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${await user.getIdToken()}`
+      },
+      body: JSON.stringify({ uid })
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to make user admin');
+    }
+    
+    const result = await response.json();
+    console.log('Success:', result.message);
+    return result;
+  } catch (error) {
+    console.error('Error making user admin:', error);
+    throw error;
+  }
 }
 
-makeUserAdmin("CuWYY1OYXPSr34jXgvh5MX5nvQi2");
+// Usage
+makeUserAdmin("CuWYY1OYXPSr34jXgvh5MX5nvQi2")
+  .then(() => alert('User is now an admin'))
+  .catch(error => alert(error.message));
 
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
