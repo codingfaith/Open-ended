@@ -68,6 +68,7 @@ async function initDashboard() {
     
     if (isAdmin) {
       // Initialize admin view
+      console.log('User is admin');
       setupAdminView(db);
     } else {
       // Regular user flow
