@@ -86,7 +86,6 @@ p {
     background:	skyblue;  
 }
 nav {
-    top:0;
     display: flex;
     position: fixed;
     background: #ffffff;
