@@ -5,11 +5,14 @@ const dashboardImg = document.getElementById("dashboard-img");
 const previousBtn = document.getElementById("dashboard-results");
 const dashboardResult = document.getElementById("previous-results");
 const dashboardErrorMessage = document.getElementById("dashboard-error-message") || document.createElement('div');
+
 const resultsBtnTxt = document.getElementById('results-btnTxt') || document.createElement('span');
 const adminToggle = document.getElementById("admin-toggle") || document.createElement('div');
 const adminView = document.getElementById("admin-view") || document.createElement('div');
 const userSearch = document.getElementById("user-search") || document.createElement('input');
-const adminResultsContainer = document.getElementById('admin-results-container')
+
+const userList = document.getElementById("user-list")
+const adminResultsContainer = document.getElementById("admin-results-container")
 
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
@@ -172,7 +175,7 @@ function displayUserResults(userDocs, db) {
       });
     }
     
-    adminResultsContainer.appendChild(userCard);
+    userList.appendChild(userCard);
   });
 }
 
