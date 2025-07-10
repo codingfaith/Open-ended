@@ -118,7 +118,7 @@
   transform: translateZ(0);
 }
 
-.admin-user-card {
+#admin-results-container {
   height: 500px;
   overflow-y: scroll;
 }
