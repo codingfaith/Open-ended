@@ -9,7 +9,7 @@ const resultsBtnTxt = document.getElementById('results-btnTxt') || document.crea
 const adminToggle = document.getElementById("admin-toggle") || document.createElement('div');
 const adminView = document.getElementById("admin-view") || document.createElement('div');
 const userSearch = document.getElementById("user-search") || document.createElement('input');
-const adminResultsContainer = document.getElementById('admin-results-container');
+const adminResultsContainer = document.getElementById('admin-results-container') || document.createElement('div');
 
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
@@ -48,7 +48,6 @@ async function initDashboard() {
     await new Promise(resolve => setTimeout(resolve, 100));
     
     const { auth, db } = await initializeFirebase();
-    console.log('Firebase initialized');
 
     const user = await new Promise((resolve) => {
       const unsubscribe = auth.onAuthStateChanged(user => {
@@ -62,16 +61,11 @@ async function initDashboard() {
       return;
     }
 
-    // Check if user is admin
-    const userDoc = await db.collection("users").doc(user.uid).get();
-    const isAdmin = userDoc.exists && userDoc.data().isAdmin;
-    
+    const isAdmin = await checkAdmin();
     if (isAdmin) {
-      // Initialize admin view
-      console.log('User is admin');
-      setupAdminView(db);
+      console.log("Show admin controls");
+      setupAdminView(db)
     } else {
-      // Regular user flow
       const data = await getUserAttemptsWithProfile(user.uid, db);
       console.log('User data loaded');
       requestAnimationFrame(() => displayData(data));
@@ -84,6 +78,17 @@ async function initDashboard() {
     showLoading(false);
   }
 }
+
+// Check if current user is admin
+async function checkAdmin() {
+  const { auth, db } = await initializeFirebase();
+  const user = auth.currentUser;
+  if (!user) return false;
+
+  const userDoc = await db.collection("users").doc(user.uid).get();
+  return userDoc.data()?.role === "admin"; // Returns true/false
+}
+
 
 // Admin functionality
 function setupAdminView(db) {
@@ -99,23 +104,27 @@ function setupAdminView(db) {
 
   // Set up user search
   addIOSSafeListener(userSearch, 'input', async (e) => {
-    const searchTerm = e.target.value.trim();
-    if (searchTerm.length < 2) return;
+  const searchTerm = e.target.value.trim();
+  if (searchTerm.length < 2) return;
+  
+  try {
+    showLoading(true);
+  
+    // Search by firstName using '>= and <=' trick for partial matching
+    const usersSnapshot = await db.collection("users")
+      .where("firstName", ">=", searchTerm)
+      .where("firstName", "<=", searchTerm + '\uf8ff')
+      .limit(10)
+      .get();
     
-    try {
-      showLoading(true);
-      const usersSnapshot = await db.collection("users")
-        .where("searchTerms", "array-contains", searchTerm.toLowerCase())
-        .limit(10)
-        .get();
-      
-      displayUserResults(usersSnapshot.docs);
-    } catch (error) {
-      showError("Failed to search users");
-    } finally {
-      showLoading(false);
-    }
-  });
+    displayUserResults(usersSnapshot.docs);
+  } catch (error) {
+    console.error("Search error:", error);
+    showError("Failed to search users");
+  } finally {
+    showLoading(false);
+  }
+});
 
   // Initial load of recent users
   loadRecentUsers(db);
@@ -301,7 +310,6 @@ async function getUserAttemptsWithProfile(userId, db) {
   }
 }
 
-
 // iOS-specific error messaging
 function iOSErrorMessage(error) {
   if (error.message.includes('Firebase')) {
@@ -310,8 +318,7 @@ function iOSErrorMessage(error) {
   return 'Failed to load. Please try again.';
 }
 
-// Data fetching with iOS timeout
-
+// format report
 function formatText(input) {
     let formatted = input.replace(/## (Key Insights|Strengths|Growth Areas|Recommendations)/g, '<h2>$1</h2>')
         .replace(/\*\*(.*?)\*\*/g, (_, group) => `<strong><em>${group.trim()}</em></strong>`)
