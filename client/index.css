@@ -105,13 +105,14 @@ nav a:hover {
 
 @media screen and (max-width: 541px) {
     .assessment h1 {
-        font-size: x-large
+        font-size: x-large;
     }
     .ubuntu-text span {
         font-size: smaller;
     }
     .redirect, 
-    .assessment p {
+    .assessment p,
+    .admin-assessment p {
         font-size: large;
     }
     .assessment {
@@ -120,7 +121,8 @@ nav a:hover {
 }
 
 @media screen and (max-width: 355px) {
-    .assessment p {
+    .assessment p,
+    .admin-assessment p {
         font-size: medium;
     }
     .assessment {
