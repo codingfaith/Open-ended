@@ -220,7 +220,7 @@ function showError(message) {
   }, 5000);
 }
 // Modified displayData to handle admin view
-function displayData(data, isAdminView = false) {
+function displayData(data, isAdminView = true) {
   if (!dashboardResult) return;
   
   const greeting = document.getElementById('greeting');
