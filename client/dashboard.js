@@ -64,6 +64,7 @@ async function initDashboard() {
     const isAdmin = await checkAdmin();
     if (isAdmin) {
       console.log("Show admin controls");
+      setupAdminView(db)
     } else {
       console.log("Regular user UI");
     }
