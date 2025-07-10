@@ -5,14 +5,11 @@ const dashboardImg = document.getElementById("dashboard-img");
 const previousBtn = document.getElementById("dashboard-results");
 const dashboardResult = document.getElementById("previous-results");
 const dashboardErrorMessage = document.getElementById("dashboard-error-message") || document.createElement('div');
-
 const resultsBtnTxt = document.getElementById('results-btnTxt') || document.createElement('span');
 const adminToggle = document.getElementById("admin-toggle") || document.createElement('div');
 const adminView = document.getElementById("admin-view") || document.createElement('div');
 const userSearch = document.getElementById("user-search") || document.createElement('input');
-
-const userList = document.getElementById("user-list")
-const adminResultsContainer = document.getElementById("admin-results-container")
+const adminResultsContainer = document.getElementById('admin-results-container')
 
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
@@ -68,7 +65,7 @@ async function initDashboard() {
     if (isAdmin) {
       console.log("Show admin controls");
       setupAdminView(db);
-      document.getElementById('dashboard-assess').style.display = "none";
+      document.getElementById('dashboard-assess').innerHTML ="";
     } else {
       const data = await getUserAttemptsWithProfile(user.uid, db);
       console.log('User data loaded');
@@ -175,7 +172,7 @@ function displayUserResults(userDocs, db) {
       });
     }
     
-    userList.appendChild(userCard);
+    adminResultsContainer.appendChild(userCard);
   });
 }
 

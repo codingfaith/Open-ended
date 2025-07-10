@@ -118,7 +118,7 @@
   transform: translateZ(0);
 }
 
-#user-list {
+#admin-results-list {
   max-height: 500px;
   overflow-y: scroll;
   border: 1px solid red;
