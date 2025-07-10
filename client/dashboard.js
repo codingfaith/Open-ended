@@ -9,7 +9,7 @@ const resultsBtnTxt = document.getElementById('results-btnTxt') || document.crea
 const adminToggle = document.getElementById("admin-toggle") || document.createElement('div');
 const adminView = document.getElementById("admin-view") || document.createElement('div');
 const userSearch = document.getElementById("user-search") || document.createElement('input');
-const adminResultsContainer = document.getElementById('admin-results-container');
+const adminResultsContainer = document.getElementById('admin-results-container') || document.createElement('div');
 
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
@@ -48,7 +48,6 @@ async function initDashboard() {
     await new Promise(resolve => setTimeout(resolve, 100));
     
     const { auth, db } = await initializeFirebase();
-    console.log('Firebase initialized');
 
     const user = await new Promise((resolve) => {
       const unsubscribe = auth.onAuthStateChanged(user => {

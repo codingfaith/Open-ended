@@ -112,3 +112,7 @@
 .attempt-card, .show-dash-report {
   transform: translateZ(0);
 }
+
+#admin-view {
+  background: red;
+}
