@@ -101,11 +101,6 @@ nav a:hover {
     color: #4c5582;
     text-decoration: underline;
 }
-header {
-    top:0;
-    width: 100%;
-    position: fixed;
-}
 
 @media screen and (max-width: 541px) {
     .assessment h1 {

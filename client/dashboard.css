@@ -118,7 +118,8 @@
 }
 
 #admin-results-container {
-  height: 400px;
+  height: 350px;
+  font-size: small;
   overflow-y: scroll;
   border: 1px solid red;
 }
