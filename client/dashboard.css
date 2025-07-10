@@ -118,7 +118,7 @@
   transform: translateZ(0);
 }
 
-.users-list {
+.admin-user-card {
   height: 500px;
   overflow-y: scroll;
 }
