@@ -117,7 +117,7 @@ function setupAdminView(db) {
       .limit(10)
       .get();
     
-    displayUserResults(usersSnapshot.docs);
+    displayUserResults(usersSnapshot.docs, db);
   } catch (error) {
     console.error("Search error:", error);
     showError("Failed to search users");
@@ -138,6 +138,11 @@ function displayUserResults(userDocs, db) {
     adminResultsContainer.removeChild(adminResultsContainer.firstChild);
   }
 
+  if (userDocs.length === 0) {
+    adminResultsContainer.innerHTML = '<p>No users found</p>';
+    return;
+  }
+
   userDocs.forEach(doc => {
     const user = doc.data();
     const userCard = document.createElement('div');
@@ -156,8 +161,9 @@ function displayUserResults(userDocs, db) {
         try {
           showLoading(true);
           const data = await getUserAttemptsWithProfile(doc.id, db);
-          displayData(data, true);
+          displayData(data, true);// Pass true to indicate admin view
         } catch (error) {
+          console.error("Error loading user data:", error);
           showError("Failed to load user data");
         } finally {
           showLoading(false);
@@ -178,7 +184,7 @@ async function loadRecentUsers(db) {
       .limit(10)
       .get();
     
-    displayUserResults(usersSnapshot.docs, db); // Pass db here
+    displayUserResults(usersSnapshot.docs, db);
   } catch (error) {
     showError("Failed to load recent users");
     console.error("Error loading recent users:", error);
