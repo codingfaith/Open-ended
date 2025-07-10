@@ -86,8 +86,9 @@ p {
     background:	skyblue;  
 }
 nav {
+    top:0;
     display: flex;
-    position: sticky;
+    position: fixed;
     background: #ffffff;
     padding-bottom: 0.5em;
     justify-content: space-around;
