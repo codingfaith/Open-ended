@@ -112,7 +112,7 @@ nav a:hover {
     }
     .redirect, 
     .assessment p,
-    .admin-assessment p {
+    .admin-user-card p {
         font-size: large;
     }
     .assessment {
@@ -122,7 +122,7 @@ nav a:hover {
 
 @media screen and (max-width: 355px) {
     .assessment p,
-    .admin-assessment p {
+    .admin-user-card p {
         font-size: medium;
     }
     .assessment {
