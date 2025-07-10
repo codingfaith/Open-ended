@@ -9,7 +9,7 @@ const resultsBtnTxt = document.getElementById('results-btnTxt') || document.crea
 const adminToggle = document.getElementById("admin-toggle") || document.createElement('div');
 const adminView = document.getElementById("admin-view") || document.createElement('div');
 const userSearch = document.getElementById("user-search") || document.createElement('input');
-const adminResultsContainer = document.getElementById('admin-results-container') || document.createElement('div');
+const adminResultsContainer = document.getElementById('admin-results-container')
 
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
@@ -220,7 +220,7 @@ function showError(message) {
   }, 5000);
 }
 // Modified displayData to handle admin view
-function displayData(data, isAdminView = true) {
+function displayData(data, isAdminView = false) {
   if (!dashboardResult) return;
   
   const greeting = document.getElementById('greeting');

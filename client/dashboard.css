@@ -22,7 +22,8 @@
     color: #ffffff;
     background: skyblue;
 }
-#dashboard-assess {
+#dashboard-assess,
+#admin-results-container {
     gap: 10px;
     display: flex;
     flex-direction: column;
@@ -111,9 +112,4 @@
 /* Fix for Safari rendering */
 .attempt-card, .show-dash-report {
   transform: translateZ(0);
-}
-
-#admin-results-container {
-  border: 2px solid red !important; /* Force visibility */
-  min-height: 100px;
 }
