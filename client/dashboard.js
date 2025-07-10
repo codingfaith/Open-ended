@@ -151,7 +151,7 @@ function displayUserResults(userDocs, db) {
     userCard.className = 'admin-user-card';
     userCard.setAttribute('data-uid', doc.id);
     userCard.innerHTML = `
-      <h4>${user.firstName || ''} ${user.lastName || ''}</h4>
+      <h3>${user.firstName || ''} ${user.lastName || ''}</h3>
       <p>Email: ${user.email || 'No email'}</p>
       <p>Last login: ${user.lastLogin?.toDate().toLocaleString() || 'Unknown'}</p>
       <button class="view-user-btn" aria-label="View results for ${user.firstName || 'user'}">View Results</button><hr>`;

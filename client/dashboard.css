@@ -14,6 +14,7 @@
   background: #ffffff;   
 }
 .view-user-btn {
+  font-size: medium;
   font-family: inherit;
 }
 #logout-btn {
