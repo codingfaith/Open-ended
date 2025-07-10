@@ -65,6 +65,7 @@ async function initDashboard() {
     if (isAdmin) {
       console.log("Show admin controls");
       setupAdminView(db);
+      document.getElementById('dashboard-assess').style.display = "none";
     } else {
       const data = await getUserAttemptsWithProfile(user.uid, db);
       console.log('User data loaded');
