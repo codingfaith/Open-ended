@@ -62,19 +62,11 @@ async function initDashboard() {
       return;
     }
 
-    // Check if user is admin
-    const userDoc = await db.collection("users").doc(user.uid).get();
-    const isAdmin = userDoc.exists && userDoc.data().isAdmin;
-    
+    const isAdmin = await checkAdmin();
     if (isAdmin) {
-      // Initialize admin view
-      console.log('User is admin');
-      setupAdminView(db);
+      console.log("Show admin controls");
     } else {
-      // Regular user flow
-      const data = await getUserAttemptsWithProfile(user.uid, db);
-      console.log('User data loaded');
-      requestAnimationFrame(() => displayData(data));
+      console.log("Regular user UI");
     }
 
   } catch (error) {
@@ -84,6 +76,17 @@ async function initDashboard() {
     showLoading(false);
   }
 }
+
+// Check if current user is admin
+async function checkAdmin() {
+  const { auth, db } = await initializeFirebase();
+  const user = auth.currentUser;
+  if (!user) return false;
+
+  const userDoc = await db.collection("users").doc(user.uid).get();
+  return userDoc.data()?.role === "admin"; // Returns true/false
+}
+
 
 // Admin functionality
 function setupAdminView(db) {
