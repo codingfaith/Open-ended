@@ -87,6 +87,7 @@ p {
 }
 nav {
     display: flex;
+    position: sticky;
     background: #ffffff;
     padding-bottom: 0.5em;
     justify-content: space-around;
