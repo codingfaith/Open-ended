@@ -119,7 +119,7 @@
 }
 
 #admin-results-container {
-  max-height: 500px;
+  height: 400px;
   overflow-y: scroll;
   border: 1px solid red;
 }
