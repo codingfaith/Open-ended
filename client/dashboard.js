@@ -92,7 +92,7 @@ async function checkAdmin() {
 
 // Admin functionality
 function setupAdminView(db) {
-  console.log("Set admin view called.")
+  console.log("Set admin view called")
   // Show admin controls
   adminToggle.style.display = 'block';
   adminView.style.display = 'block';
@@ -178,6 +178,7 @@ function displayUserResults(userDocs, db) {
 
 // Update loadRecentUsers call in setupAdminView:
 async function loadRecentUsers(db) {
+  console.log("loadRecentUsers called")
   try {
     showLoading(true);
     const usersSnapshot = await db.collection("users")
