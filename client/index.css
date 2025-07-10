@@ -87,7 +87,6 @@ p {
 }
 nav {
     display: flex;
-    position: fixed;
     background: #ffffff;
     padding-bottom: 0.5em;
     justify-content: space-around;
@@ -101,6 +100,10 @@ nav a {
 nav a:hover {
     color: #4c5582;
     text-decoration: underline;
+}
+header {
+    top:0;
+    position: fixed;
 }
 
 @media screen and (max-width: 541px) {
