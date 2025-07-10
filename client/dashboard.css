@@ -115,9 +115,9 @@
 }
 header {
   top: 0;
-  width: 100%;
   position: fixed;
+  max-width: 800px;
 }
 #admin-results-container {
-  margin-top: 10vh;
+  margin-top: 15vh;
 }
