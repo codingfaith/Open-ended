@@ -183,7 +183,6 @@ async function loadRecentUsers(db) {
     showLoading(true);
     const usersSnapshot = await db.collection("users")
       .orderBy("lastLogin", "desc")
-      .limit(10)
       .get();
     
     displayUserResults(usersSnapshot.docs, db);

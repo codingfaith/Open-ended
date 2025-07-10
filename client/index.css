@@ -46,7 +46,8 @@ p {
 .landing-container h1 {
     margin: 0;
 }
-.assessment {
+.assessment,
+.admin-assessment {
     padding: 1em;
     color: #ffffff;
 }
