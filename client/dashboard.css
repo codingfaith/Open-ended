@@ -113,3 +113,11 @@
 .attempt-card, .show-dash-report {
   transform: translateZ(0);
 }
+header {
+  top: 0;
+  width: 100%;
+  position: fixed;
+}
+#admin-results-container {
+  margin-top: 10vh;
+}
