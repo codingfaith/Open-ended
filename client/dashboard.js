@@ -64,7 +64,7 @@ async function initDashboard() {
     const isAdmin = await checkAdmin();
     if (isAdmin) {
       console.log("Show admin controls");
-      setupAdminView(db)
+      setupAdminView(db);
     } else {
       const data = await getUserAttemptsWithProfile(user.uid, db);
       console.log('User data loaded');
@@ -92,6 +92,7 @@ async function checkAdmin() {
 
 // Admin functionality
 function setupAdminView(db) {
+  console.log("Set admin view called.")
   // Show admin controls
   adminToggle.style.display = 'block';
   adminView.style.display = 'block';
