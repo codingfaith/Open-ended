@@ -113,6 +113,7 @@
   transform: translateZ(0);
 }
 
-#admin-view {
-  background: red;
+#admin-results-container {
+  border: 2px solid red !important; /* Force visibility */
+  min-height: 100px;
 }
