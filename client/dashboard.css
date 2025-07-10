@@ -1,57 +1,61 @@
 #greeting {
-    color: #ffffff;
+  color: #ffffff;
 }
 #logout-btn,
+.view-user-btn,
 #dashboard-results {
-    border: none;
-    outline: none;
-    padding: 10px;
-    cursor: pointer;
-    color: #4c5582;
-    font-size: large;
-    border-radius: 10px;
-    background: #ffffff;   
+  border: none;
+  outline: none;
+  padding: 10px;
+  cursor: pointer;
+  color: #4c5582;
+  font-size: large;
+  border-radius: 10px;
+  background: #ffffff;   
+}
+.view-user-btn {
+  font-family: inherit;
 }
 #logout-btn {
-    position: relative;
-    z-index: 9999;
+  position: relative;
+  z-index: 9999;
 }
 #logout-btn:hover,
 .last-reportBtn:hover,
 #dashboard-results:hover {
-    color: #ffffff;
-    background: skyblue;
+  color: #ffffff;
+  background: skyblue;
 }
 #dashboard-assess,
 #admin-results-container {
-    gap: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
     
 }
 #dashboard-img {
-    margin: 10px;
-    max-width: 250px;
-    align-self: center;
-    border-radius: 20%;
-    border: 2px solid #ccc;
-    box-shadow: 1px 1px 1px 1px #ffffff; 
+  margin: 10px;
+  max-width: 250px;
+  align-self: center;
+  border-radius: 20%;
+  border: 2px solid #ccc;
+  box-shadow: 1px 1px 1px 1px #ffffff; 
 }
 #previous-results {
-    margin: 20px 0;
+  margin: 20px 0;
 }
 .hide {
-    display: none;
+  display: none;
 }
 .show {
-    display: block;
+  display: block;
 }
 .welcome {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .logout-message {
   padding: 10px;
@@ -113,11 +117,8 @@
 .attempt-card, .show-dash-report {
   transform: translateZ(0);
 }
-header {
-  top: 0;
-  position: fixed;
-  max-width: 800px;
-}
-#admin-results-container {
-  margin-top: 15vh;
+
+.users-list {
+  height: 500px;
+  overflow-y: scroll;
 }
