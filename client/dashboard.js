@@ -315,31 +315,49 @@ function displayAdminData(adminData) {
       <h4 style="margin:0">User Attempt</h4>
     </div>
     <div class="attempts-list">
-      ${adminData.attempts.map((attempt, index) => `
-        <div class="admin-attempt-card">
-          <div class="attempt-meta">
-            <span class="attempt-date"> Date and time: ${formatAttemptDate(attempt.timestamp)}</span>
-          </div>
-          <div class="attempt-stats">
-            <span class="attempt-score">Score: ${attempt.score}%</span><br>
-            <span class="attempt-class">${attempt.classification}</span><br>
-             <button class="admin-answers-toggle" data-index="${index}">
-              Toggle Answers
-            </button><br>
-            <button class="admin-report-toggle" data-index="${index}">
-              Toggle Full Report
-            </button>
-          </div><hr>
+  ${adminData.attempts.map((attempt, index) => `
+    <div class="admin-attempt-card">
+      <div class="attempt-meta">
+        <span class="attempt-date">Date and time: ${formatAttemptDate(attempt.timestamp)}</span>
+      </div>
+      <div class="attempt-stats">
+        <span class="attempt-score">Score: ${attempt.score}%</span><br>
+        <span class="attempt-class">${attempt.classification}</span><br>
+        <button class="admin-answers-toggle" data-index="${index}">
+          Toggle Answers
+        </button><br>
+        <button class="admin-report-toggle" data-index="${index}">
+          Toggle Full Report
+        </button>
+      </div>
+      <hr>
 
-          <div class="admin-report-content" id="admin-report-${index}">
-            ${formatText(attempt.report)}<hr>
-          </div>
-           <div class="admin-answers-content" id="admin-answers-${index}">
-            ${(attempt.answers[0])}<hr>
-          </div>
-        </div>
-      `).join('')}
+      <div class="admin-report-content hide" id="admin-report-${index}">
+        ${formatText(attempt.report)}<hr>
+      </div>
+      
+      <div class="admin-answers-content hide" id="admin-answers-${index}">
+        <table class="answers-table">
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>User Answer</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${attempt.answers.map(answer => `
+              <tr class="${answer.isCorrect ? 'correct-answer' : 'incorrect-answer'}">
+                <td>${answer.question || 'N/A'}</td>
+                <td>${answer.userAnswer || 'No answer'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <hr>
+      </div>
     </div>
+  `).join('')}
+</div>
   `;
 
   // Add to DOM
