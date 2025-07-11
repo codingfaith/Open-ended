@@ -24,8 +24,10 @@
   z-index: 9999;
 }
 #logout-btn:hover,
+.view-user-btn:hover,
 .last-reportBtn:hover,
-#dashboard-results:hover {
+#dashboard-results:hover,
+.admin-report-toggle:hover {
   color: #ffffff;
   background: skyblue;
 }
