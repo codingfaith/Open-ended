@@ -227,6 +227,7 @@ function displayData(data, isAdminView = false) {
   }
   dashboardResult.appendChild(tempDiv);
   } else if(adminDashboardResult){
+    console.log("container is there");
     while (adminDashboardResult.firstChild) {
     adminDashboardResult.removeChild(adminDashboardResult.firstChild);
   }
