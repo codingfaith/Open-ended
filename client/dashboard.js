@@ -127,10 +127,9 @@ async function calculateGlobalAverageScore(db) {
   }
 }
 
-average = calculateGlobalAverageScore(db);
-console.log(average);
 function displayUserResults(userDocs, db) {
   if (!adminView) return;
+  average = calculateGlobalAverageScore(db);
   message.innerHTML = `<h3>${usersNum} users have taken the test!</h3>
   Their average score is ${average}%`;
   
