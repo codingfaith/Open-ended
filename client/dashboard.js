@@ -63,8 +63,8 @@ async function initDashboard() {
     if (isAdmin) {
       message.style.display = "block";
       document.getElementById('dashboard-assess').innerHTML =` 
+        <h3 style="text-align:center" id="admin-greeting"></h3>
         <div id="admin-previous-results">
-          <h3 style="text-align:center" id="admin-greeting"></h3>
         </div>`;
       loadRecentUsers(db);
     } else {
@@ -290,9 +290,10 @@ function displayAdminData(adminData) {
 
   // Clear previous content
   adminDashboard.innerHTML = '';
-
+  
   // Update admin greeting
   adminGreeting.textContent = `Viewing results for ${adminData.userProfile?.firstName || 'User'} ${adminData.userProfile?.lastName || ''}`;
+
 
   // Create new content container
   const contentDiv = document.createElement('div');
