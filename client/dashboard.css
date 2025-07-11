@@ -120,9 +120,13 @@
 }
 
 #admin-results-container {
+  width: 90%;
+  margin: auto;
   height: 350px;
   overflow-y: scroll;
-  border: 1px solid red;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background: midnightblue;
 }
 .admin-user-card {
   font-size: small;
