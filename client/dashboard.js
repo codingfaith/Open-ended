@@ -182,7 +182,7 @@ async function loadRecentUsers(db) {
 
 async function calculateGlobalAverageScore(db) {
   const attempts = await db.collectionGroup("attempts").get();
-  if (attempts.empty) return 0;
+  if (attempts.empty) return { averageScore: 0, totalUsers: 0 };
   const total = attempts.docs.reduce((sum, doc) => sum + doc.data().score, 0);
   // Round to 2 decimal places
   const average = Math.round((total / attempts.size) * 100) / 100;
