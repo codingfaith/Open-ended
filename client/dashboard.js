@@ -372,10 +372,7 @@ function displayAdminData(adminData) {
       <div class="admin-report-content hide" id="admin-report-${index}">
         ${formatText(attempt.report)}<hr>
       </div>
-      <button class="scroll-top-btn" data-target="attempt-${index}">
-        ↑ Back to Top
-      </button>
-      
+  
       <div class="admin-answers-content hide" id="admin-answers-${index}">
         <table class="answers-table">
           <thead>
@@ -393,9 +390,6 @@ function displayAdminData(adminData) {
             `).join('')}
           </tbody>
         </table>
-        <button class="scroll-top-btn" data-target="attempt-${index}">
-          ↑ Back to Top
-        </button>
         <hr>
       </div>
     </div>
@@ -434,21 +428,6 @@ function displayAdminData(adminData) {
           : 'Hide Full Report';
       }
     });
-  });
-
-  //Scroll back to top
-  document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('scroll-top-btn')) {
-      const targetId = e.target.getAttribute('data-target');
-      const targetElement = document.getElementById(targetId);
-      
-      if (targetElement) {
-        targetElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-    }
   });
 
   // Add admin-specific action listeners
