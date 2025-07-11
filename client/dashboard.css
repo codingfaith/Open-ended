@@ -36,7 +36,6 @@
   width:100%;
   display: flex;
   flex-direction: column;
-  /* align-items: flex-start;   */
 }
 #dashboard-img {
   margin: 10px;
@@ -150,4 +149,7 @@
 }
 .attempts-list {
   margin: auto;
+}
+#dashboard-results {
+  align-self: flex-start;
 }
