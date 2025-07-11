@@ -206,7 +206,7 @@ async function calculateGlobalAverageScore(db) {
     const averageScore = userCount > 0 
       ? Math.round((totalScore / userCount) * 100) / 100
       : 0;
-
+    console.log(`Score: ${totalScore} count: ${userCount} average: ${averageScore}`)
     return averageScore;
   
   } catch (error) {
