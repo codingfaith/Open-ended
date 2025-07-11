@@ -61,10 +61,15 @@ async function initDashboard() {
 
     const isAdmin = await checkAdmin();
     if (isAdmin) {
+      message.style.display = "block";
       loadRecentUsers(db);
-      message.style.display = "block"
+      document.getElementById('dashboard-assess').innerHTML =` 
+        <div id="admin-previous-results">
+          <h1 id="admin-greeting"></h1>
+        </div>`;
     
     } else {
+      adminView.style.display = "none;"
       const data = await getUserAttemptsWithProfile(user.uid, db);
       console.log('User data loaded');
       requestAnimationFrame(() => displayData(data));
@@ -117,10 +122,6 @@ function displayUserResults(userDocs, db) {
     const viewBtn = userCard.querySelector('.view-user-btn');
     if (viewBtn) {
       addIOSSafeListener(viewBtn, 'click', async function() {
-        document.getElementById('dashboard-assess').innerHTML =` 
-        <div id="admin-previous-results">
-          <h1 id="admin-greeting"></h1>
-        </div>`;
         try {
           showLoading(true);
           const data = await getUserAttemptsWithProfile(doc.id, db);
