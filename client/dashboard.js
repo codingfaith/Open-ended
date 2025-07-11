@@ -4,6 +4,7 @@ import { initializeFirebase } from './auth.js';
 const dashboardImg = document.getElementById("dashboard-img");
 const previousBtn = document.getElementById("dashboard-results");
 const dashboardResult = document.getElementById("previous-results");
+const adminDashboardResult = document.getElementById("admin-previous-results");
 const dashboardErrorMessage = document.getElementById("dashboard-error-message") || document.createElement('div');
 const resultsBtnTxt = document.getElementById('results-btnTxt') || document.createElement('span');
 const adminToggle = document.getElementById("admin-toggle") || document.createElement('div');
@@ -63,7 +64,6 @@ async function initDashboard() {
 
     const isAdmin = await checkAdmin();
     if (isAdmin) {
-      console.log("Show admin controls");
       setupAdminView(db);
       document.getElementById('dashboard-assess').innerHTML ="";
     } else {
@@ -218,10 +218,12 @@ function showError(message) {
 }
 // Modified displayData to handle admin view
 function displayData(data, isAdminView = false) {
-  if (!dashboardResult) return;
+  if (!dashboardResult || !adminDashboardResult) return;
   
   const greeting = document.getElementById('greeting');
-  if (greeting) {
+  const adminGreeting = document.getElementById('admin-greeting');
+
+  if (greeting || adminGreeting) {
     if (isAdminView) {
       greeting.textContent = `Viewing results for ${data.userProfile?.firstName || 'User'} ${data.userProfile?.lastName || ''}`;
     } else {
@@ -259,10 +261,18 @@ function displayData(data, isAdminView = false) {
   `;
   
   // iOS-safe DOM update
-  while (dashboardResult.firstChild) {
+  if(dashboardResult){
+    while (dashboardResult.firstChild) {
     dashboardResult.removeChild(dashboardResult.firstChild);
   }
   dashboardResult.appendChild(tempDiv);
+  } else if(adminDashboardResult){
+    while (adminDashboardResult.firstChild) {
+    adminDashboardResult.removeChild(adminDashboardResult.firstChild);
+  }
+  adminDashboardResult.appendChild(tempDiv);
+  }
+
 
   // Add event listeners to all report buttons
   if (hasAttempts) {
