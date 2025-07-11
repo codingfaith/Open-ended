@@ -132,6 +132,8 @@ function displayUserResults(userDocs, db) {
       });
     }
     adminView.appendChild(userCard);
+    adminView.classList.remove("hide");
+    adminView.classList.add("show");
   });
 }
 
