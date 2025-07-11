@@ -306,7 +306,6 @@ function displayAdminData(adminData) {
       </div>
     `;
     adminDashboard.appendChild(contentDiv);
-    adminView.classList.remove('hide');
     return;
   }
 
