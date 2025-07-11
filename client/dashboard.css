@@ -161,13 +161,10 @@
   width: 100%;
   margin: 15px 0;
 }
-.answers-table tr {
-  text-align: center;
-}
 .answers-table th, .answers-table td {
   padding: 8px;
+  text-align: centre;
   border: 1px solid #ccc;
-  text-align: left;
 }
 
 .answers-table th {
