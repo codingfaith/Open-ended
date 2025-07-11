@@ -124,10 +124,11 @@
   margin: auto;
   height: 350px;
   overflow-y: scroll;
-  background: #262b41;
-  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  background: #434a72;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
+  box-shadow: 1px 1px 2px 2px #626a92;
 }
 .admin-user-card {
   font-size: small;
