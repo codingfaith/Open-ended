@@ -195,7 +195,8 @@ async function calculateGlobalAverageScore(db) {
 
       if (!attemptsSnapshot.empty) {
         const attempt = attemptsSnapshot.docs[0].data();
-        totalScore += attempt.score;
+        totalScore += parseFloat(attempt.score)
+        
         userCount++;
       }
     });
