@@ -94,7 +94,7 @@ async function checkAdmin() {
 
 function displayUserResults(userDocs, db) {
   if (!adminView) return;
-  message.innerHTML = `<h3>${usersNum} users have taken the test!</h3><br>
+  message.innerHTML = `<h3>${usersNum} users have taken the test!</h3>
   Their average score is ${calculateGlobalAverageScore(db)}%`;
   
   // Clear existing content safely
@@ -182,7 +182,7 @@ async function loadRecentUsers(db) {
 
 async function calculateGlobalAverageScore(db) {
   const attempts = await db.collectionGroup("attempts").get();
-  if (attempts.empty) return { averageScore: 0, totalUsers: 0 };
+  if (attempts.empty) return 0;
   const total = attempts.docs.reduce((sum, doc) => sum + doc.data().score, 0);
   // Round to 2 decimal places
   const average = Math.round((total / attempts.size) * 100) / 100;
