@@ -323,12 +323,15 @@ function displayAdminData(adminData) {
           <div class="attempt-stats">
             <span class="attempt-score">Score: ${attempt.score}%</span><br>
             <span class="attempt-class">${attempt.classification}</span><br>
+             <button class="admin-report-toggle" data-index="${index}">
+              Toggle Answers
+            </button><br>
             <button class="admin-report-toggle" data-index="${index}">
               Toggle Full Report
             </button>
           </div><hr>
 
-          <div class="admin-report-content hide" id="admin-report-${index}">
+          <div class="admin-report-content" id="admin-report-${index}">
             ${formatText(attempt.report)}
             ${adminData.userProfile?.role === 'admin' ? `
               <div class="admin-actions">
