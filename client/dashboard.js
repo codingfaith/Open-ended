@@ -277,7 +277,7 @@ function displayAdminData(adminData) {
   // Validate input and required elements
   const adminDashboard = document.getElementById('admin-previous-results');
   const adminGreeting = document.getElementById('admin-greeting');
-  const adminView = document.getElementById('admin-view');
+  const adminView = document.getElementById('admin-results-container');
   
   if (!adminDashboard || !adminGreeting || !adminView) {
     console.error('Missing required elements for admin view');
