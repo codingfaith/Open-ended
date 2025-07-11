@@ -7,10 +7,8 @@ const dashboardResult = document.getElementById("previous-results");
 const adminDashboardResult = document.getElementById("admin-previous-results");
 const dashboardErrorMessage = document.getElementById("dashboard-error-message") || document.createElement('div');
 const resultsBtnTxt = document.getElementById('results-btnTxt') || document.createElement('span');
-const adminToggle = document.getElementById("admin-toggle") || document.createElement('div');
-const adminView = document.getElementById("admin-view") || document.createElement('div');
 const userSearch = document.getElementById("user-search") || document.createElement('input');
-const adminResultsContainer = document.getElementById('admin-results-container')
+const adminView = document.getElementById('admin-results-container')
 
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
@@ -96,16 +94,8 @@ async function checkAdmin() {
 
 // Admin functionality
 function setupAdminView(db) {
-  // Show admin controls
-  adminToggle.style.display = 'block';
-  adminView.style.display = 'block';
   userSearch.style.display = 'block';
   
-  // Set up admin toggle
-  addIOSSafeListener(adminToggle, 'click', () => {
-    adminView.classList.toggle('hide');
-  });
-
   // Set up user search
   addIOSSafeListener(userSearch, 'input', async (e) => {
   const searchTerm = e.target.value.trim();
@@ -135,15 +125,15 @@ function setupAdminView(db) {
 }
 
 function displayUserResults(userDocs, db) {
-  if (!adminResultsContainer) return;
+  if (!adminView) return;
   
   // Clear existing content safely
-  while (adminResultsContainer.firstChild) {
-    adminResultsContainer.removeChild(adminResultsContainer.firstChild);
+  while (adminView.firstChild) {
+    adminView.removeChild(adminView.firstChild);
   }
 
   if (userDocs.length === 0) {
-    adminResultsContainer.innerHTML = '<p>No users found</p>';
+    adminView.innerHTML = '<p>No users found</p>';
     return;
   }
 
@@ -174,7 +164,7 @@ function displayUserResults(userDocs, db) {
       });
     }
     
-    adminResultsContainer.appendChild(userCard);
+    adminView.appendChild(userCard);
   });
 }
 
@@ -228,7 +218,7 @@ function displayData(data, isAdminView = false) {
 
   if (greeting || adminGreeting) {
     if (isAdminView) {
-      greeting.textContent = `Viewing results for ${data.userProfile?.firstName || 'User'} ${data.userProfile?.lastName || ''}`;
+      adminGreeting.textContent = `Viewing results for ${data.userProfile?.firstName || 'User'} ${data.userProfile?.lastName || ''}`;
     } else {
       greeting.textContent = `Welcome back ${data.userProfile?.firstName || 'User'}!`;
     }
