@@ -160,10 +160,10 @@
 .answers-table {
   width: 100%;
   margin: 15px 0;
-  text-align: center;
-  border-collapse: collapse;
 }
-
+.answers-table tr {
+  text-align: center;
+}
 .answers-table th, .answers-table td {
   padding: 8px;
   border: 1px solid #ccc;
@@ -174,5 +174,7 @@
   background: #151825;
 }
 .answers-table tbody tr:nth-child(even) {
-  background-color: #525876;
+  background-color: #2b304a;
+}.answers-table tbody tr:nth-child(odd) {
+  background-color: #394062;
 }
