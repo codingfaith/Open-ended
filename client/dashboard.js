@@ -62,10 +62,7 @@ async function initDashboard() {
     const isAdmin = await checkAdmin();
     if (isAdmin) {
       loadRecentUsers(db);
-      adminView.classList.remove("hide");
-      adminView.classList.add("show");
-      message.classList.remove("hide");
-      message.classList.add("show");
+      message.style.display = "block"
     
     } else {
       const data = await getUserAttemptsWithProfile(user.uid, db);
