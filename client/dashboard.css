@@ -3,7 +3,8 @@
 }
 #logout-btn,
 .view-user-btn,
-#dashboard-results {
+#dashboard-results,
+.admin-report-toggle {
   border: none;
   outline: none;
   padding: 10px;
@@ -13,7 +14,8 @@
   border-radius: 10px;
   background: #ffffff;   
 }
-.view-user-btn {
+.view-user-btn,
+.admin-report-toggle {
   font-size: medium;
   font-family: inherit;
 }
@@ -135,4 +137,7 @@
 #admin-greeting {
   color: #ffffff;
   text-align: center;
+}
+#admin-greeting {
+  justify-self: center;
 }

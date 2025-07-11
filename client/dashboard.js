@@ -312,17 +312,17 @@ function displayAdminData(adminData) {
   // Build admin attempts list with additional admin features
   contentDiv.innerHTML = `
     <div class="admin-results-header">
-      <h2>User Attempts</h2>
+      <h4>User Attempts</h4>
     </div>
     <div class="attempts-list">
       ${adminData.attempts.map((attempt, index) => `
         <div class="admin-attempt-card">
           <div class="attempt-meta">
-            <span class="attempt-date">${formatAttemptDate(attempt.timestamp)}</span>
-          </div><br>
+            <span class="attempt-date"> Date and time: ${formatAttemptDate(attempt.timestamp)}</span>
+          </di
           <div class="attempt-stats">
             <span class="attempt-score">Score: ${attempt.score}%</span><br>
-            <span class="attempt-class">${attempt.classification}</span><br>
+            <span class="attempt-class">${attempt.classification}</span>
             <button class="admin-report-toggle" data-index="${index}">
               Toggle Full Report
             </button>
