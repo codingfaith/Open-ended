@@ -181,16 +181,40 @@ async function loadRecentUsers(db) {
 }
 
 async function calculateGlobalAverageScore(db) {
-  const attempts = await db.collectionGroup("attempts").get();
-  if (attempts.empty) return { averageScore: 0, totalUsers: 0 };
-  const total = attempts.docs.reduce((sum, doc) => sum + doc.data().score, 0);
-  // Round to 2 decimal places
-  const average = Math.round((total / attempts.size) * 100) / 100;
-  console.log(totalUsers);
-  return {
-    averageScore: average,
-    totalUsers: attempts.size
-  };
+  try {
+    const usersSnapshot = await db.collection("users").get();
+    let totalScore = 0;
+    let userCount = 0;
+
+    const scorePromises = usersSnapshot.docs.map(async (userDoc) => {
+      const attemptsSnapshot = await db.collection("userResults")
+        .doc(userDoc.id)
+        .collection("attempts")
+        .limit(1)
+        .get();
+
+      if (!attemptsSnapshot.empty) {
+        const attempt = attemptsSnapshot.docs[0].data();
+        totalScore += attempt.score;
+        userCount++;
+      }
+    });
+
+    await Promise.all(scorePromises);
+
+    // Round to 2 decimal places
+    const averageScore = userCount > 0 
+      ? Math.round((totalScore / userCount) * 100) / 100
+      : 0;
+    console.log(userCount);
+    return {
+      averageScore,
+      totalUsers: userCount
+    };
+  } catch (error) {
+    console.error("Error calculating global average:", error);
+    throw error;
+  }
 }
 
 // Add this helper function for better error messages
