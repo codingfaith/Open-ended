@@ -92,6 +92,7 @@ async function checkAdmin() {
 
 
 function displayUserResults(userDocs, db) {
+  document.getElementById('message').innerHTML = `<h1>${usersNum} users have taken the test!</h1>`;
   if (!adminView) return;
   
   // Clear existing content safely
@@ -130,8 +131,7 @@ function displayUserResults(userDocs, db) {
         }
       });
     }
-    const message = `${usersNum} users have taken the test!`;
-    adminView.append(message, userCard);
+    adminView.appendChild(userCard);
   });
 }
 
