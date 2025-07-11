@@ -131,7 +131,8 @@
 .admin-user-card {
   font-size: small;
 }
-#message {
+#message,
+#admin-greeting {
   color: #ffffff;
   text-align: center;
 }

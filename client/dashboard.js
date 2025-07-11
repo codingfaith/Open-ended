@@ -63,9 +63,8 @@ async function initDashboard() {
     if (isAdmin) {
       message.style.display = "block";
       document.getElementById('dashboard-assess').innerHTML =` 
-        <h3 style="text-align:center" id="admin-greeting"></h3>
-        <div id="admin-previous-results">
-        </div>`;
+        <h3 id="admin-greeting"></h3>
+        <div id="admin-previous-results"></div>`;
       loadRecentUsers(db);
     } else {
       adminView.style.display = "none";
@@ -313,28 +312,24 @@ function displayAdminData(adminData) {
   // Build admin attempts list with additional admin features
   contentDiv.innerHTML = `
     <div class="admin-results-header">
-      <h3>User Attempts</h3>
-      <div class="admin-meta">
-        <span>Email: ${adminData.userProfile?.email || 'Not available'}</span>
-        <span>Last login: ${formatAttemptDate(adminData.userProfile?.lastLogin)}</span>
-      </div>
+      <h2>User Attempts</h2>
     </div>
     <div class="attempts-list">
       ${adminData.attempts.map((attempt, index) => `
         <div class="admin-attempt-card">
           <div class="attempt-meta">
             <span class="attempt-date">${formatAttemptDate(attempt.timestamp)}</span>
-            <span class="attempt-id">Attempt ID: ${attempt.id || 'N/A'}</span>
-          </div>
+          </div><br>
           <div class="attempt-stats">
-            <span class="attempt-score">Score: ${attempt.score}%</span>
-            <span class="attempt-class">${attempt.classification}</span>
+            <span class="attempt-score">Score: ${attempt.score}%</span><br>
+            <span class="attempt-class">${attempt.classification}</span><br>
             <button class="admin-report-toggle" data-index="${index}">
               Toggle Full Report
             </button>
           </div>
+
           <div class="admin-report-content hide" id="admin-report-${index}">
-            <h4>Detailed Report:</h4>
+            <h1>Detailed Report:</h1>
             ${formatText(attempt.report)}
             ${adminData.userProfile?.role === 'admin' ? `
               <div class="admin-actions">
