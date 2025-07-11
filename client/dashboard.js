@@ -1,3 +1,4 @@
+import { createElement } from 'react';
 import { initializeFirebase } from './auth.js';
 
 // DOM elements with null checks for iOS
@@ -63,9 +64,8 @@ async function initDashboard() {
 
     const isAdmin = await checkAdmin();
     if (isAdmin) {
-      console.log("Show admin controls");
-      setupAdminView(db);
       document.getElementById('dashboard-assess').innerHTML ="";
+      setupAdminView(db);
     } else {
       const data = await getUserAttemptsWithProfile(user.uid, db);
       console.log('User data loaded');
