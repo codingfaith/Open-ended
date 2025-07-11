@@ -7,7 +7,6 @@ const dashboardResult = document.getElementById("previous-results");
 const adminDashboardResult = document.getElementById("admin-previous-results");
 const dashboardErrorMessage = document.getElementById("dashboard-error-message") || document.createElement('div');
 const resultsBtnTxt = document.getElementById('results-btnTxt') || document.createElement('span');
-const userSearch = document.getElementById("user-search") || document.createElement('input');
 const adminView = document.getElementById('admin-results-container')
 
 // iOS-specific event listener with passive option
@@ -62,7 +61,7 @@ async function initDashboard() {
 
     const isAdmin = await checkAdmin();
     if (isAdmin) {
-      setupAdminView(db);
+      loadRecentUsers(db)
       document.getElementById('dashboard-assess').innerHTML =` 
         <div id="admin-previous-results">
           <h1 id="admin-greeting"></h1>
@@ -91,38 +90,6 @@ async function checkAdmin() {
   return userDoc.data()?.role === "admin"; // Returns true/false
 }
 
-
-// Admin functionality
-function setupAdminView(db) {
-  userSearch.style.display = 'block';
-  
-  // Set up user search
-  addIOSSafeListener(userSearch, 'input', async (e) => {
-  const searchTerm = e.target.value.trim();
-  if (searchTerm.length < 2) return;
-  
-  try {
-    showLoading(true);
-  
-    // Search by firstName using '>= and <=' trick for partial matching
-    const usersSnapshot = await db.collection("users")
-      .where("firstName", ">=", searchTerm)
-      .where("firstName", "<=", searchTerm + '\uf8ff')
-      .limit(10)
-      .get();
-    
-    displayUserResults(usersSnapshot.docs, db);
-  } catch (error) {
-    console.error("Search error:", error);
-    showError("Failed to search users");
-  } finally {
-    showLoading(false);
-  }
-});
-
-  // Initial load of recent users
-  loadRecentUsers(db);
-}
 
 function displayUserResults(userDocs, db) {
   if (!adminView) return;
@@ -169,7 +136,6 @@ function displayUserResults(userDocs, db) {
   });
 }
 
-// Update loadRecentUsers call in setupAdminView:
 async function loadRecentUsers(db) {
   try {
     showLoading(true);
