@@ -8,6 +8,7 @@ const dashboardErrorMessage = document.getElementById("dashboard-error-message")
 const resultsBtnTxt = document.getElementById('results-btnTxt') || document.createElement('span');
 const adminView = document.getElementById('admin-results-container');
 let usersNum = 0;
+let average = 0;
 let message =  document.getElementById('message');
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
@@ -91,11 +92,47 @@ async function checkAdmin() {
   return userDoc.data()?.role === "admin"; // Returns true/false
 }
 
+async function calculateGlobalAverageScore(db) {
+  try {
+    const usersSnapshot = await db.collection("users").get();
+    let totalScore = 0;
+    let userCount = 0;
 
+    const scorePromises = usersSnapshot.docs.map(async (userDoc) => {
+      const attemptsSnapshot = await db.collection("userResults")
+        .doc(userDoc.id)
+        .collection("attempts")
+        .limit(1)
+        .get();
+
+      if (!attemptsSnapshot.empty) {
+        const attempt = attemptsSnapshot.docs[0].data();
+        totalScore += parseFloat(attempt.score)
+        
+        userCount++;
+      }
+    });
+
+    await Promise.all(scorePromises);
+
+    // Round to 2 decimal places
+    const averageScore = userCount > 0 
+      ? Math.round((totalScore / userCount) * 100) / 100
+      : 0;
+    return averageScore;
+  
+  } catch (error) {
+    console.error("Error calculating global average:", error);
+    throw error;
+  }
+}
+
+average = calculateGlobalAverageScore(db);
+console.log(average);
 function displayUserResults(userDocs, db) {
   if (!adminView) return;
   message.innerHTML = `<h3>${usersNum} users have taken the test!</h3>
-  Their average score is ${calculateGlobalAverageScore(db)}%`;
+  Their average score is ${average}%`;
   
   // Clear existing content safely
   while (adminView.firstChild) {
@@ -180,41 +217,6 @@ async function loadRecentUsers(db) {
   }
 }
 
-async function calculateGlobalAverageScore(db) {
-  try {
-    const usersSnapshot = await db.collection("users").get();
-    let totalScore = 0;
-    let userCount = 0;
-
-    const scorePromises = usersSnapshot.docs.map(async (userDoc) => {
-      const attemptsSnapshot = await db.collection("userResults")
-        .doc(userDoc.id)
-        .collection("attempts")
-        .limit(1)
-        .get();
-
-      if (!attemptsSnapshot.empty) {
-        const attempt = attemptsSnapshot.docs[0].data();
-        totalScore += parseFloat(attempt.score)
-        
-        userCount++;
-      }
-    });
-
-    await Promise.all(scorePromises);
-
-    // Round to 2 decimal places
-    const averageScore = userCount > 0 
-      ? Math.round((totalScore / userCount) * 100) / 100
-      : 0;
-    console.log(`Score: ${totalScore} count: ${userCount} average: ${averageScore}`)
-    return averageScore;
-  
-  } catch (error) {
-    console.error("Error calculating global average:", error);
-    throw error;
-  }
-}
 
 // Add this helper function for better error messages
 function getFriendlyErrorMessage(error) {
