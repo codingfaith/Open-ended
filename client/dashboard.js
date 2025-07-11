@@ -60,8 +60,7 @@ async function initDashboard() {
       return;
     }
 
-    const isAdmin = await checkAdmin();
-    if (isAdmin) {
+    if (await checkAdmin()) {
       message.style.display = "block";
       document.getElementById('dashboard-assess').innerHTML =` 
         <h3 id="admin-greeting"></h3>
