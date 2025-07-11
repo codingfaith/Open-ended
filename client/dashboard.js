@@ -222,6 +222,7 @@ function displayData(data, isAdminView = false) {
   
   // iOS-safe DOM update
   if(dashboardResult){
+    console.log("still old container is there");
     while (dashboardResult.firstChild) {
     dashboardResult.removeChild(dashboardResult.firstChild);
   }
