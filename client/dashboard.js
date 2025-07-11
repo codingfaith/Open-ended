@@ -323,7 +323,7 @@ function displayAdminData(adminData) {
           <div class="attempt-stats">
             <span class="attempt-score">Score: ${attempt.score}%</span><br>
             <span class="attempt-class">${attempt.classification}</span><br>
-             <button class="admin-report-toggle" data-index="${index}">
+             <button class="admin-answers-toggle" data-index="${index}">
               Toggle Answers
             </button><br>
             <button class="admin-report-toggle" data-index="${index}">
@@ -332,15 +332,10 @@ function displayAdminData(adminData) {
           </div><hr>
 
           <div class="admin-report-content" id="admin-report-${index}">
-            ${formatText(attempt.report)}
-            ${adminData.userProfile?.role === 'admin' ? `
-              <div class="admin-actions">
-                <button class="delete-attempt-btn" data-attempt-id="${attempt.id}">
-                  Delete Attempt
-                </button>
-              </div>
-            ` : ''}
-            <hr>
+            ${formatText(attempt.report)}<hr>
+          </div>
+           <div class="admin-answers-content" id="admin-answers-${index}">
+            ${(attempt.answers[0])}<hr>
           </div>
         </div>
       `).join('')}
@@ -352,6 +347,20 @@ function displayAdminData(adminData) {
   adminView.classList.remove('hide');
 
   // Add event listeners
+  contentDiv.querySelectorAll('.admin-answers-toggle').forEach(button => {
+    button.addEventListener('click', function() {
+      const index = this.getAttribute('data-index');
+      const reportDiv = document.getElementById(`admin-answers-${index}`);
+      
+      if (reportDiv) {
+        reportDiv.classList.toggle('hide');
+        this.textContent = reportDiv.classList.contains('hide') 
+          ? 'Show Answers' 
+          : 'Hide Answers';
+      }
+    });
+  });
+
   contentDiv.querySelectorAll('.admin-report-toggle').forEach(button => {
     button.addEventListener('click', function() {
       const index = this.getAttribute('data-index');
