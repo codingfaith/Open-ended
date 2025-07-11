@@ -130,7 +130,8 @@ function displayUserResults(userDocs, db) {
         }
       });
     }
-    adminView.appendChild(`${usersNum} users have taken the test!`);
+    const message = `${usersNum} users have taken the test!`;
+    adminView.appendChild(message);
     adminView.appendChild(userCard);
   });
 }
