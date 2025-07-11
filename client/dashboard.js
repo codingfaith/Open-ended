@@ -63,9 +63,11 @@ async function initDashboard() {
     if (isAdmin) {
       loadRecentUsers(db)
       document.getElementById('dashboard-assess').innerHTML =` 
+      <div id="admin-results-container" class="admin-assessment">
         <div id="admin-previous-results">
           <h1 id="admin-greeting"></h1>
-        </div>`;
+        </div>
+      </div>`;
     } else {
       const data = await getUserAttemptsWithProfile(user.uid, db);
       console.log('User data loaded');
@@ -177,69 +179,150 @@ function showError(message) {
   }, 5000);
 }
 // Modified displayData to handle admin view
-function displayData(data, isAdminView = false) {
-  if (!dashboardResult || !adminDashboardResult) return;
+// function displayData(data, isAdminView = false) {
+//   if (!dashboardResult || !adminDashboardResult) return;
   
-  const greeting = document.getElementById('greeting');
-  const adminGreeting = document.getElementById('admin-greeting');
+//   const greeting = document.getElementById('greeting');
+//   const adminGreeting = document.getElementById('admin-greeting');
 
-  if (greeting || adminGreeting) {
-    if (isAdminView) {
-      adminGreeting.textContent = `Viewing results for ${data.userProfile?.firstName || 'User'} ${data.userProfile?.lastName || ''}`;
-    } else {
-      greeting.textContent = `Welcome back ${data.userProfile?.firstName || 'User'}!`;
-    }
+//   if (greeting || adminGreeting) {
+//     if (isAdminView) {
+//       adminGreeting.textContent = `Viewing results for ${data.userProfile?.firstName || 'User'} ${data.userProfile?.lastName || ''}`;
+//     } else {
+//       greeting.textContent = `Welcome back ${data.userProfile?.firstName || 'User'}!`;
+//     }
+//   }
+  
+//   const container = document.getElementById('previous-results-details');
+//   if (!container || adminView) return;
+  
+//   const hasAttempts = data.attempts?.length > 0;
+  
+//   // iOS-safe template rendering
+//   const tempDiv = document.createElement('div');
+//   tempDiv.innerHTML = `
+//     <div id="previous-results-content">
+//       <h3>Your Test Attempts</h3>
+//       <div class="attempts-list">
+//         ${hasAttempts ? data.attempts.map((attempt, index) => `
+//           <div class="attempt-card">
+//             <span class="attempt-date">${new Date(attempt.timestamp?.seconds * 1000).toLocaleString()}</span>
+//             <span class="attempt-score">Score: ${attempt.score}%</span>
+//             <span class="attempt-class">${attempt.classification}</span>
+//             <button class="last-reportBtn" data-index="${index}">See report</button><br><br>
+//           </div>
+//           <div class="show-dash-report hide" id="report-${index}">${formatText(attempt.report)}<hr></br></div>
+//         `).join('') : `
+//           <div class="no-attempts">
+//             <span>You have no results to show yet.</span>
+//             <span>Complete your first quiz to see your results here! 😊</span>
+//           </div>
+//         `}
+//       </div>
+//     </div>
+//   `;
+  
+//   // iOS-safe DOM update
+//   if(dashboardResult){
+//     console.log("still old container is there");
+//     while (dashboardResult.firstChild) {
+//     dashboardResult.removeChild(dashboardResult.firstChild);
+//   }
+//   dashboardResult.appendChild(tempDiv);
+//   } else if(adminDashboardResult){
+//     console.log("container is there");
+//     while (adminDashboardResult.firstChild) {
+//     adminDashboardResult.removeChild(adminDashboardResult.firstChild);
+//   }
+//   adminDashboardResult.appendChild(tempDiv);
+//   }
+
+
+//   // Add event listeners to all report buttons
+//   if (hasAttempts) {
+//     const reportButtons = document.querySelectorAll('.last-reportBtn');
+//     reportButtons.forEach(button => {
+//       addIOSSafeListener(button, 'click', function() {
+//         const index = this.getAttribute('data-index');
+//         const reportDiv = document.getElementById(`report-${index}`);
+        
+//         if (reportDiv) {
+//           reportDiv.classList.toggle('hide');
+//           this.textContent = reportDiv.classList.contains('hide') ? 'See report' : 'Hide report';
+//         }
+//       });
+//     });
+//   }
+// }
+
+function displayData(data, isAdminView = false) {
+  // Debugging logs
+  console.log('Displaying data for:', isAdminView ? 'Admin' : 'User');
+  console.log('Data received:', data);
+
+  // Determine which containers to use
+  const greetingElement = isAdminView 
+    ? document.getElementById('admin-greeting')
+    : document.getElementById('greeting');
+  
+  const resultsContainer = isAdminView
+    ? document.getElementById('admin-previous-results')
+    : document.getElementById('previous-results');
+
+  // Validate we have the necessary elements
+  if (!greetingElement || !resultsContainer) {
+    console.error('Missing required elements:', {
+      greetingElement,
+      resultsContainer,
+      isAdminView
+    });
+    return;
   }
-  
-  const container = document.getElementById('previous-results-details');
-  // if (!container) return;
-  
+
+  // Update greeting
+  greetingElement.textContent = isAdminView
+    ? `Viewing results for ${data.userProfile?.firstName || 'User'} ${data.userProfile?.lastName || ''}`
+    : `Welcome back ${data.userProfile?.firstName || 'User'}!`;
+
+  // Clear existing content
+  while (resultsContainer.firstChild) {
+    resultsContainer.removeChild(resultsContainer.firstChild);
+  }
+
+  // Create and populate new content
   const hasAttempts = data.attempts?.length > 0;
-  
-  // iOS-safe template rendering
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = `
-    <div id="previous-results-content">
-      <h3>Your Test Attempts</h3>
-      <div class="attempts-list">
-        ${hasAttempts ? data.attempts.map((attempt, index) => `
-          <div class="attempt-card">
-            <span class="attempt-date">${new Date(attempt.timestamp?.seconds * 1000).toLocaleString()}</span>
-            <span class="attempt-score">Score: ${attempt.score}%</span>
-            <span class="attempt-class">${attempt.classification}</span>
-            <button class="last-reportBtn" data-index="${index}">See report</button><br><br>
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'results-content';
+
+  contentDiv.innerHTML = `
+    <h3>${isAdminView ? 'User' : 'Your'} Test Attempts</h3>
+    <div class="attempts-list">
+      ${hasAttempts ? data.attempts.map((attempt, index) => `
+        <div class="attempt-card">
+          <span class="attempt-date">${formatAttemptDate(attempt.timestamp)}</span>
+          <span class="attempt-score">Score: ${attempt.score}%</span>
+          <span class="attempt-class">${attempt.classification}</span>
+          <button class="last-reportBtn" data-index="${index}">See report</button>
+          <div class="show-dash-report hide" id="report-${index}">
+            ${formatText(attempt.report)}
+            <hr>
           </div>
-          <div class="show-dash-report hide" id="report-${index}">${formatText(attempt.report)}<hr></br></div>
-        `).join('') : `
-          <div class="no-attempts">
-            <span>You have no results to show yet.</span>
-            <span>Complete your first quiz to see your results here! 😊</span>
-          </div>
-        `}
-      </div>
+        </div>
+      `).join('') : `
+        <div class="no-attempts">
+          <p>No results to show yet.</p>
+          <p>Complete your first quiz to see results here! 😊</p>
+        </div>
+      `}
     </div>
   `;
-  
-  // iOS-safe DOM update
-  if(dashboardResult){
-    console.log("still old container is there");
-    while (dashboardResult.firstChild) {
-    dashboardResult.removeChild(dashboardResult.firstChild);
-  }
-  dashboardResult.appendChild(tempDiv);
-  } else if(adminDashboardResult){
-    console.log("container is there");
-    while (adminDashboardResult.firstChild) {
-    adminDashboardResult.removeChild(adminDashboardResult.firstChild);
-  }
-  adminDashboardResult.appendChild(tempDiv);
-  }
 
+  // Append to the correct container
+  resultsContainer.appendChild(contentDiv);
 
-  // Add event listeners to all report buttons
+  // Add event listeners for report toggles
   if (hasAttempts) {
-    const reportButtons = document.querySelectorAll('.last-reportBtn');
-    reportButtons.forEach(button => {
+    contentDiv.querySelectorAll('.last-reportBtn').forEach(button => {
       addIOSSafeListener(button, 'click', function() {
         const index = this.getAttribute('data-index');
         const reportDiv = document.getElementById(`report-${index}`);
@@ -251,6 +334,18 @@ function displayData(data, isAdminView = false) {
       });
     });
   }
+
+  // Ensure admin view is visible if this is an admin view
+  if (isAdminView && adminView) {
+    adminView.classList.remove('hide');
+    adminView.style.display = 'block';
+  }
+}
+
+// Helper function for date formatting
+function formatAttemptDate(timestamp) {
+  if (!timestamp || !timestamp.seconds) return 'Unknown date';
+  return new Date(timestamp.seconds * 1000).toLocaleString();
 }
 
 // Modified getUserAttemptsWithProfile to work with any user ID
