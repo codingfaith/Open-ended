@@ -121,7 +121,7 @@ function displayUserResults(userDocs, db) {
         try {
           showLoading(true);
           const data = await getUserAttemptsWithProfile(doc.id, db);
-          displayData(data);
+          displayAdminData(data);
         } catch (error) {
           console.error("Error loading user data:", error);
           showError("Failed to load user data");
