@@ -69,7 +69,7 @@ async function initDashboard() {
         </div>`;
     
     } else {
-      adminView.style.display = "none;"
+      adminView.style.display = "none";
       const data = await getUserAttemptsWithProfile(user.uid, db);
       console.log('User data loaded');
       requestAnimationFrame(() => displayData(data));
