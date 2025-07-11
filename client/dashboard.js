@@ -8,7 +8,7 @@ const dashboardErrorMessage = document.getElementById("dashboard-error-message")
 const resultsBtnTxt = document.getElementById('results-btnTxt') || document.createElement('span');
 const adminView = document.getElementById('admin-results-container');
 let usersNum = 0;
-
+let message =  document.getElementById('message');
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
   if (!element) return;
@@ -61,11 +61,12 @@ async function initDashboard() {
 
     const isAdmin = await checkAdmin();
     if (isAdmin) {
-      loadRecentUsers(db)
-      document.getElementById('dashboard-assess').innerHTML =` 
-        <div id="admin-previous-results">
-          <h1 id="admin-greeting"></h1>
-        </div>`;
+      loadRecentUsers(db);
+      adminView.classList.remove("hide");
+      adminView.classList.add("show");
+      message.classList.remove("hide");
+      message.classList.add("show");
+    
     } else {
       const data = await getUserAttemptsWithProfile(user.uid, db);
       console.log('User data loaded');
@@ -93,7 +94,7 @@ async function checkAdmin() {
 
 function displayUserResults(userDocs, db) {
   if (!adminView) return;
-  document.getElementById('message').innerHTML = `<h3>${usersNum} users have taken the test!</h3>`;
+  message.innerHTML = `<h3>${usersNum} users have taken the test!</h3>`;
   
   // Clear existing content safely
   while (adminView.firstChild) {
@@ -119,6 +120,10 @@ function displayUserResults(userDocs, db) {
     const viewBtn = userCard.querySelector('.view-user-btn');
     if (viewBtn) {
       addIOSSafeListener(viewBtn, 'click', async function() {
+        document.getElementById('dashboard-assess').innerHTML =` 
+        <div id="admin-previous-results">
+          <h1 id="admin-greeting"></h1>
+        </div>`;
         try {
           showLoading(true);
           const data = await getUserAttemptsWithProfile(doc.id, db);
@@ -132,8 +137,6 @@ function displayUserResults(userDocs, db) {
       });
     }
     adminView.appendChild(userCard);
-    adminView.classList.remove("hide");
-    adminView.classList.add("show");
   });
 }
 
@@ -280,10 +283,9 @@ function displayData(data) {
 //for admins
 function displayAdminData(adminData) {
   // Validate input and required elements
-  const adminDashboard = document.getElementById('admin-previous-results');
   const adminGreeting = document.getElementById('admin-greeting');
   
-  if (!adminDashboard || !adminGreeting || !adminView) {
+  if (!adminGreeting || !adminView) {
     console.error('Missing required elements for admin view');
     return;
   }
