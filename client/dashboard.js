@@ -6,6 +6,7 @@ const previousBtn = document.getElementById("dashboard-results");
 const dashboardResult = document.getElementById("previous-results");
 const dashboardErrorMessage = document.getElementById("dashboard-error-message") || document.createElement('div');
 const resultsBtnTxt = document.getElementById('results-btnTxt') || document.createElement('span');
+  const adminView = document.getElementById('admin-results-container');
 
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
@@ -277,7 +278,6 @@ function displayAdminData(adminData) {
   // Validate input and required elements
   const adminDashboard = document.getElementById('admin-previous-results');
   const adminGreeting = document.getElementById('admin-greeting');
-  const adminView = document.getElementById('admin-results-container');
   
   if (!adminDashboard || !adminGreeting || !adminView) {
     console.error('Missing required elements for admin view');
