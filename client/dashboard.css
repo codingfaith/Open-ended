@@ -27,6 +27,7 @@
 }
 #logout-btn:hover,
 .view-user-btn:hover,
+.scroll-top-btn:hover
 .last-reportBtn:hover,
 #dashboard-results:hover,
 .admin-report-toggle:hover,
@@ -174,4 +175,19 @@
   background-color: #2b304a;
 }.answers-table tbody tr:nth-child(odd) {
   background-color: #394062;
+}
+.scroll-top-btn {
+  left: 100%;
+  border: none;
+  bottom: 20px;
+  cursor: pointer;
+  font-size: large;
+  position: sticky;
+  color: #4c5582;
+  margin-top: 15px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background: #ffffff;
+  transform: translateX(-100%);
+  transition: background-color 0.3s;
 }
