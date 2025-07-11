@@ -130,7 +130,7 @@ async function displayUserResults(userDocs, db) {
   if (!adminView) return;
   average = await calculateGlobalAverageScore(db);
   message.innerHTML = `<h3>${usersNum} users have taken the test!</h3>
-  Their average score is ${average}% (<span style="font-size:small">scroll below</span>)`;
+  Their average score is ${average}% <br><span style="font-size:small">(scroll below to see users)</span>`;
   
   // Clear existing content safely
   while (adminView.firstChild) {
