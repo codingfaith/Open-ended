@@ -64,7 +64,7 @@ async function initDashboard() {
       message.style.display = "block";
       document.getElementById('dashboard-assess').innerHTML =` 
         <div id="admin-previous-results">
-          <h1 id="admin-greeting"></h1>
+          <h3 style="text-align:center" id="admin-greeting"></h3>
         </div>`;
       loadRecentUsers(db);
     } else {
@@ -280,6 +280,7 @@ function displayData(data) {
 //for admins
 function displayAdminData(adminData) {
   // Validate input and required elements
+  const adminDashboard = document.getElementById("admin-previous-results");
   const adminGreeting = document.getElementById('admin-greeting');
   
   if (!adminGreeting || !adminView) {
