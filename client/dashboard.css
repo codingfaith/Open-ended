@@ -127,3 +127,7 @@
 .admin-user-card {
   font-size: small;
 }
+#message {
+  color: #ffffff;
+  text-align: center;
+}

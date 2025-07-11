@@ -92,8 +92,8 @@ async function checkAdmin() {
 
 
 function displayUserResults(userDocs, db) {
-  document.getElementById('message').innerHTML = `<h1>${usersNum} users have taken the test!</h1>`;
   if (!adminView) return;
+  document.getElementById('message').innerHTML = `<h2>${usersNum} users have taken the test!</h2>`;
   
   // Clear existing content safely
   while (adminView.firstChild) {
