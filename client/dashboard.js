@@ -348,10 +348,7 @@ function displayAdminData(adminData) {
 
   // Build admin attempts list with additional admin features
   contentDiv.innerHTML = `
-    <div class="admin-results-header">
-      <h4 style="margin:0">User Attempt</h4>
-    </div>
-    <div class="attempts-list">
+  <div class="attempts-list">
   ${adminData.attempts.map((attempt, index) => `
     <div class="admin-attempt-card">
       <div class="attempt-meta">
