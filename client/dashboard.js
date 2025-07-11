@@ -95,7 +95,7 @@ async function checkAdmin() {
 function displayUserResults(userDocs, db) {
   if (!adminView) return;
   message.innerHTML = `<h3>${usersNum} users have taken the test!</h3>
-  Their average score is ${calculateGlobalAverageScore(db)}%`;
+  Their average score is ${calculateGlobalAverageScore(db).averageScore}%`;
   
   // Clear existing content safely
   while (adminView.firstChild) {
@@ -186,7 +186,11 @@ async function calculateGlobalAverageScore(db) {
   const total = attempts.docs.reduce((sum, doc) => sum + doc.data().score, 0);
   // Round to 2 decimal places
   const average = Math.round((total / attempts.size) * 100) / 100;
-  return average;
+  console.log(totalUsers);
+  return {
+    averageScore: average,
+    totalUsers: attempts.size
+  };
 }
 
 // Add this helper function for better error messages
