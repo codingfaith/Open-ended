@@ -95,7 +95,7 @@ async function checkAdmin() {
 function displayUserResults(userDocs, db) {
   if (!adminView) return;
   message.innerHTML = `<h3>${usersNum} users have taken the test!</h3>
-  Their average score is ${calculateGlobalAverageScore(db).averageScore}%`;
+  Their average score is ${calculateGlobalAverageScore(db)}%`;
   
   // Clear existing content safely
   while (adminView.firstChild) {
@@ -206,11 +206,9 @@ async function calculateGlobalAverageScore(db) {
     const averageScore = userCount > 0 
       ? Math.round((totalScore / userCount) * 100) / 100
       : 0;
-    console.log(userCount);
-    return {
-      averageScore,
-      totalUsers: userCount
-    };
+
+    return averageScore;
+  
   } catch (error) {
     console.error("Error calculating global average:", error);
     throw error;
