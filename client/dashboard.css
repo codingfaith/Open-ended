@@ -125,8 +125,8 @@
   height: 350px;
   overflow-y: scroll;
   border-radius: 10px;
+  background: #767da0;
   border: 1px solid #ccc;
-  background: midnightblue;
 }
 .admin-user-card {
   font-size: small;
