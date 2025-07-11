@@ -346,9 +346,9 @@ function displayAdminData(adminData) {
           </thead>
           <tbody>
             ${attempt.answers.map(answer => `
-              <tr class="${answer.isCorrect ? 'correct-answer' : 'incorrect-answer'}">
-                <td>${answer.question || 'N/A'}</td>
-                <td>${answer.userAnswer || 'No answer'}</td>
+              <tr>
+                <td>${answer.question}</td>
+                <td>${answer.userAnswer}</td>
               </tr>
             `).join('')}
           </tbody>

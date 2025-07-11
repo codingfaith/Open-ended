@@ -157,3 +157,22 @@
 #dashboard-results {
   align-self: flex-start;
 }
+.answers-table {
+  width: 100%;
+  margin: 15px 0;
+  text-align: center;
+  border-collapse: collapse;
+}
+
+.answers-table th, .answers-table td {
+  padding: 8px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.answers-table th {
+  background: #151825;
+}
+.answers-table tbody tr:nth-child(even) {
+  background-color: #525876;
+}
