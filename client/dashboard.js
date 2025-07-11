@@ -203,9 +203,8 @@ function showError(message) {
 }
 
 //for regular users
-function displayData(userData) {
+function displayData(data) {
   // Validate input and required elements
-  const dashboardResult = document.getElementById('previous-results');
   const greeting = document.getElementById('greeting');
   
   if (!dashboardResult || !greeting) {
@@ -214,7 +213,7 @@ function displayData(userData) {
   }
 
   // Update greeting
-  greeting.textContent = `Welcome back ${userData.userProfile?.firstName || 'User'}!`;
+  greeting.textContent = `Welcome back ${data.userProfile?.firstName || 'User'}!`;
 
   // Clear previous content
   dashboardResult.innerHTML = '';
@@ -224,7 +223,7 @@ function displayData(userData) {
   contentDiv.className = 'user-results-content';
 
   // Handle case with no attempts
-  if (!userData.attempts?.length) {
+  if (!data.attempts?.length) {
     contentDiv.innerHTML = `
       <div class="no-attempts">
         <p>You have no results to show yet.</p>
@@ -239,7 +238,7 @@ function displayData(userData) {
   contentDiv.innerHTML = `
     <h3>Your Test Attempts</h3>
     <div class="attempts-list">
-      ${userData.attempts.map((attempt, index) => `
+      ${data.attempts.map((attempt, index) => `
         <div class="attempt-card">
           <span class="attempt-date">${formatAttemptDate(attempt.timestamp)}</span>
           <span class="attempt-score">Score: ${attempt.score}%</span>
