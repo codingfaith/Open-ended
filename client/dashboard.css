@@ -4,7 +4,8 @@
 #logout-btn,
 .view-user-btn,
 #dashboard-results,
-.admin-report-toggle {
+.admin-report-toggle,
+.admin-answers-toggle {
   border: none;
   outline: none;
   cursor: pointer;
@@ -15,7 +16,8 @@
   background: #ffffff;   
 }
 .view-user-btn,
-.admin-report-toggle {
+.admin-report-toggle,
+.admin-answers-toggle {
   font-size: medium;
   font-family: inherit;
 }
@@ -27,7 +29,8 @@
 .view-user-btn:hover,
 .last-reportBtn:hover,
 #dashboard-results:hover,
-.admin-report-toggle:hover {
+.admin-report-toggle:hover,
+.admin-answers-toggle:hover {
   color: #ffffff;
   background: skyblue;
 }
@@ -143,7 +146,8 @@
 #admin-greeting {
   justify-self: center;
 }
-.admin-report-toggle {
+.admin-report-toggle,
+.admin-answers-toggle {
   width: 100%;
   margin-top: 5px;
 }
