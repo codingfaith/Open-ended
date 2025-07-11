@@ -312,24 +312,23 @@ function displayAdminData(adminData) {
   // Build admin attempts list with additional admin features
   contentDiv.innerHTML = `
     <div class="admin-results-header">
-      <h4>User Attempts</h4>
+      <h4 style="margin:0">User Attempts</h4>
     </div>
     <div class="attempts-list">
       ${adminData.attempts.map((attempt, index) => `
         <div class="admin-attempt-card">
           <div class="attempt-meta">
             <span class="attempt-date"> Date and time: ${formatAttemptDate(attempt.timestamp)}</span>
-          </di
+          </div><br>
           <div class="attempt-stats">
             <span class="attempt-score">Score: ${attempt.score}%</span><br>
-            <span class="attempt-class">${attempt.classification}</span>
+            <span class="attempt-class">${attempt.classification}</span><br>
             <button class="admin-report-toggle" data-index="${index}">
               Toggle Full Report
             </button>
-          </div>
+          </div><hr>
 
           <div class="admin-report-content hide" id="admin-report-${index}">
-            <h1>Detailed Report:</h1>
             ${formatText(attempt.report)}
             ${adminData.userProfile?.role === 'admin' ? `
               <div class="admin-actions">
