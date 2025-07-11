@@ -7,10 +7,10 @@
 .admin-report-toggle {
   border: none;
   outline: none;
-  padding: 5px;
   cursor: pointer;
   color: #4c5582;
   font-size: large;
+  padding: 5px 10px;
   border-radius: 10px;
   background: #ffffff;   
 }
