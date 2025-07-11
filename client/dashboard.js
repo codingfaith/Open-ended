@@ -63,11 +63,9 @@ async function initDashboard() {
     if (isAdmin) {
       loadRecentUsers(db)
       document.getElementById('dashboard-assess').innerHTML =` 
-      <div id="admin-results-container" class="admin-assessment">
         <div id="admin-previous-results">
           <h1 id="admin-greeting"></h1>
-        </div>
-      </div>`;
+        </div>`;
     } else {
       const data = await getUserAttemptsWithProfile(user.uid, db);
       console.log('User data loaded');
