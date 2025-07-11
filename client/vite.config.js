@@ -13,8 +13,7 @@ export default defineConfig({
         contact: resolve(__dirname, 'contact.html'),
         auth: resolve(__dirname, 'auth.html'),
         dashboard: resolve(__dirname, 'dashboard.html')
-      },
-      external: ['react']
+      }
     }
   }
 })
