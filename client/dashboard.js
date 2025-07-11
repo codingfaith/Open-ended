@@ -92,7 +92,7 @@ async function checkAdmin() {
   return userDoc.data()?.role === "admin"; // Returns true/false
 }
 
-average = async function calculateGlobalAverageScore(db) {
+async function calculateGlobalAverageScore(db) {
   try {
     const usersSnapshot = await db.collection("users").get();
     let totalScore = 0;
@@ -129,6 +129,7 @@ average = async function calculateGlobalAverageScore(db) {
 
 function displayUserResults(userDocs, db) {
   if (!adminView) return;
+  console.log(calculateGlobalAverageScore(db));
   message.innerHTML = `<h3>${usersNum} users have taken the test!</h3>
   Their average score is ${average}%`;
   
