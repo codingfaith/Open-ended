@@ -288,11 +288,11 @@ function displayAdminData(adminData) {
     return;
   }
 
-  // Update admin greeting
-  adminGreeting.textContent = `Viewing results for ${adminData.userProfile?.firstName || 'User'} ${adminData.userProfile?.lastName || ''}`;
-
   // Clear previous content
   adminDashboard.innerHTML = '';
+
+  // Update admin greeting
+  adminGreeting.textContent = `Viewing results for ${adminData.userProfile?.firstName || 'User'} ${adminData.userProfile?.lastName || ''}`;
 
   // Create new content container
   const contentDiv = document.createElement('div');
