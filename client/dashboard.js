@@ -6,7 +6,8 @@ const previousBtn = document.getElementById("dashboard-results");
 const dashboardResult = document.getElementById("previous-results");
 const dashboardErrorMessage = document.getElementById("dashboard-error-message") || document.createElement('div');
 const resultsBtnTxt = document.getElementById('results-btnTxt') || document.createElement('span');
-  const adminView = document.getElementById('admin-results-container');
+const adminView = document.getElementById('admin-results-container');
+let usersNum = 0;
 
 // iOS-specific event listener with passive option
 const addIOSSafeListener = (element, event, handler) => {
@@ -129,7 +130,7 @@ function displayUserResults(userDocs, db) {
         }
       });
     }
-    
+    adminView.appendChild(`${usersNum} users have taken the test!`);
     adminView.appendChild(userCard);
   });
 }
@@ -166,6 +167,7 @@ async function loadRecentUsers(db) {
       .map(user => user.userDoc);
 
     console.log(`Found ${filteredUsers.length} users with attempts`);
+    usersNum = filteredUsers.length;
     displayUserResults(filteredUsers, db);
     
   } catch (error) {
