@@ -192,7 +192,7 @@ function displayData(data, isAdminView = false) {
   }
   
   const container = document.getElementById('previous-results-details');
-  if (!container) return;
+  // if (!container) return;
   
   const hasAttempts = data.attempts?.length > 0;
   
