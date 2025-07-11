@@ -151,6 +151,7 @@ function displayUserResults(userDocs, db) {
     const viewBtn = userCard.querySelector('.view-user-btn');
     if (viewBtn) {
       addIOSSafeListener(viewBtn, 'click', async function() {
+        console.log('button clicked');
         try {
           showLoading(true);
           const data = await getUserAttemptsWithProfile(doc.id, db);
