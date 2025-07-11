@@ -7,7 +7,7 @@
 .admin-report-toggle {
   border: none;
   outline: none;
-  padding: 10px;
+  padding: 5px;
   cursor: pointer;
   color: #4c5582;
   font-size: large;
@@ -140,4 +140,8 @@
 }
 #admin-greeting {
   justify-self: center;
+}
+.admin-report-toggle {
+  width: 100%;
+  margin-top: 5px;
 }
