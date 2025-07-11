@@ -118,7 +118,6 @@ function displayUserResults(userDocs, db) {
     const viewBtn = userCard.querySelector('.view-user-btn');
     if (viewBtn) {
       addIOSSafeListener(viewBtn, 'click', async function() {
-        console.log('button clicked');
         try {
           showLoading(true);
           const data = await getUserAttemptsWithProfile(doc.id, db);
@@ -136,17 +135,59 @@ function displayUserResults(userDocs, db) {
   });
 }
 
+// async function loadRecentUsers(db) {
+//   try {
+//     showLoading(true);
+//     const usersSnapshot = await db.collection("users")
+//       .orderBy("lastLogin", "desc")
+//       .get();
+    
+//     displayUserResults(usersSnapshot.docs, db);
+//   } catch (error) {
+//     showError("Failed to load recent users");
+//     console.error("Error loading recent users:", error);
+//   } finally {
+//     showLoading(false);
+//   }
+// }
+
 async function loadRecentUsers(db) {
   try {
     showLoading(true);
+    
+    // First get all recent users
     const usersSnapshot = await db.collection("users")
       .orderBy("lastLogin", "desc")
+      .limit(100) // Add reasonable limit
       .get();
+
+    // Check each user for attempts
+    const usersWithAttempts = await Promise.all(
+      usersSnapshot.docs.map(async (userDoc) => {
+        const attemptsSnapshot = await db.collection("userResults")
+          .doc(userDoc.id)
+          .collection("attempts")
+          .limit(1) // We only need to know if at least one exists
+          .get();
+        
+        return {
+          userDoc,
+          hasAttempts: !attemptsSnapshot.empty
+        };
+      })
+    );
+
+    // Filter to only users with attempts
+    const filteredUsers = usersWithAttempts
+      .filter(user => user.hasAttempts)
+      .map(user => user.userDoc);
+
+    console.log(`Found ${filteredUsers.length} users with attempts`);
+    displayUserResults(filteredUsers, db);
     
-    displayUserResults(usersSnapshot.docs, db);
   } catch (error) {
-    showError("Failed to load recent users");
     console.error("Error loading recent users:", error);
+    showError("Failed to load users with results");
   } finally {
     showLoading(false);
   }
@@ -331,12 +372,6 @@ function displayData(data, isAdminView = false) {
         }
       });
     });
-  }
-
-  // Ensure admin view is visible if this is an admin view
-  if (isAdminView && adminView) {
-    adminView.classList.remove('hide');
-    adminView.style.display = 'block';
   }
 }
 
