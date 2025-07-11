@@ -62,12 +62,11 @@ async function initDashboard() {
     const isAdmin = await checkAdmin();
     if (isAdmin) {
       message.style.display = "block";
-      loadRecentUsers(db);
       document.getElementById('dashboard-assess').innerHTML =` 
         <div id="admin-previous-results">
           <h1 id="admin-greeting"></h1>
         </div>`;
-    
+      loadRecentUsers(db);
     } else {
       adminView.style.display = "none";
       const data = await getUserAttemptsWithProfile(user.uid, db);
