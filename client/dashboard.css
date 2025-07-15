@@ -72,7 +72,7 @@
 }
 #logout-buttonAdmin {
   margin: 10px;
-  justify-self: flex-end;
+  align-self: flex-end;
 }
 
 #auth-error {
