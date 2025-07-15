@@ -130,14 +130,17 @@ async function displayUserResults(userDocs, db) {
   if (!adminView) return;
   average = await calculateGlobalAverageScore(db);
   message.innerHTML = `<h3>${usersNum} users have taken the test!</h3>
-  Their average score is ${average}% <br><span style="font-size:small">(scroll below to see users)</span>
-   <button id="logout-btn" class="logout-button" type="button">
-      <span class="button-text">Log Out</span>
-      <span class="loading-spinner" style="display:none;">
-          <svg class="spinner" viewBox="0 0 50 50">
-          <circle cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
-          </svg>
-      </span>
+  Their average score is ${average}% <br><span style="font-size:small">(scroll below to see users)</span>`;
+
+  document.getElementById('logoutContainer').style.display="block";
+  document.getElementById('logoutContainer').innerHTML = `
+  <button id="logout-btn" class="logout-button" type="button" style="justify-self: flex-end">
+    <span class="button-text">Log Out</span>
+    <span class="loading-spinner" style="display:none;">
+        <svg class="spinner" viewBox="0 0 50 50">
+        <circle cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+        </svg>
+    </span>
   </button>`;
   document.getElementById('logout-btn').addEventListener('click', handleLogout)
   // Clear existing content safely
