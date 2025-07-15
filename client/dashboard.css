@@ -70,9 +70,13 @@
   text-align: center;
 }
 .logout-buttonAdmin {
-  margin-bottom: 5px;
-  justify-self: flex-end;
+  right:0;
+  margin: 10px;
+  position: absolute;
   border: 1px solid red;
+}
+.admin-assessment {
+  position: relative;
 }
 
 #auth-error {
