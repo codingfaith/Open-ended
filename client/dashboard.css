@@ -72,12 +72,7 @@
 }
 #logout-buttonAdmin {
   margin: 10px;
-  justify-items: flex-end;
-}
-.admin-assessment {
- display: flex;
- border: 1px solid red;
- flex-direction: column;
+  justify-self: flex-end;
 }
 
 #auth-error {
