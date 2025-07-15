@@ -141,7 +141,7 @@ async function displayUserResults(userDocs, db) {
         </svg>
     </span>
   </button>`;
-  document.getElementById('logoutContainer').style.display="block";
+  document.getElementById('logoutContainer').style.display="flex";
   document.getElementById('logout-buttonAdmin').addEventListener('click', handleLogout)
   // Clear existing content safely
   while (adminView.firstChild) {
