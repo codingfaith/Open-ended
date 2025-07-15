@@ -69,6 +69,9 @@
   border-radius: 4px;
   text-align: center;
 }
+.logout-button {
+  justify-self: flex-end;
+}
 
 #auth-error {
   color: orange; /* Default error color */
