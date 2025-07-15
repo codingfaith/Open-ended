@@ -133,7 +133,7 @@ async function displayUserResults(userDocs, db) {
   Their average score is ${average}% <br><span style="font-size:small">(scroll below to see users)</span>`;
 
   document.getElementById('logoutContainer').innerHTML = `
-  <button id="logout-btn" class="logout-buttonAdmin" type="button">
+  <button id="logout-buttonAdmin" class="logout-buttonAdmin" type="button">
     <span class="button-text">Log Out</span>
     <span class="loading-spinner" style="display:none;">
         <svg class="spinner" viewBox="0 0 50 50">
