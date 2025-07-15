@@ -69,7 +69,8 @@
   border-radius: 4px;
   text-align: center;
 }
-.logout-button {
+.logout-buttonAdmin {
+  margin-bottom: 5px;
   justify-self: flex-end;
 }
 
