@@ -300,7 +300,7 @@ async function handleLogin(e) {
 }
 
 //logout function
-async function handleLogout(e) {
+export async function handleLogout(e) {
   console.log('clicked logout');
   if (e) {
     e.preventDefault();

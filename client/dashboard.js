@@ -1,4 +1,4 @@
-import { initializeFirebase } from './auth.js';
+import { handleLogout, initializeFirebase } from './auth.js';
 
 // DOM elements with null checks for iOS
 const dashboardImg = document.getElementById("dashboard-img");
@@ -139,7 +139,7 @@ async function displayUserResults(userDocs, db) {
           </svg>
       </span>
   </button>`;
-  
+  document.getElementById('logout-btn').addEventListener('click', handleLogout)
   // Clear existing content safely
   while (adminView.firstChild) {
     adminView.removeChild(adminView.firstChild);
