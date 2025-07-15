@@ -4,6 +4,7 @@
 #logout-btn,
 .view-user-btn,
 #dashboard-results,
+#logout-buttonAdmin,
 .admin-report-toggle,
 .admin-answers-toggle {
   border: none;
@@ -69,11 +70,10 @@
   border-radius: 4px;
   text-align: center;
 }
-.logout-buttonAdmin {
+#logout-buttonAdmin {
   right:0;
   margin: 10px;
   position: absolute;
-  border: 1px solid red;
 }
 .admin-assessment {
   position: relative;

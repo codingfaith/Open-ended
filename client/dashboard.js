@@ -142,7 +142,7 @@ async function displayUserResults(userDocs, db) {
     </span>
   </button>`;
   document.getElementById('logoutContainer').style.display="block";
-  document.getElementById('logout-btn').addEventListener('click', handleLogout)
+  document.getElementById('logout-buttonAdmin').addEventListener('click', handleLogout)
   // Clear existing content safely
   while (adminView.firstChild) {
     adminView.removeChild(adminView.firstChild);
