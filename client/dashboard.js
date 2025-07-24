@@ -62,7 +62,8 @@ async function initDashboard() {
 
     if (await checkAdmin()) {
       message.style.display = "block";
-      document.getElementById('dashboard-assess').innerHTML =` 
+      document.getElementById('dashboard-assess').style.display ="none";
+       document.getElementById('dashboard-assessAdmin').innerHTML =` 
         <h3 id="admin-greeting"></h3>
         <div id="admin-previous-results"></div>`;
       loadRecentUsers(db);
@@ -432,16 +433,6 @@ function displayAdminData(adminData) {
         this.textContent = reportDiv.classList.contains('hide') 
           ? 'Show Full Report' 
           : 'Hide Full Report';
-      }
-    });
-  });
-
-  // Add admin-specific action listeners
-  contentDiv.querySelectorAll('.delete-attempt-btn').forEach(button => {
-    button.addEventListener('click', async function() {
-      const attemptId = this.getAttribute('data-attempt-id');
-      if (confirm('Are you sure you want to delete this attempt?')) {
-        await deleteUserAttempt(adminData.userProfile.uid, attemptId);
       }
     });
   });

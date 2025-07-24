@@ -631,34 +631,98 @@ class UbuntexIndex {
          `;
 
         // Save results to Firebase
-       try {
-            const auth = firebase.auth();
-            const user = auth.currentUser;
+    //    try {
+    //         const auth = firebase.auth();
+    //         const user = auth.currentUser;
             
-            if (user) {
-                const db = firebase.firestore();
-                const userResultsRef = db.collection('userResults').doc(user.uid);
-                const attemptsRef = userResultsRef.collection('attempts');
+    //         if (user) {
+    //             const db = firebase.firestore();
+    //             const userResultsRef = db.collection('userResults').doc(user.uid);
+    //             const attemptsRef = userResultsRef.collection('attempts');
 
-                // Prepare data for this attempt
-                const attemptData = {
-                    score: score.toFixed(2),
-                    classification: this.getClassification(score),
-                    answers: this.quizResults.responses,
-                    report: finalReport,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    attemptNumber: (await attemptsRef.get()).size + 1  // Auto-increment attempt count
-                };
+    //             // Prepare data for this attempt
+    //             const attemptData = {
+    //                 score: score.toFixed(2),
+    //                 classification: this.getClassification(score),
+    //                 answers: this.quizResults.responses,
+    //                 report: finalReport,
+    //                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    //                 attemptNumber: (await attemptsRef.get()).size + 1  // Auto-increment attempt count
+    //             };
                 
-                // Save as a new document in the 'attempts' subcollection
-                await attemptsRef.add(attemptData);
-                console.log(`Attempt #${attemptData.attemptNumber} saved to Firebase`);
-            } else {
-                console.log("No user logged in, skipping Firebase save");
-            }
-        } catch (firebaseError) {
-            console.error("Error saving to Firebase:", firebaseError);
+    //             // Save as a new document in the 'attempts' subcollection
+    //             await attemptsRef.add(attemptData);
+    //             console.log(`Attempt #${attemptData.attemptNumber} saved to Firebase`);
+    //         } else {
+    //             console.log("No user logged in, skipping Firebase save");
+    //         }
+    //     } catch (firebaseError) {
+    //         console.error("Error saving to Firebase:", firebaseError);
+    //     }
+
+    // Save results to Firebase
+    try {
+        const auth = firebase.auth();
+        
+        // Add a small delay to ensure auth state is ready (sometimes needed on mobile)
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        const user = auth.currentUser;
+        
+        if (!user) {
+            console.log("No user logged in, skipping Firebase save");
+            return;
         }
+
+        const db = firebase.firestore();
+        const userResultsRef = db.collection('userResults').doc(user.uid);
+        const attemptsRef = userResultsRef.collection('attempts');
+
+        // Get attempt count first
+        const attemptsSnapshot = await attemptsRef.get();
+        const attemptNumber = attemptsSnapshot.size + 1;
+
+        // Prepare data for this attempt
+        const attemptData = {
+            score: typeof score === 'number' ? score.toFixed(2) : score,
+            classification: this.getClassification(score),
+            answers: this.quizResults.responses,
+            report: finalReport,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            attemptNumber: attemptNumber,
+            deviceInfo: {
+                platform: navigator.platform,
+                userAgent: navigator.userAgent
+            }
+        };
+        
+        console.log("Attempting to save data:", attemptData);
+        
+        // Save as a new document in the 'attempts' subcollection
+        const docRef = await attemptsRef.add(attemptData);
+        console.log(`Attempt #${attemptData.attemptNumber} saved to Firebase with ID: ${docRef.id}`);
+        
+        // Verify the write by reading it back
+        const docSnapshot = await docRef.get();
+        if (docSnapshot.exists) {
+            console.log("Write verification successful:", docSnapshot.data());
+        } else {
+            console.warn("Write verification failed - document not found");
+        }
+    } catch (firebaseError) {
+        console.error("Error saving to Firebase:", firebaseError);
+        
+        // Additional error details for debugging
+        if (firebaseError.code) {
+            console.error("Firebase error code:", firebaseError.code);
+        }
+        if (firebaseError.message) {
+            console.error("Firebase error message:", firebaseError.message);
+        }
+        
+        // Check network status
+        console.log("Online status:", navigator.onLine);
+    }
 
         // Set up button interactions
         document.getElementById("answers").addEventListener("click", () => {
@@ -835,7 +899,7 @@ class UbuntexIndex {
         return report || "No report could be generated.";
     } catch (error) {
         console.error("Error generating report:", error);
-        return "## Report Unavailable\nWe couldn't generate a detailed report at this time.";
+        return "Report Unavailable\nWe couldn't generate a detailed report at this time. Please contact us via the contact page.";
     }
 }
 }
