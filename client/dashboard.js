@@ -63,7 +63,10 @@ async function initDashboard() {
     if (await checkAdmin()) {
       message.style.display = "block";
       document.getElementById('dashboard-assess').style.display ="none";
-       document.getElementById('dashboard-assessAdmin').innerHTML =` 
+      const adminCard = document.createElement('div');
+      adminCard.id = "dashboard-assessAdmin";
+      document.getElementById('dashboard-assessAdmin').innerHTML =` 
+        <span>X<span>
         <h3 id="admin-greeting"></h3>
         <div id="admin-previous-results"></div>`;
       loadRecentUsers(db);

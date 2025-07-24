@@ -124,6 +124,7 @@
   position: fixed;
 }
 #dashboard-assessAdmin {
+  width: 96%;
   border: 1px solid red;
 }
 /* iPhone fixes */
