@@ -285,7 +285,7 @@ function displayData(data) {
 
   // Build attempts list
   contentDiv.innerHTML = `
-    <h3>Your Test Attempts</h3>
+    <h3 style="text-align:center;">Your Test Attempts</h3>
     <div class="attempts-list">
       ${data.attempts.map((attempt, index) => `
         <div class="attempt-card">
