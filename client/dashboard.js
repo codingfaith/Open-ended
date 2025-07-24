@@ -65,6 +65,9 @@ async function initDashboard() {
       document.getElementById('dashboard-assess').style.display ="none";
       const adminCard = document.createElement('div');
       adminCard.id = "dashboard-assessAdmin";
+      if (adminView.parentNode) {
+       adminView.parentNode.insertBefore(adminCard, adminView.nextSibling);
+      }
       document.getElementById('dashboard-assessAdmin').innerHTML =` 
         <span>X<span>
         <h3 id="admin-greeting"></h3>
