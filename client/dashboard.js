@@ -170,6 +170,7 @@ async function displayUserResults(userDocs, db) {
           showLoading(true);
           const data = await getUserAttemptsWithProfile(doc.id, db);
           displayAdminData(data);
+          adminView.scrollIntoView({ behavior: "smooth" });
         } catch (error) {
           console.error("Error loading user data:", error);
           showError("Failed to load user data");
@@ -262,7 +263,7 @@ function displayData(data) {
   }
 
   // Update greeting
-  greeting.textContent = `Welcome back ${data.userProfile?.firstName || 'User'}!`;
+  greeting.textContent = `Hi ${data.userProfile?.firstName || 'User'}!`;
 
   // Clear previous content
   dashboardResult.innerHTML = '';
