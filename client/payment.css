@@ -34,6 +34,14 @@ button:hover {
     flex-direction: column;
     justify-content: center;
 }
+#close {
+    padding: 10px;
+    cursor: pointer;
+    font-size: large;
+    font-weight: bold;
+    align-self: flex-end;
+    border: 1px solid #ccc;
+}
 @media screen and (max-width: 500px) {
     .payment h1 {
         font-size: 1.3rem;
