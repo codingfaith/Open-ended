@@ -449,7 +449,7 @@ function downloadPDF() {
   const element = document.querySelector(".user-results-content");
   const opt = {
     margin:       0.5,
-    filename:     'styled-content.pdf',
+    filename:     'ubuntex-report.pdf',
     image:        { type: 'jpeg', quality: 0.98 },
     html2canvas:  { scale: 2 },
     jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
