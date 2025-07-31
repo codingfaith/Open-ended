@@ -443,6 +443,17 @@ function formatAttemptDate(timestamp) {
   if (!timestamp || !timestamp.seconds) return 'Unknown date';
   return new Date(timestamp.seconds * 1000).toLocaleString();
 }
+function downloadStyledPDF() {
+  const element = document.getElementById("content");
+  const opt = {
+    margin:       0.5,
+    filename:     'styled-content.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+  };
+  html2pdf().set(opt).from(element).save();
+}
 
 // Modified getUserAttemptsWithProfile to work with any user ID
 async function getUserAttemptsWithProfile(userId, db) {

@@ -673,6 +673,7 @@ class UbuntexIndex {
                 document.getElementById("results-table").innerHTML = `
                     <h3>Detailed Analysis</h3>
                     <div class="report-content">${this.formatText(finalReport)}</div>
+                    <button id="downloadReportBtn" ${onclick="downloadPDF()"}>Download report</button>
                 `;
             }, 50);
         });
@@ -698,6 +699,18 @@ class UbuntexIndex {
             .replace(/\*\*(.*?)\*\*/g, (_, group) => `<strong><em>${group.trim()}</em></strong>`)
             .replace(/[:\-]/g, "");
         return formatted;
+    }
+    
+    downloadPDF() {
+    const element = document.getElementById("results-table");
+    const opt = {
+        margin:       0.5,
+        filename:     'ubuntexreport.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
     }
 
     renderResultsTable() {
