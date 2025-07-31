@@ -106,11 +106,11 @@ nav a:hover {
     width: 100%; 
     border: none;
     outline: none;
+    padding: 10px;
     margin: 10px 0;   
     cursor: pointer;
     color:#4c5582;  
     font-size: large;
-    padding: 5px 10px;
     border-radius: 5px;
     background:#ffffff;  
 }
