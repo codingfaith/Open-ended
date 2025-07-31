@@ -114,6 +114,10 @@ nav a:hover {
     border-radius: 5px;
     background:#ffffff;  
 }
+#downloadReportBtn:hover {
+  color: #ffffff;
+  background: skyblue;
+}
 
 @media screen and (max-width: 541px) {
     .assessment h1 {

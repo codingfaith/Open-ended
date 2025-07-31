@@ -298,7 +298,7 @@ function displayData(data) {
           </button>
           <div class="report-content hide" id="report-${index}">
             ${formatText(attempt.report)}
-            <button class="downloadReportBtn" ${onclick="downloadPDF()"}>Download Report</button>
+            <button class="downloadReportBtn"}>Download Report</button>
             <hr>
           </div>
         </div>
@@ -308,6 +308,7 @@ function displayData(data) {
 
   // Add to DOM
   dashboardResult.appendChild(contentDiv);
+  document.querySelector(".downloadReportBtn").addEventListener("click", downloadPDF);
 
   // Add event listeners for report toggles
   contentDiv.querySelectorAll('.report-toggle-btn').forEach(button => {
@@ -445,7 +446,7 @@ function formatAttemptDate(timestamp) {
   return new Date(timestamp.seconds * 1000).toLocaleString();
 }
 function downloadPDF() {
-  const element = document.getElementById("content");
+  const element = document.querySelector(".user-results-content");
   const opt = {
     margin:       0.5,
     filename:     'styled-content.pdf',
