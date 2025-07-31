@@ -298,7 +298,7 @@ function displayData(data) {
           </button>
           <div class="report-content hide" id="report-${index}">
             ${formatText(attempt.report)}
-            <button class="downloadReportBtn" ${onclick="downloadPDF()"}>Download report</button>
+            <button class="downloadReportBtn" ${onclick="downloadPDF()"}>Download Report</button>
             <hr>
           </div>
         </div>
@@ -444,7 +444,7 @@ function formatAttemptDate(timestamp) {
   if (!timestamp || !timestamp.seconds) return 'Unknown date';
   return new Date(timestamp.seconds * 1000).toLocaleString();
 }
-function downloadStyledPDF() {
+function downloadPDF() {
   const element = document.getElementById("content");
   const opt = {
     margin:       0.5,

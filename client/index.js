@@ -673,7 +673,7 @@ class UbuntexIndex {
                 document.getElementById("results-table").innerHTML = `
                     <h3>Detailed Analysis</h3>
                     <div class="report-content">${this.formatText(finalReport)}</div>
-                    <button id="downloadReportBtn" ${onclick="downloadPDF()"}>Download report</button>
+                    <button id="downloadReportBtn" ${onclick="this.downloadPDF()"}>Download Report</button>
                 `;
             }, 50);
         });
