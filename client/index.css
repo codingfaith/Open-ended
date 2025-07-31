@@ -102,7 +102,7 @@ nav a:hover {
     color: #4c5582;
     text-decoration: underline;
 }
-.downloadReportBtn {
+#downloadReportBtn {
   width: 100%;  
   border: none;
   outline: none;

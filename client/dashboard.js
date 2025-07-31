@@ -298,7 +298,7 @@ function displayData(data) {
           </button>
           <div class="report-content hide" id="report-${index}">
             ${formatText(attempt.report)}
-            <button class="downloadReportBtn"${onclick="downloadPDF()"}>Download report</button>
+            <button class="downloadReportBtn" ${onclick="downloadPDF()"}>Download report</button>
             <hr>
           </div>
         </div>
