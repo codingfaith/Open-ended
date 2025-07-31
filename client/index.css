@@ -102,6 +102,16 @@ nav a:hover {
     color: #4c5582;
     text-decoration: underline;
 }
+.downloadReportBtn {
+  width: 100%;  
+  border: none;
+  outline: none;
+  color:#4c5582;
+  font-size: large;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background:#ffffff;  
+}
 
 @media screen and (max-width: 541px) {
     .assessment h1 {

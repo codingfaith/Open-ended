@@ -95,13 +95,18 @@
   font-size: smaller;  
 }
 
-.last-reportBtn {
+.last-reportBtn,
+.downloadReportBtn {
   border: none;
   outline: none;
   color:#4c5582;
   padding: 5px 10px;
   border-radius: 5px;
   background:#ffffff;  
+}
+.downloadReportBtn {
+  width: 100%;
+  font-size: 100%;
 }
 .show-dash-report {
   text-align: left;
