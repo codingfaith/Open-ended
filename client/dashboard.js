@@ -298,9 +298,9 @@ function displayData(data) {
           </button>
           <div class="report-content hide" id="report-${index}">
             ${formatText(attempt.report)}
-            <button class="downloadReportBtn"}>Download Report</button>
-            <hr>
           </div>
+          <button class="downloadReportBtn"}>Download Report</button>
+          <hr>
         </div>
       `).join('')}
     </div>
@@ -446,7 +446,7 @@ function formatAttemptDate(timestamp) {
   return new Date(timestamp.seconds * 1000).toLocaleString();
 }
 function downloadPDF() {
-  const element = document.querySelector(".user-results-content");
+  const element = document.querySelector(".report-content");
   const opt = {
     margin:       0.5,
     filename:     'ubuntex-report.pdf',
