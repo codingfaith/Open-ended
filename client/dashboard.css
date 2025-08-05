@@ -127,10 +127,13 @@
   position: fixed;
   text-align: center;
 }
-.report-content {
-  padding: 1rem;
-  font-size: medium;
-  border: 1px solid red;
+@media print {
+  .report-content {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    page-break-inside: avoid;
+  }
 }
 /* iPhone fixes */
 /* Prevent touch highlights */

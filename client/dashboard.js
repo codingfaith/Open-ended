@@ -446,119 +446,55 @@ function formatAttemptDate(timestamp) {
   return new Date(timestamp.seconds * 1000).toLocaleString();
 }
 
-// function downloadPDF() {
-//   const element = document.querySelector(".report-content");
-  
-//   // Clone the element to avoid affecting the original content
-//   const elementClone = element.cloneNode(true);
-//   document.body.appendChild(elementClone);
-//   elementClone.style.visibility = 'hidden';
-//   elementClone.style.position = 'absolute';
-//   elementClone.style.left = '-9999px';
-  
-//   const opt = {
-//     margin: 2,
-//     filename: 'ubuntex-report.pdf',
-//     image: { type: 'jpeg', quality: 0.98 },
-//     html2canvas: { 
-//       scale: 2,
-//       useCORS: true,
-//       scrollY: 0, // Prevent scroll offset issues
-//       allowTaint: true,
-//       logging: true // Enable logging to debug rendering issues
-//     },
-//     jsPDF: { 
-//       unit: 'mm', 
-//       format: 'a4', 
-//       orientation: 'portrait',
-//       putOnlyUsedFonts: true 
-//     },
-//     pagebreak: { 
-//       mode: ['avoid-all', 'css', 'legacy'] // Better page break handling
-//     }
-//   };
-
-//   // Add a small delay to ensure proper rendering
-//   setTimeout(() => {
-//     html2pdf()
-//       .set(opt)
-//       .from(elementClone)
-//       .toPdf()
-//       .get('pdf')
-//       .then((pdf) => {
-//         // Remove the clone after PDF generation
-//         document.body.removeChild(elementClone);
-//       })
-//       .save();
-//   }, 500);
-// }
-
 function downloadPDF() {
   const element = document.querySelector(".report-content");
   document.querySelector(".downloadReportBtn").style.display = "none";
   
-  // Make sure the element exists and is visible
-  if (!element) {
-    console.error("Could not find .report-content element");
-    return;
-  }
-
-  // Temporarily make the element visible for rendering
-  const originalStyles = {
-    visibility: element.style.visibility,
-    position: element.style.position,
-    overflow: element.style.overflow
-  };
-  element.style.visibility = 'visible';
-  element.style.position = 'static';
-  element.style.overflow = 'visible';
-
+  // Create a temporary container with controlled styling
+  const tempContainer = document.createElement('div');
+  tempContainer.style.width = '210mm'; // A4 width
+  tempContainer.style.margin = '0 auto';
+  tempContainer.style.padding = '20px';
+  tempContainer.style.boxSizing = 'border-box';
+  tempContainer.style.fontFamily = 'Arial, sans-serif';
+  tempContainer.style.lineHeight = '1.5';
+  
+  // Clone and modify the content
+  const contentClone = element.cloneNode(true);
+  contentClone.style.width = '100%';
+  contentClone.style.margin = '0';
+  contentClone.style.padding = '0';
+  contentClone.style.textAlign = 'center';
+  
+  tempContainer.appendChild(contentClone);
+  document.body.appendChild(tempContainer);
+  
   const opt = {
-    margin: 0.5, // Reduced margin
+    margin: 0,
     filename: 'ubuntex-report.pdf',
-    image: { 
-      type: 'jpeg', 
-      quality: 0.98 
-    },
-    html2canvas: { 
+    html2canvas: {
       scale: 2,
-      useCORS: true,
-      scrollY: 0,
-      logging: true, // Enable logging
-      windowWidth: element.scrollWidth,
-      width: element.scrollWidth,
-      height: element.scrollHeight
+      width: 210 * 3.78, // Convert mm to pixels (210mm A4 width)
+      height: contentClone.scrollHeight * 2,
+      windowWidth: 210 * 3.78,
+      logging: true
     },
-    jsPDF: { 
-      unit: 'mm', 
-      format: 'a4', 
-      orientation: 'portrait' 
+    jsPDF: {
+      unit: 'mm',
+      format: 'a4',
+      orientation: 'portrait'
     }
   };
 
-  // Add a delay to ensure rendering
   setTimeout(() => {
     html2pdf()
       .set(opt)
-      .from(element)
-      .toPdf()
-      .get('pdf')
-      .then((pdf) => {
-        console.log('PDF generated successfully');
-        // Restore original styles
-        element.style.visibility = originalStyles.visibility;
-        element.style.position = originalStyles.position;
-        element.style.overflow = originalStyles.overflow;
-      })
-      .catch((error) => {
-        console.error('PDF generation failed:', error);
-        // Restore original styles even if failed
-        element.style.visibility = originalStyles.visibility;
-        element.style.position = originalStyles.position;
-        element.style.overflow = originalStyles.overflow;
-      })
-      .save();
-  }, 1000); // Increased delay
+      .from(tempContainer)
+      .save()
+      .then(() => {
+        document.body.removeChild(tempContainer);
+      });
+  }, 500);
 }
 
 // Modified getUserAttemptsWithProfile to work with any user ID
