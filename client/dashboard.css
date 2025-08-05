@@ -131,8 +131,6 @@
 .report-content {
   width: 100%;
   padding: 10px;
-  color: red;
-  page-break-inside: avoid;
 }
 /* iPhone fixes */
 /* Prevent touch highlights */

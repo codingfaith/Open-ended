@@ -467,7 +467,6 @@ function downloadPDF() {
   element.style.overflow = 'visible';
 
   const opt = {
-    margin: 0.5, // Reduced margin
     filename: 'ubuntex-report.pdf',
     image: { 
       type: 'jpeg', 
