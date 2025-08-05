@@ -495,6 +495,7 @@ function formatAttemptDate(timestamp) {
 
 function downloadPDF() {
   const element = document.querySelector(".report-content");
+  document.querySelector(".downloadReportBtn").style.display = "none";
   
   // Make sure the element exists and is visible
   if (!element) {
@@ -513,7 +514,7 @@ function downloadPDF() {
   element.style.overflow = 'visible';
 
   const opt = {
-    margin: 1, // Reduced margin
+    margin: 0.5, // Reduced margin
     filename: 'ubuntex-report.pdf',
     image: { 
       type: 'jpeg', 
