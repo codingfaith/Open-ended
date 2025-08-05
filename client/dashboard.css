@@ -130,6 +130,7 @@
 .report-content {
   padding: 1rem;
   font-size: medium;
+  border: 1px solid red;
 }
 /* iPhone fixes */
 /* Prevent touch highlights */
