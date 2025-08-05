@@ -298,9 +298,9 @@ function displayData(data) {
           </button>
           <div class="report-content hide" id="report-${index}">
             ${formatText(attempt.report)}
+            <button class="downloadReportBtn"}>Download Report</button>
+            <hr>
           </div>
-          <button class="downloadReportBtn"}>Download Report</button>
-          <hr>
         </div>
       `).join('')}
     </div>

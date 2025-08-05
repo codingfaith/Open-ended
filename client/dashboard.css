@@ -127,6 +127,10 @@
   position: fixed;
   text-align: center;
 }
+.report-content {
+  padding: 1rem;
+  font-size: medium;
+}
 /* iPhone fixes */
 /* Prevent touch highlights */
 * {
