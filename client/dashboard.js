@@ -299,8 +299,8 @@ function displayData(data) {
           <div class="report-content hide" id="report-${index}">
             ${formatText(attempt.report)}
             <button class="downloadReportBtn"}>Download Report</button>
-            <hr>
           </div>
+          <hr>
         </div>
       `).join('')}
     </div>
@@ -450,51 +450,68 @@ function downloadPDF() {
   const element = document.querySelector(".report-content");
   document.querySelector(".downloadReportBtn").style.display = "none";
   
-  // Create a temporary container with controlled styling
-  const tempContainer = document.createElement('div');
-  tempContainer.style.width = '210mm'; // A4 width
-  tempContainer.style.margin = '0 auto';
-  tempContainer.style.padding = '20px';
-  tempContainer.style.boxSizing = 'border-box';
-  tempContainer.style.fontFamily = 'Arial, sans-serif';
-  tempContainer.style.lineHeight = '1.5';
-  
-  // Clone and modify the content
-  const contentClone = element.cloneNode(true);
-  contentClone.style.width = '100%';
-  contentClone.style.margin = '0';
-  contentClone.style.padding = '0';
-  contentClone.style.textAlign = 'center';
-  
-  tempContainer.appendChild(contentClone);
-  document.body.appendChild(tempContainer);
-  
+  // Make sure the element exists and is visible
+  if (!element) {
+    console.error("Could not find .report-content element");
+    return;
+  }
+
+  // Temporarily make the element visible for rendering
+  const originalStyles = {
+    visibility: element.style.visibility,
+    position: element.style.position,
+    overflow: element.style.overflow
+  };
+  element.style.visibility = 'visible';
+  element.style.position = 'static';
+  element.style.overflow = 'visible';
+
   const opt = {
-    margin: 0,
+    margin: 0.5, // Reduced margin
     filename: 'ubuntex-report.pdf',
-    html2canvas: {
-      scale: 2,
-      width: 210 * 3.78, // Convert mm to pixels (210mm A4 width)
-      height: contentClone.scrollHeight * 2,
-      windowWidth: 210 * 3.78,
-      logging: true
+    image: { 
+      type: 'jpeg', 
+      quality: 0.98 
     },
-    jsPDF: {
-      unit: 'mm',
-      format: 'a4',
-      orientation: 'portrait'
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      scrollY: 0,
+      logging: true, // Enable logging
+      windowWidth: element.scrollWidth,
+      width: element.scrollWidth,
+      height: element.scrollHeight
+    },
+    jsPDF: { 
+      unit: 'mm', 
+      format: 'a4', 
+      orientation: 'portrait' 
     }
   };
 
+  // Add a delay to ensure rendering
   setTimeout(() => {
     html2pdf()
       .set(opt)
-      .from(tempContainer)
-      .save()
-      .then(() => {
-        document.body.removeChild(tempContainer);
-      });
-  }, 500);
+      .from(element)
+      .toPdf()
+      .get('pdf')
+      .then((pdf) => {
+        console.log('PDF generated successfully');
+        // Restore original styles
+        element.style.visibility = originalStyles.visibility;
+        element.style.position = originalStyles.position;
+        element.style.overflow = originalStyles.overflow;
+      })
+      .catch((error) => {
+        console.error('PDF generation failed:', error);
+        // Restore original styles even if failed
+        element.style.visibility = originalStyles.visibility;
+        element.style.position = originalStyles.position;
+        element.style.overflow = originalStyles.overflow;
+      })
+      .save();
+  }, 1000); // Increased delay
 }
 
 // Modified getUserAttemptsWithProfile to work with any user ID
