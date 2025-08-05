@@ -127,14 +127,12 @@
   position: fixed;
   text-align: center;
 }
-@media print {
-  .report-content {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    color: red;
-    page-break-inside: avoid;
-  }
+
+.report-content {
+  width: 100%;
+  padding: 10px;
+  color: red;
+  page-break-inside: avoid;
 }
 /* iPhone fixes */
 /* Prevent touch highlights */
