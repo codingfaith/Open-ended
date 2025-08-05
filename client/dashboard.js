@@ -475,6 +475,7 @@ function downloadPDF() {
     html2canvas: { 
       scale: 2,
       useCORS: true,
+      scrollX: 0,
       scrollY: 0,
       logging: true, // Enable logging
       windowWidth: element.scrollWidth,
