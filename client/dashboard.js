@@ -446,51 +446,118 @@ function formatAttemptDate(timestamp) {
   return new Date(timestamp.seconds * 1000).toLocaleString();
 }
 
+// function downloadPDF() {
+//   const element = document.querySelector(".report-content");
+  
+//   // Clone the element to avoid affecting the original content
+//   const elementClone = element.cloneNode(true);
+//   document.body.appendChild(elementClone);
+//   elementClone.style.visibility = 'hidden';
+//   elementClone.style.position = 'absolute';
+//   elementClone.style.left = '-9999px';
+  
+//   const opt = {
+//     margin: 2,
+//     filename: 'ubuntex-report.pdf',
+//     image: { type: 'jpeg', quality: 0.98 },
+//     html2canvas: { 
+//       scale: 2,
+//       useCORS: true,
+//       scrollY: 0, // Prevent scroll offset issues
+//       allowTaint: true,
+//       logging: true // Enable logging to debug rendering issues
+//     },
+//     jsPDF: { 
+//       unit: 'mm', 
+//       format: 'a4', 
+//       orientation: 'portrait',
+//       putOnlyUsedFonts: true 
+//     },
+//     pagebreak: { 
+//       mode: ['avoid-all', 'css', 'legacy'] // Better page break handling
+//     }
+//   };
+
+//   // Add a small delay to ensure proper rendering
+//   setTimeout(() => {
+//     html2pdf()
+//       .set(opt)
+//       .from(elementClone)
+//       .toPdf()
+//       .get('pdf')
+//       .then((pdf) => {
+//         // Remove the clone after PDF generation
+//         document.body.removeChild(elementClone);
+//       })
+//       .save();
+//   }, 500);
+// }
+
 function downloadPDF() {
   const element = document.querySelector(".report-content");
   
-  // Clone the element to avoid affecting the original content
-  const elementClone = element.cloneNode(true);
-  document.body.appendChild(elementClone);
-  elementClone.style.visibility = 'hidden';
-  elementClone.style.position = 'absolute';
-  elementClone.style.left = '-9999px';
-  
+  // Make sure the element exists and is visible
+  if (!element) {
+    console.error("Could not find .report-content element");
+    return;
+  }
+
+  // Temporarily make the element visible for rendering
+  const originalStyles = {
+    visibility: element.style.visibility,
+    position: element.style.position,
+    overflow: element.style.overflow
+  };
+  element.style.visibility = 'visible';
+  element.style.position = 'static';
+  element.style.overflow = 'visible';
+
   const opt = {
-    margin: 2,
+    margin: 1, // Reduced margin
     filename: 'ubuntex-report.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
+    image: { 
+      type: 'jpeg', 
+      quality: 0.98 
+    },
     html2canvas: { 
       scale: 2,
       useCORS: true,
-      scrollY: 0, // Prevent scroll offset issues
-      allowTaint: true,
-      logging: true // Enable logging to debug rendering issues
+      scrollY: 0,
+      logging: true, // Enable logging
+      windowWidth: element.scrollWidth,
+      width: element.scrollWidth,
+      height: element.scrollHeight
     },
     jsPDF: { 
       unit: 'mm', 
       format: 'a4', 
-      orientation: 'portrait',
-      putOnlyUsedFonts: true 
-    },
-    pagebreak: { 
-      mode: ['avoid-all', 'css', 'legacy'] // Better page break handling
+      orientation: 'portrait' 
     }
   };
 
-  // Add a small delay to ensure proper rendering
+  // Add a delay to ensure rendering
   setTimeout(() => {
     html2pdf()
       .set(opt)
-      .from(elementClone)
+      .from(element)
       .toPdf()
       .get('pdf')
       .then((pdf) => {
-        // Remove the clone after PDF generation
-        document.body.removeChild(elementClone);
+        console.log('PDF generated successfully');
+        // Restore original styles
+        element.style.visibility = originalStyles.visibility;
+        element.style.position = originalStyles.position;
+        element.style.overflow = originalStyles.overflow;
+      })
+      .catch((error) => {
+        console.error('PDF generation failed:', error);
+        // Restore original styles even if failed
+        element.style.visibility = originalStyles.visibility;
+        element.style.position = originalStyles.position;
+        element.style.overflow = originalStyles.overflow;
       })
       .save();
-  }, 500);
+  }, 1000); // Increased delay
 }
 
 // Modified getUserAttemptsWithProfile to work with any user ID
