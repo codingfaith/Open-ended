@@ -448,11 +448,11 @@ function formatAttemptDate(timestamp) {
 function downloadPDF() {
   const element = document.querySelector(".report-content");
   const opt = {
-    margin:       0.5,
+    margin:       2,
     filename:     'ubuntex-report.pdf',
     image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2 },
-    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    html2canvas:  { scale: 2, useCORS: true },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
   html2pdf().set(opt).from(element).save();
 }
