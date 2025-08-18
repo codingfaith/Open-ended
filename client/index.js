@@ -631,31 +631,34 @@ class UbuntexIndex {
          `;
 
         // Save results to Firebase
-       try {
+        try {
             const auth = firebase.auth();
-            const user = auth.currentUser;
-            
-            if (user) {
-                const db = firebase.firestore();
-                const userResultsRef = db.collection('userResults').doc(user.uid);
-                const attemptsRef = userResultsRef.collection('attempts');
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    const db = firebase.firestore();
+                    const userResultsRef = db.collection('userResults').doc(user.uid);
+                    const attemptsRef = userResultsRef.collection('attempts');
 
-                // Prepare data for this attempt
-                const attemptData = {
-                    score: score.toFixed(2),
-                    classification: this.getClassification(score),
-                    answers: this.quizResults.responses,
-                    report: finalReport,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    attemptNumber: (await attemptsRef.get()).size + 1  // Auto-increment attempt count
-                };
-                
-                // Save as a new document in the 'attempts' subcollection
-                await attemptsRef.add(attemptData);
-                console.log(`Attempt #${attemptData.attemptNumber} saved to Firebase`);
-            } else {
-                console.log("No user logged in, skipping Firebase save");
-            }
+                    // Fetch attempts count safely
+                    const attemptsSnapshot = await attemptsRef.get();
+                    const attemptNumber = attemptsSnapshot.size + 1;
+
+                    const attemptData = {
+                        score: score.toFixed(2),
+                        classification: this.getClassification(score),
+                        answers: this.quizResults.responses,
+                        report: finalReport,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        attemptNumber: attemptNumber
+                    };
+
+                    // Save new attempt
+                    await attemptsRef.add(attemptData);
+                    console.log(`Attempt #${attemptNumber} saved to Firebase`);
+                } else {
+                    console.log("No user logged in (iOS issue) - skipping Firebase save");
+                }
+            });
         } catch (firebaseError) {
             console.error("Error saving to Firebase:", firebaseError);
         }
