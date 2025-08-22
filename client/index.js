@@ -1,5 +1,5 @@
 import { initializeFirebase } from './auth.js';
-let finalScore = 0;
+
 const totalQuestions = 44;
 const progress = document.getElementById("progress");
 const progressText = document.getElementById("progress-text");
@@ -599,11 +599,11 @@ class UbuntexIndex {
 
         const totalScore = newArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
         const maxPossibleScore = 315
-        finalScore = (totalScore  / maxPossibleScore) * 100 
+        const finalScore = (totalScore  / maxPossibleScore) * 100 
         localStorage.setItem('ubuntexTestCompleted', 'true') // Mark test as completed in localStorage
 
-        window.location.replace() = "https://ubuntex.netlify.app/payment"
         this.displayResults(finalScore)
+        window.location.replace() = "https://ubuntex.netlify.app/payment"
     }
 
     async displayResults(score) {
