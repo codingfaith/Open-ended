@@ -602,8 +602,8 @@ class UbuntexIndex {
         finalScore = (totalScore  / maxPossibleScore) * 100 
         localStorage.setItem('ubuntexTestCompleted', 'true') // Mark test as completed in localStorage
 
-        // this.displayResults(finalScore)
         window.location.replace() = "https://ubuntex.netlify.app/payment"
+        this.displayResults(finalScore)
     }
 
     async displayResults(score) {
