@@ -676,7 +676,6 @@ class UbuntexIndex {
                 document.getElementById("results-table").innerHTML = `
                     <h3>Detailed Analysis</h3>
                     <div class="report-content">${this.formatText(finalReport)}</div>
-                    <button id="downloadReportBtn" ${onclick="this.downloadPDF()"}>Download Report</button>
                 `;
             }, 50);
         });
@@ -690,7 +689,7 @@ class UbuntexIndex {
                 <button id="answers">View Your Answers</button>
             </div>
         `;
-        
+        // <button id="downloadReportBtn" ${onclick="this.downloadPDF()"}>Download Report</button>
         document.getElementById("answers").addEventListener("click", () => {
             this.renderResultsTable();
         });
