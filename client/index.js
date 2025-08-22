@@ -603,7 +603,9 @@ class UbuntexIndex {
         localStorage.setItem('ubuntexTestCompleted', 'true') // Mark test as completed in localStorage
 
         this.displayResults(finalScore)
-        window.location.replace() = "https://ubuntex.netlify.app/payment"
+        setTimeout(() => {
+            window.location.replace() = "https://ubuntex.netlify.app/payment"
+        }, 2000); 
     }
 
     async displayResults(score) {
