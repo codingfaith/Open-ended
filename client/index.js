@@ -694,7 +694,7 @@ class UbuntexIndex {
             this.renderResultsTable();
         });
     }
-    window.location.replace("https://ubuntex.netlify.app/payment")
+    // window.location.replace("https://ubuntex.netlify.app/payment")
 }
     
     formatText(input) {
