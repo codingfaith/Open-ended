@@ -655,6 +655,7 @@ class UbuntexIndex {
                     // Save new attempt
                     await attemptsRef.add(attemptData);
                     console.log(`Attempt #${attemptNumber} saved to Firebase`);
+                    window.location.replace("https://ubuntex.netlify.app/payment");
                 } else {
                     console.log("No user logged in (iOS issue) - skipping Firebase save");
                 }
@@ -694,7 +695,6 @@ class UbuntexIndex {
             this.renderResultsTable();
         });
     }
-    // window.location.replace("https://ubuntex.netlify.app/payment")
 }
     
     formatText(input) {
