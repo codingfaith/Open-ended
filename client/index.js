@@ -789,11 +789,12 @@ class UbuntexIndex {
 
     // Helper method to get classification
     getClassification(score) {
-        if (score <= 40) return "High Risk (Anti-Social)";
-        if (score <= 50) return "Low Ubuntu Awareness";
-        if (score <= 60) return "Moderate Ubuntu Awareness";
-        if (score <= 80) return "Strong Ubuntu Traits";
-        if (score <= 100) return "Ubuntu Ambassador (High Social Contribution)";
+        if (score <= 65.49) return "Ubuntex Level 6";
+        if (score <= 72.50) return "Ubuntex Level 5";
+        if (score <= 78.50) return "Ubuntex Level 4";
+        if (score <= 83.50) return "Ubuntex Level 3";
+        if (score <= 87.99) return "Ubuntex Level 2";
+        if (score <= 100) return "Ubuntex Level 1";
         return "Score could not be calculated";
     }
 
