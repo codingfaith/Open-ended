@@ -484,8 +484,8 @@ function downloadPDF() {
       useCORS: true,
       scrollY: 0,
       logging: true, // Enable logging
-      width: 750, // Match the fixed width
-      windowWidth: 750, // Match the fixed width
+      width: 800, // Match the fixed width
+      windowWidth: 800, // Match the fixed width
       height: element.scrollHeight
     },
     jsPDF: { 
