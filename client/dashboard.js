@@ -460,13 +460,18 @@ function downloadPDF() {
   const originalStyles = {
     visibility: element.style.visibility,
     position: element.style.position,
-    overflow: element.style.overflow
+    overflow: element.style.overflow,
+    width: element.style.width,
+    margin: element.style.margin
   };
   element.style.visibility = 'visible';
   element.style.position = 'static';
   element.style.overflow = 'visible';
+  element.style.width = '800px'; // Fixed width for centering
+  element.style.margin = '0 auto'; // Center the content
 
   const opt = {
+    margin: [10, 10, 10, 10], // Equal margins on all sides
     filename: 'ubuntex-report.pdf',
     image: { 
       type: 'jpeg', 
@@ -475,12 +480,11 @@ function downloadPDF() {
     html2canvas: { 
       scale: 2,
       useCORS: true,
-      scrollX: 0,
       scrollY: 0,
       logging: true, // Enable logging
       windowWidth: element.scrollWidth,
-      width: element.scrollWidth,
-      height: element.scrollHeight
+      width: 800,
+      height: 800
     },
     jsPDF: { 
       unit: 'mm', 
@@ -498,17 +502,17 @@ function downloadPDF() {
       .get('pdf')
       .then((pdf) => {
         console.log('PDF generated successfully');
+      })
+      .catch((error) => {
+        console.error('PDF generation failed:', error);
+      })
+      .finally(() => {
         // Restore original styles
         element.style.visibility = originalStyles.visibility;
         element.style.position = originalStyles.position;
         element.style.overflow = originalStyles.overflow;
-      })
-      .catch((error) => {
-        console.error('PDF generation failed:', error);
-        // Restore original styles even if failed
-        element.style.visibility = originalStyles.visibility;
-        element.style.position = originalStyles.position;
-        element.style.overflow = originalStyles.overflow;
+        element.style.width = originalStyles.width;
+        element.style.margin = originalStyles.margin;
       })
       .save();
   }, 1000); // Increased delay
