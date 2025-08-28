@@ -299,16 +299,16 @@ function displayData(data) {
           <div class="report-content hide" id="report-${index}">
             ${formatText(attempt.report)}
           </div>
+          <button class="downloadReportBtn"}>Download Report</button>
           <hr>
         </div>
       `).join('')}
     </div>
   `;
 
-  //  <button class="downloadReportBtn"}>Download Report</button>
   // Add to DOM
   dashboardResult.appendChild(contentDiv);
-  // document.querySelector(".downloadReportBtn").addEventListener("click", downloadPDF);
+  document.querySelector(".downloadReportBtn").addEventListener("click", downloadPDF);
 
   // Add event listeners for report toggles
   contentDiv.querySelectorAll('.report-toggle-btn').forEach(button => {
