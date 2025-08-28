@@ -40,47 +40,6 @@ addIOSSafeListener(previousBtn, "click", () => {
 });
 
 // Main execution wrapper with iOS timers
-// async function initDashboard() {
-//   try {
-//     showLoading(true);
-    
-//     await new Promise(resolve => setTimeout(resolve, 100));
-    
-//     const { auth, db } = await initializeFirebase();
-
-//     const user = await new Promise((resolve) => {
-//       const unsubscribe = auth.onAuthStateChanged(user => {
-//         unsubscribe();
-//         resolve(user);
-//       });
-//     });
-
-//     if (!user) {
-//       showError('Please log in to view your results');
-//       return;
-//     }
-
-//     if (await checkAdmin()) {
-//       message.style.display = "block";
-//       document.getElementById('dashboard-assess').innerHTML =` 
-//         <h3 id="admin-greeting"></h3>
-//         <div id="admin-previous-results"></div>`;
-//       loadRecentUsers(db);
-//     } else {
-//       adminView.style.display = "none";
-//       const data = await getUserAttemptsWithProfile(user.uid, db);
-//       console.log('User data loaded');
-//       requestAnimationFrame(() => displayData(data));
-//     }
-
-//   } catch (error) {
-//     console.error('Dashboard failed:', error);
-//     showError(iOSErrorMessage(error));
-//   } finally {
-//     showLoading(false);
-//   }
-// }
-
 async function initDashboard() {
   try {
     showLoading(true);
@@ -111,16 +70,6 @@ async function initDashboard() {
       adminView.style.display = "none";
       const data = await getUserAttemptsWithProfile(user.uid, db);
       console.log('User data loaded');
-      
-      // Check if user has any paid reports
-      const hasPaidReports = data.attempts.some(attempt => attempt.paymentStatus === 'paid');
-      
-      if (!hasPaidReports) {
-        // Redirect to payment page if no paid reports
-        window.location.href = '/payment.html';
-        return;
-      }
-      
       requestAnimationFrame(() => displayData(data));
     }
 
@@ -131,6 +80,7 @@ async function initDashboard() {
     showLoading(false);
   }
 }
+
 // Check if current user is admin
 async function checkAdmin() {
   const { auth, db } = await initializeFirebase();
@@ -565,39 +515,6 @@ function downloadPDF() {
 }
 
 // Modified getUserAttemptsWithProfile to work with any user ID
-// async function getUserAttemptsWithProfile(userId, db) {
-//   try {
-//     const controller = new AbortController();
-//     const timeout = setTimeout(() => controller.abort(), 10000);
-    
-//     const [userDoc, attemptsSnapshot] = await Promise.all([
-//       db.collection("users").doc(userId).get({ signal: controller.signal }),
-//       db.collection("userResults").doc(userId)
-//         .collection("attempts")
-//         .orderBy("timestamp", "desc")
-//         .get({ signal: controller.signal })
-//     ]);
-
-//     clearTimeout(timeout);
-
-//     if (!userDoc.exists) throw new Error("User profile not found");
-
-//     return {
-//       userProfile: userDoc.data(),
-//       attempts: attemptsSnapshot.docs.map(doc => ({
-//         id: doc.id,
-//         ...doc.data(),
-//         date: doc.data().timestamp?.toDate().toLocaleString()
-//       }))
-//     };
-//   } catch (error) {
-//     if (error.name === 'AbortError') {
-//       throw new Error('Request timed out');
-//     }
-//     throw error;
-//   }
-// }
-
 async function getUserAttemptsWithProfile(userId, db) {
   try {
     const controller = new AbortController();
@@ -615,19 +532,13 @@ async function getUserAttemptsWithProfile(userId, db) {
 
     if (!userDoc.exists) throw new Error("User profile not found");
 
-    // Check if user is admin
-    const isAdmin = userDoc.data()?.role === "admin";
-
     return {
       userProfile: userDoc.data(),
-      attempts: attemptsSnapshot.docs
-        .map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          date: doc.data().timestamp?.toDate().toLocaleString()
-        }))
-        // Filter out unpaid attempts for non-admins
-        .filter(attempt => isAdmin || attempt.paymentStatus === 'paid')
+      attempts: attemptsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        date: doc.data().timestamp?.toDate().toLocaleString()
+      }))
     };
   } catch (error) {
     if (error.name === 'AbortError') {
