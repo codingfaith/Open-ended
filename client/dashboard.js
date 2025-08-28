@@ -61,7 +61,6 @@ async function initDashboard() {
     }
 
     if (await checkAdmin()) {
-      document.getElementById('dashboard-assess').innerHTML = "";
       message.style.display = "block";
       document.getElementById('dashboard-assess').innerHTML =` 
         <h3 id="admin-greeting"></h3>
