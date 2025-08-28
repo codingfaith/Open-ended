@@ -448,7 +448,7 @@ function formatAttemptDate(timestamp) {
 
 function downloadPDF() {
   const element = document.querySelector(".report-content");
-  // document.querySelector(".downloadReportBtn").style.display = "none";
+  document.querySelector(".downloadReportBtn").style.display = "none";
   
   // Make sure the element exists and is visible
   if (!element) {
