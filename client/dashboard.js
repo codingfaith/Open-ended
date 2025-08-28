@@ -456,17 +456,24 @@ function downloadPDF() {
     return;
   }
 
-  // Temporarily make the element visible for rendering
+  // Store original styles
   const originalStyles = {
-    visibility: element.style.visibility,
-    position: element.style.position,
-    overflow: element.style.overflow
+      visibility: element.style.visibility,
+      position: element.style.position,
+      overflow: element.style.overflow,
+      width: element.style.width,
+      margin: element.style.margin
   };
+  
+  // Apply styles for PDF rendering
   element.style.visibility = 'visible';
   element.style.position = 'static';
   element.style.overflow = 'visible';
+  element.style.width = '750px';
+  element.style.margin = '0 auto'; // Center the content
 
   const opt = {
+    margin: [10, 10, 10, 10], // Equal margins on all sides
     filename: 'ubuntex-report.pdf',
     image: { 
       type: 'jpeg', 
@@ -475,11 +482,10 @@ function downloadPDF() {
     html2canvas: { 
       scale: 2,
       useCORS: true,
-      scrollX: 0,
       scrollY: 0,
       logging: true, // Enable logging
-      windowWidth: element.scrollWidth,
-      width: element.scrollWidth,
+      width: 750, // Match the fixed width
+      windowWidth: 750, // Match the fixed width
       height: element.scrollHeight
     },
     jsPDF: { 
@@ -509,8 +515,14 @@ function downloadPDF() {
         element.style.visibility = originalStyles.visibility;
         element.style.position = originalStyles.position;
         element.style.overflow = originalStyles.overflow;
-      })
-      .save();
+      }).finally(() => {
+        // Restore original styles
+        element.style.visibility = originalStyles.visibility;
+        element.style.position = originalStyles.position;
+        element.style.overflow = originalStyles.overflow;
+        element.style.width = originalStyles.width;
+        element.style.margin = originalStyles.margin;
+    }).save();
   }, 1000); // Increased delay
 }
 
