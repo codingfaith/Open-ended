@@ -549,7 +549,12 @@ function downloadPDF() {
       scale: 2,
       useCORS: true,
       scrollY: 0,
-      windowWidth: element.scrollWidth
+      x: 0,
+      y: 0,
+      width: element.scrollWidth,
+      height: element.scrollHeight,
+      windowWidth: element.scrollWidth,
+      windowHeight: element.scrollHeight
     },
     jsPDF: { 
       unit: 'mm', 
