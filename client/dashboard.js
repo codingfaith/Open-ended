@@ -446,45 +446,109 @@ function formatAttemptDate(timestamp) {
   return new Date(timestamp.seconds * 1000).toLocaleString();
 }
 
+// function downloadPDF() {
+//   const element = document.querySelector(".report-content");
+//   document.querySelector(".downloadReportBtn").style.display = "none";
+  
+//   // Make sure the element exists and is visible
+//   if (!element) {
+//     console.error("Could not find .report-content element");
+//     return;
+//   }
+
+//   // Temporarily make the element visible for rendering
+//   const originalStyles = {
+//     visibility: element.style.visibility,
+//     position: element.style.position,
+//     overflow: element.style.overflow,
+//     width: element.style.width,
+//     margin: element.style.margin
+//   };
+//   element.style.visibility = 'visible';
+//   element.style.position = 'static';
+//   element.style.overflow = 'visible';
+//   element.style.width = '800px'; // Fixed width for centering
+//   element.style.margin = '0 auto'; // Center the content
+
+//   const opt = {
+//     margin: [10, 10, 10, 10], // Equal margins on all sides
+//     filename: 'ubuntex-report.pdf',
+//     image: { 
+//       type: 'jpeg', 
+//       quality: 0.98 
+//     },
+//     html2canvas: { 
+//       scale: 2,
+//       useCORS: true,
+//       scrollY: 0,
+//       logging: true, // Enable logging
+//       windowWidth: element.scrollWidth,
+//       width: 800,
+//       height: 800
+//     },
+//     jsPDF: { 
+//       unit: 'mm', 
+//       format: 'a4', 
+//       orientation: 'portrait' 
+//     }
+//   };
+
+//   // Add a delay to ensure rendering
+//   setTimeout(() => {
+//     html2pdf()
+//       .set(opt)
+//       .from(element)
+//       .toPdf()
+//       .get('pdf')
+//       .then((pdf) => {
+//         console.log('PDF generated successfully');
+//       })
+//       .catch((error) => {
+//         console.error('PDF generation failed:', error);
+//       })
+//       .finally(() => {
+//         // Restore original styles
+//         element.style.visibility = originalStyles.visibility;
+//         element.style.position = originalStyles.position;
+//         element.style.overflow = originalStyles.overflow;
+//         element.style.width = originalStyles.width;
+//         element.style.margin = originalStyles.margin;
+//       })
+//       .save();
+//   }, 1000); // Increased delay
+// }
+
 function downloadPDF() {
   const element = document.querySelector(".report-content");
-  document.querySelector(".downloadReportBtn").style.display = "none";
   
-  // Make sure the element exists and is visible
   if (!element) {
     console.error("Could not find .report-content element");
     return;
   }
 
-  // Temporarily make the element visible for rendering
+  // Save original styles
   const originalStyles = {
     visibility: element.style.visibility,
     position: element.style.position,
     overflow: element.style.overflow,
-    width: element.style.width,
     margin: element.style.margin
   };
+
+  // Force element to be visible and centered
   element.style.visibility = 'visible';
   element.style.position = 'static';
   element.style.overflow = 'visible';
-  element.style.width = '800px'; // Fixed width for centering
-  element.style.margin = '0 auto'; // Center the content
+  element.style.margin = '0 auto'; // center horizontally on page
 
   const opt = {
-    margin: [10, 10, 10, 10], // Equal margins on all sides
+    margin: [0, 0, 0, 0], // top, left, bottom, right
     filename: 'ubuntex-report.pdf',
-    image: { 
-      type: 'jpeg', 
-      quality: 0.98 
-    },
+    image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { 
       scale: 2,
       useCORS: true,
       scrollY: 0,
-      logging: true, // Enable logging
-      windowWidth: element.scrollWidth,
-      width: 800,
-      height: 800
+      windowWidth: element.scrollWidth
     },
     jsPDF: { 
       unit: 'mm', 
@@ -493,7 +557,6 @@ function downloadPDF() {
     }
   };
 
-  // Add a delay to ensure rendering
   setTimeout(() => {
     html2pdf()
       .set(opt)
@@ -502,21 +565,17 @@ function downloadPDF() {
       .get('pdf')
       .then((pdf) => {
         console.log('PDF generated successfully');
+        // Restore original styles
+        Object.assign(element.style, originalStyles);
       })
       .catch((error) => {
         console.error('PDF generation failed:', error);
-      })
-      .finally(() => {
-        // Restore original styles
-        element.style.visibility = originalStyles.visibility;
-        element.style.position = originalStyles.position;
-        element.style.overflow = originalStyles.overflow;
-        element.style.width = originalStyles.width;
-        element.style.margin = originalStyles.margin;
+        Object.assign(element.style, originalStyles);
       })
       .save();
-  }, 1000); // Increased delay
+  }, 800);
 }
+
 
 // Modified getUserAttemptsWithProfile to work with any user ID
 async function getUserAttemptsWithProfile(userId, db) {
