@@ -447,8 +447,8 @@ function formatAttemptDate(timestamp) {
 }
 
 function downloadPDF() {
-  const element = document.querySelector('.report-content');
-  document.querySelector('.downloadReportBtn').style.display = "none";
+  const element = document.querySelector(".report-content");
+  document.querySelector(".downloadReportBtn").style.display = "none";
   
   if (!element) {
     console.error("Could not find .report-content element");
@@ -460,19 +460,17 @@ function downloadPDF() {
     visibility: element.style.visibility,
     position: element.style.position,
     overflow: element.style.overflow,
-    margin: element.style.margin,
-    width: element.style.width
+    margin: element.style.margin
   };
 
-  // Force element to be visible and centered
+  // Make element visible and centered
   element.style.visibility = 'visible';
   element.style.position = 'static';
   element.style.overflow = 'visible';
-  element.style.margin = '0 auto'; // center horizontally on page
-  element.style.width = element.scrollWidth + 'px'; // expand to full scroll width
+  element.style.margin = '0 auto';
 
   const opt = {
-    margin: [0, 0, 0, 0], //top, left, bottom, right
+    margin: [20, 0, 20, 0], // top, left, bottom, right
     filename: 'ubuntex-report.pdf',
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { 
@@ -481,8 +479,6 @@ function downloadPDF() {
       scrollY: 0,
       x: 0,
       y: 0,
-      width: element.scrollWidth,
-      height: element.scrollHeight,
       windowWidth: element.scrollWidth,
       windowHeight: element.scrollHeight
     },
@@ -501,7 +497,6 @@ function downloadPDF() {
       .get('pdf')
       .then((pdf) => {
         console.log('PDF generated successfully');
-        // Restore original styles
         Object.assign(element.style, originalStyles);
       })
       .catch((error) => {
@@ -511,6 +506,7 @@ function downloadPDF() {
       .save();
   }, 800);
 }
+
 
 // Modified getUserAttemptsWithProfile to work with any user ID
 async function getUserAttemptsWithProfile(userId, db) {
