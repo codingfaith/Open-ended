@@ -520,6 +520,7 @@ function formatAttemptDate(timestamp) {
 
 function downloadPDF() {
   const element = document.querySelector(".report-content");
+  document.querySelector(".downloadReportBtn").style.display = "none";
   
   if (!element) {
     console.error("Could not find .report-content element");
