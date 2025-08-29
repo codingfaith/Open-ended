@@ -542,7 +542,7 @@ function downloadPDF() {
   element.style.margin = '0 auto'; // center horizontally on page
 
   const opt = {
-    margin: [0, 0, 0, 0], // top, left, bottom, right
+    margin: [20, 0, 20, 0], // top, left, bottom, right
     filename: 'ubuntex-report.pdf',
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { 
