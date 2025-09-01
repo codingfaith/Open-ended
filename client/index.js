@@ -690,7 +690,6 @@ class UbuntexIndex {
                 <button id="answers">View Your Answers</button>
             </div>
         `;
-        // <button id="downloadReportBtn" ${onclick="this.downloadPDF()"}>Download Report</button>
         document.getElementById("answers").addEventListener("click", () => {
             this.renderResultsTable();
         });
