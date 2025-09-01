@@ -669,7 +669,7 @@ class UbuntexIndex {
             this.showLoadingMessage("Compiling your answers...");
             setTimeout(() => {
                 this.renderResultsTable();
-            }, 1000); // Small delay to allow loading message to render
+            }, 2000); // Small delay to allow loading message to render
         });
         document.getElementById("report").addEventListener("click", () => {
             this.showLoadingMessage("Finalizing your report...");
@@ -678,7 +678,7 @@ class UbuntexIndex {
                     <h3>Detailed Analysis</h3>
                     <div class="report-content">${this.formatText(finalReport)}</div>
                 `;
-            }, 1000);
+            }, 2000);
         });
     } catch (error) {
         console.error("Error displaying results:", error);
