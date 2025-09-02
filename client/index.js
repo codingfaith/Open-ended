@@ -525,7 +525,7 @@ class UbuntexIndex {
             
             const valueDisplay = document.createElement("div");
             valueDisplay.className = "slider-value";
-            valueDisplay.textContent = `Selected: 5 (drag slider)`;
+            valueDisplay.textContent = `Selected: 5 (drag slider to change default)`;
             
             slider.oninput = () => {
                 valueDisplay.textContent = `Selected: ${slider.value}`;
@@ -654,7 +654,7 @@ class UbuntexIndex {
             console.error("Error saving to Firebase:", firebaseError);
             // Fallback: Store data locally for later sync
             this.storeLocalForLaterSync(score, finalReport);
-             resultContainer.innerHTML = `<p>${firebaseError}</p>`;
+            resultContainer.innerHTML = `<p>${firebaseError}</p>`;
         }
 
     } catch (error) {
