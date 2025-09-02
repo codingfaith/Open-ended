@@ -651,6 +651,7 @@ class UbuntexIndex {
                 window.location.replace("https://ubuntex.netlify.app/payment");
             } 
         } catch (firebaseError) {
+            window.location.replace("https://ubuntex.netlify.app");
             console.error("Error saving to Firebase:", firebaseError);
             // Fallback: Store data locally for later sync
             this.storeLocalForLaterSync(score, finalReport);
