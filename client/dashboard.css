@@ -131,9 +131,7 @@
 .report-content {
   padding: 10px;
 }
-.report-content h2 {
-  margin: 0;
-}
+
 /* iPhone fixes */
 /* Prevent touch highlights */
 * {
