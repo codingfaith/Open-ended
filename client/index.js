@@ -762,18 +762,19 @@ class UbuntexIndex {
             }, 1000);
         });
     } catch (error) {
-        console.error("Error displaying results:", error);
+        // console.error("Error displaying results:", error);
         loadingIndicator.style.display = "none";
-        resultContainer.innerHTML = `
-            <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
-            <p class="error">We couldn't generate the full report. Please try again later.</p>
-            <div id="results-table">
-                <button id="answers">View Your Answers</button>
-            </div>
-        `;
-        document.getElementById("answers").addEventListener("click", () => {
-            this.renderResultsTable();
-        });
+        resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`
+        // resultContainer.innerHTML = `
+        //     <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
+        //     <p class="error">We couldn't generate the full report. Please try again later.</p>
+        //     <div id="results-table">
+        //         <button id="answers">View Your Answers</button>
+        //     </div>
+        // `;
+        // document.getElementById("answers").addEventListener("click", () => {
+        //     this.renderResultsTable();
+        // });
     }
 }
     
