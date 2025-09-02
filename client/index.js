@@ -620,7 +620,7 @@ class UbuntexIndex {
         loadingIndicator.style.display = "none";
 
         // Display final results with classification and buttons
-        resultContainer.innerHTML = `
+        resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
             // <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
             // <p>Classification: ${this.getClassification(score)}</p>
             // <div class="choiceButtons" id="choiceButtons">
@@ -628,8 +628,6 @@ class UbuntexIndex {
             //     <button id="report">Read Full Report</button>
             // </div>
             // <div id="results-table"></div>
-            <p>Redirecting to payment page...</p>
-         `;
 
         // Save results to Firebase
         // try {
