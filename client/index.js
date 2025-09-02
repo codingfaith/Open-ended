@@ -621,13 +621,14 @@ class UbuntexIndex {
 
         // Display final results with classification and buttons
         resultContainer.innerHTML = `
-            <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
-            <p>Classification: ${this.getClassification(score)}</p>
-            <div class="choiceButtons" id="choiceButtons">
-                <button id="answers">View Your Answers</button>
-                <button id="report">Read Full Report</button>
-            </div>
-            <div id="results-table"></div>
+            // <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
+            // <p>Classification: ${this.getClassification(score)}</p>
+            // <div class="choiceButtons" id="choiceButtons">
+            //     <button id="answers">View Your Answers</button>
+            //     <button id="report">Read Full Report</button>
+            // </div>
+            // <div id="results-table"></div>
+            <p>Redirecting to payment page...</p>
          `;
 
         // Save results to Firebase
