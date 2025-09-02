@@ -138,11 +138,11 @@ export async function initializeFirebase() {
       }
 
       const { firebaseConfig } = await configResponse.json();
-      console.log('Firebase config fetched:', firebaseConfig);
+      console.log('Firebase config fetched');
 
       // 4. Validate configuration
       if (!firebaseConfig || !firebaseConfig.apiKey) {
-        console.error('Invalid Firebase config:', firebaseConfig);
+        console.error('Invalid Firebase config');
         throw new Error('Invalid Firebase configuration');
       }
 
@@ -150,7 +150,7 @@ export async function initializeFirebase() {
       const app = firebase.apps.length
         ? firebase.app()
         : firebase.initializeApp(firebaseConfig);
-      console.log('Firebase app initialized:', app.name);
+      console.log('Firebase app initialized');
 
       // 6. Initialize services
       auth = firebase.auth?.(app) || null;
