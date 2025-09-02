@@ -663,72 +663,87 @@ class UbuntexIndex {
         // } catch (firebaseError) {
         //     console.error("Error saving to Firebase:", firebaseError);
         // }
+        
         try {
-    // Ensure Firebase is fully initialized
-    const app = firebase.app(); // Verify Firebase app is initialized
-    const auth = firebase.auth();
-    
-    // Enable offline persistence for Firestore to handle iOS connectivity issues
-    const db = firebase.firestore();
-    db.enablePersistence()
-        .catch((err) => {
-            if (err.code === 'failed-precondition') {
-                console.warn("Firestore persistence failed: Multiple tabs open");
-            } else if (err.code === 'unimplemented') {
-                console.warn("Firestore persistence not supported on this browser");
-            }
-        });
+            const auth = firebase.auth();
+            // Force getting the current user immediately (works better on iOS)
+            const currentUser = auth.currentUser;
+            
+            if (currentUser) {
+                const db = firebase.firestore();
+                const userResultsRef = db.collection('userResults').doc(currentUser.uid);
+                const attemptsRef = userResultsRef.collection('attempts');
 
-    // Enable authentication persistence to maintain user session on iOS
-    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-        .then(() => {
-            auth.onAuthStateChanged(async (user) => {
-                if (user) {
-                    try {
-                        const userResultsRef = db.collection('userResults').doc(user.uid);
-                        const attemptsRef = userResultsRef.collection('attempts');
+                // Fetch attempts count safely
+                const attemptsSnapshot = await attemptsRef.get();
+                const attemptNumber = attemptsSnapshot.size + 1;
 
-                        // Fetch attempts count safely
-                        const attemptsSnapshot = await attemptsRef.get();
-                        const attemptNumber = attemptsSnapshot.size + 1;
+                const attemptData = {
+                    score: score.toFixed(2),
+                    classification: this.getClassification(score),
+                    answers: this.quizResults.responses,
+                    report: finalReport,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    attemptNumber: attemptNumber
+                };
 
-                        const attemptData = {
-                            score: score.toFixed(2),
-                            classification: this.getClassification(score),
-                            answers: this.quizResults.responses,
-                            report: finalReport,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                            attemptNumber: attemptNumber
-                        };
+                // Save new attempt directly without waiting for onAuthStateChanged
+                await attemptsRef.add(attemptData);
+                console.log(`Attempt #${attemptNumber} saved to Firebase for user ${currentUser.uid}`);
+            } else {
+                // If no current user, try the onAuthStateChanged approach as fallback
+                return new Promise((resolve, reject) => {
+                    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+                        unsubscribe(); // Clean up listener immediately
+                        
+                        if (user) {
+                            try {
+                                const db = firebase.firestore();
+                                const userResultsRef = db.collection('userResults').doc(user.uid);
+                                const attemptsRef = userResultsRef.collection('attempts');
 
-                        // Save new attempt
-                        await attemptsRef.add(attemptData);
-                        console.log(`Attempt #${attemptNumber} saved to Firebase for user ${user.uid}`);
-                        window.location.replace("https://ubuntex.netlify.app/payment");
-                    } catch (error) {
-                        console.error("Error processing attempt for user:", error);
-                    }
-                } else {
-                    console.log("No user logged in - possible iOS auth issue");
-                    // Optional: Trigger re-authentication or log for debugging
-                    console.log("Attempting to recheck auth state...");
-                    setTimeout(() => {
-                        const currentUser = firebase.auth().currentUser;
-                        if (currentUser) {
-                            console.log("User detected on retry:", currentUser.uid);
+                                const attemptsSnapshot = await attemptsRef.get();
+                                const attemptNumber = attemptsSnapshot.size + 1;
+
+                                const attemptData = {
+                                    score: score.toFixed(2),
+                                    classification: this.getClassification(score),
+                                    answers: this.quizResults.responses,
+                                    report: finalReport,
+                                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                    attemptNumber: attemptNumber
+                                };
+
+                                await attemptsRef.add(attemptData);
+                                console.log(`Attempt #${attemptNumber} saved via auth state listener`);
+                                window.location.replace("https://ubuntex.netlify.app/payment");
+                                resolve(true);
+                            } catch (error) {
+                                console.error("Error in auth state callback:", error);
+                                reject(error);
+                            }
                         } else {
-                            console.log("No user detected on retry");
+                            console.log("No user logged in - skipping Firebase save");
+                            // Optional: Store data locally for later sync
+                            this.storeLocalForLaterSync(score, finalReport);
+                            resolve(false);
                         }
-                    }, 1000);
-                }
-            });
-        })
-        .catch((error) => {
-            console.error("Error setting auth persistence:", error);
-        });
+                    });
+                    
+                    // Add timeout for iOS auth state issues
+                    setTimeout(() => {
+                        unsubscribe();
+                        console.log("Auth state change timeout - user might be logged out");
+                        resolve(false);
+                    }, 5000);
+                });
+            }
         } catch (firebaseError) {
-            console.error("Error initializing Firebase or saving to Firestore:", firebaseError);
+            console.error("Error saving to Firebase:", firebaseError);
+            // Fallback: Store data locally for later sync
+            this.storeLocalForLaterSync(score, finalReport);
         }
+
 
         // Set up button interactions
         document.getElementById("answers").addEventListener("click", () => {
