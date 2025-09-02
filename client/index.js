@@ -332,79 +332,79 @@ class UbuntexIndex {
     }
 
     async fetchScoreFromOpenAI(userResponse, expectations) {
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const apiUrl = '/api/openai-proxy';
-    const fallbackScore = 5;
-    
-    // 1. Check connectivity first
-    if (isIOS && !navigator.onLine) {
-        console.warn('iOS offline detected - returning fallback');
-        return fallbackScore;
-    }
-
-    try {
-        const payload = {
-            userResponse: typeof userResponse === 'string' ? userResponse.trim() : '',
-            expectations: typeof expectations === 'string' ? expectations.trim() : ''
-        };
-
-        // 2. Configure with iOS-specific settings
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), isIOS ? 20000 : 10000);
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const apiUrl = '/api/openai-proxy';
+        const fallbackScore = 5;
         
-        const fetchOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-Device-Type': isIOS ? 'iOS' : 'other'
-            },
-            body: JSON.stringify(payload),
-            signal: controller.signal,
-            cache: 'no-store',
-            keepalive: isIOS // Important for iOS background requests
-        };
-
-        // 3. Attempt fetch with offline detection
-        let response;
-        try {
-            response = await fetch(apiUrl, fetchOptions);
-            clearTimeout(timeout);
-        } catch (error) {
-            if (error.name === 'AbortError') {
-                console.warn('Request timeout');
-            }
-            throw error;
-        }
-
-        // 4. Handle successful response
-        if (response.ok) {
-            const data = await response.json();
-            return data?.score ?? fallbackScore;
-        }
-
-        throw new Error(`HTTP ${response.status}`);
-        
-    } catch (error) {
-        console.error('Scoring error:', {
-            error: error.message,
-            type: error.name,
-            isIOS,
-            onlineStatus: navigator.onLine,
-            userAgent: navigator.userAgent,
-            timestamp: new Date().toISOString()
-        });
-
-        // 5. Special offline handling
-        if (!navigator.onLine) {
-            // Can implement offline storage here if needed
+        // 1. Check connectivity first
+        if (isIOS && !navigator.onLine) {
+            console.warn('iOS offline detected - returning fallback');
             return fallbackScore;
         }
 
-        // 6. Final fallback for other errors
-        return fallbackScore;
+        try {
+            const payload = {
+                userResponse: typeof userResponse === 'string' ? userResponse.trim() : '',
+                expectations: typeof expectations === 'string' ? expectations.trim() : ''
+            };
+
+            // 2. Configure with iOS-specific settings
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), isIOS ? 20000 : 10000);
+            
+            const fetchOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Device-Type': isIOS ? 'iOS' : 'other'
+                },
+                body: JSON.stringify(payload),
+                signal: controller.signal,
+                cache: 'no-store',
+                keepalive: isIOS // Important for iOS background requests
+            };
+
+            // 3. Attempt fetch with offline detection
+            let response;
+            try {
+                response = await fetch(apiUrl, fetchOptions);
+                clearTimeout(timeout);
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    console.warn('Request timeout');
+                }
+                throw error;
+            }
+
+            // 4. Handle successful response
+            if (response.ok) {
+                const data = await response.json();
+                return data?.score ?? fallbackScore;
+            }
+
+            throw new Error(`HTTP ${response.status}`);
+            
+        } catch (error) {
+            console.error('Scoring error:', {
+                error: error.message,
+                type: error.name,
+                isIOS,
+                onlineStatus: navigator.onLine,
+                userAgent: navigator.userAgent,
+                timestamp: new Date().toISOString()
+            });
+
+            // 5. Special offline handling
+            if (!navigator.onLine) {
+                // Can implement offline storage here if needed
+                return fallbackScore;
+            }
+
+            // 6. Final fallback for other errors
+            return fallbackScore;
+        }
     }
-}
 
     startQuiz() {
         this.showQuestion();
@@ -631,37 +631,103 @@ class UbuntexIndex {
          `;
 
         // Save results to Firebase
+        // try {
+        //     const auth = firebase.auth();
+        //     auth.onAuthStateChanged(async (user) => {
+        //         if (user) {
+        //             const db = firebase.firestore();
+        //             const userResultsRef = db.collection('userResults').doc(user.uid);
+        //             const attemptsRef = userResultsRef.collection('attempts');
+
+        //             // Fetch attempts count safely
+        //             const attemptsSnapshot = await attemptsRef.get();
+        //             const attemptNumber = attemptsSnapshot.size + 1;
+
+        //             const attemptData = {
+        //                 score: score.toFixed(2),
+        //                 classification: this.getClassification(score),
+        //                 answers: this.quizResults.responses,
+        //                 report: finalReport,
+        //                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        //                 attemptNumber: attemptNumber
+        //             };
+
+        //             // Save new attempt
+        //             await attemptsRef.add(attemptData);
+        //             console.log(`Attempt #${attemptNumber} saved to Firebase`);
+        //             window.location.replace("https://ubuntex.netlify.app/payment");
+        //         } else {
+        //             console.log("No user logged in (iOS issue) - skipping Firebase save");
+        //         }
+        //     });
+        // } catch (firebaseError) {
+        //     console.error("Error saving to Firebase:", firebaseError);
+        // }
         try {
-            const auth = firebase.auth();
+    // Ensure Firebase is fully initialized
+    const app = firebase.app(); // Verify Firebase app is initialized
+    const auth = firebase.auth();
+    
+    // Enable offline persistence for Firestore to handle iOS connectivity issues
+    const db = firebase.firestore();
+    db.enablePersistence()
+        .catch((err) => {
+            if (err.code === 'failed-precondition') {
+                console.warn("Firestore persistence failed: Multiple tabs open");
+            } else if (err.code === 'unimplemented') {
+                console.warn("Firestore persistence not supported on this browser");
+            }
+        });
+
+    // Enable authentication persistence to maintain user session on iOS
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => {
             auth.onAuthStateChanged(async (user) => {
                 if (user) {
-                    const db = firebase.firestore();
-                    const userResultsRef = db.collection('userResults').doc(user.uid);
-                    const attemptsRef = userResultsRef.collection('attempts');
+                    try {
+                        const userResultsRef = db.collection('userResults').doc(user.uid);
+                        const attemptsRef = userResultsRef.collection('attempts');
 
-                    // Fetch attempts count safely
-                    const attemptsSnapshot = await attemptsRef.get();
-                    const attemptNumber = attemptsSnapshot.size + 1;
+                        // Fetch attempts count safely
+                        const attemptsSnapshot = await attemptsRef.get();
+                        const attemptNumber = attemptsSnapshot.size + 1;
 
-                    const attemptData = {
-                        score: score.toFixed(2),
-                        classification: this.getClassification(score),
-                        answers: this.quizResults.responses,
-                        report: finalReport,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                        attemptNumber: attemptNumber
-                    };
+                        const attemptData = {
+                            score: score.toFixed(2),
+                            classification: this.getClassification(score),
+                            answers: this.quizResults.responses,
+                            report: finalReport,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            attemptNumber: attemptNumber
+                        };
 
-                    // Save new attempt
-                    await attemptsRef.add(attemptData);
-                    console.log(`Attempt #${attemptNumber} saved to Firebase`);
-                    window.location.replace("https://ubuntex.netlify.app/payment");
+                        // Save new attempt
+                        await attemptsRef.add(attemptData);
+                        console.log(`Attempt #${attemptNumber} saved to Firebase for user ${user.uid}`);
+                        window.location.replace("https://ubuntex.netlify.app/payment");
+                    } catch (error) {
+                        console.error("Error processing attempt for user:", error);
+                    }
                 } else {
-                    console.log("No user logged in (iOS issue) - skipping Firebase save");
+                    console.log("No user logged in - possible iOS auth issue");
+                    // Optional: Trigger re-authentication or log for debugging
+                    console.log("Attempting to recheck auth state...");
+                    setTimeout(() => {
+                        const currentUser = firebase.auth().currentUser;
+                        if (currentUser) {
+                            console.log("User detected on retry:", currentUser.uid);
+                        } else {
+                            console.log("No user detected on retry");
+                        }
+                    }, 1000);
                 }
             });
+        })
+        .catch((error) => {
+            console.error("Error setting auth persistence:", error);
+        });
         } catch (firebaseError) {
-            console.error("Error saving to Firebase:", firebaseError);
+            console.error("Error initializing Firebase or saving to Firestore:", firebaseError);
         }
 
         // Set up button interactions
