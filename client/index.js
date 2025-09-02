@@ -649,54 +649,7 @@ class UbuntexIndex {
                 await attemptsRef.add(attemptData);
                 console.log(`Attempt #${attemptNumber} saved to Firebase for user ${currentUser.uid}`);
                 window.location.replace("https://ubuntex.netlify.app/payment");
-            } else {
-                // If no current user, try the onAuthStateChanged approach as fallback
-                return new Promise((resolve, reject) => {
-                    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-                        unsubscribe(); // Clean up listener immediately
-                        
-                        if (user) {
-                            try {
-                                const db = firebase.firestore();
-                                const userResultsRef = db.collection('userResults').doc(user.uid);
-                                const attemptsRef = userResultsRef.collection('attempts');
-
-                                const attemptsSnapshot = await attemptsRef.get();
-                                const attemptNumber = attemptsSnapshot.size + 1;
-
-                                const attemptData = {
-                                    score: score.toFixed(2),
-                                    classification: this.getClassification(score),
-                                    answers: this.quizResults.responses,
-                                    report: finalReport,
-                                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                                    attemptNumber: attemptNumber
-                                };
-
-                                await attemptsRef.add(attemptData);
-                                console.log(`Attempt #${attemptNumber} saved via auth state listener`);
-                                resolve(true);
-                                window.location.replace("https://ubuntex.netlify.app/payment");
-                            } catch (error) {
-                                console.error("Error in auth state callback:", error);
-                                reject(error);
-                            }
-                        } else {
-                            console.log("No user logged in - skipping Firebase save");
-                            // Optional: Store data locally for later sync
-                            this.storeLocalForLaterSync(score, finalReport);
-                            resolve(false);
-                        }
-                    });
-                    
-                    // Add timeout for iOS auth state issues
-                    setTimeout(() => {
-                        unsubscribe();
-                        console.log("Auth state change timeout - user might be logged out");
-                        resolve(false);
-                    }, 1000);
-                });
-            }
+            } 
         } catch (firebaseError) {
             console.error("Error saving to Firebase:", firebaseError);
             // Fallback: Store data locally for later sync
@@ -706,8 +659,9 @@ class UbuntexIndex {
 
     } catch (error) {
         loadingIndicator.style.display = "none";
-        resultContainer.innerHTML = `<p>Results could not be saved to firebase...</p>`
     }
+    resultContainer.innerHTML = `<p>Didn't work...</p>`
+    window.location.replace("https://ubuntex.netlify.app");
 }
     
     formatText(input) {
