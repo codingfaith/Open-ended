@@ -629,7 +629,6 @@ class UbuntexIndex {
             // </div>
             // <div id="results-table"></div>
 
-        // Save results to Firebase
         // try {
         //     const auth = firebase.auth();
         //     auth.onAuthStateChanged(async (user) => {
@@ -663,6 +662,7 @@ class UbuntexIndex {
         //     console.error("Error saving to Firebase:", firebaseError);
         // }
         
+        // Save results to Firebase
         try {
             const auth = firebase.auth();
             // Force getting the current user immediately (works better on iOS)
