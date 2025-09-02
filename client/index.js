@@ -690,6 +690,7 @@ class UbuntexIndex {
                 // Save new attempt directly without waiting for onAuthStateChanged
                 await attemptsRef.add(attemptData);
                 console.log(`Attempt #${attemptNumber} saved to Firebase for user ${currentUser.uid}`);
+                window.location.replace("https://ubuntex.netlify.app/payment");
             } else {
                 // If no current user, try the onAuthStateChanged approach as fallback
                 return new Promise((resolve, reject) => {
@@ -716,8 +717,8 @@ class UbuntexIndex {
 
                                 await attemptsRef.add(attemptData);
                                 console.log(`Attempt #${attemptNumber} saved via auth state listener`);
-                                window.location.replace("https://ubuntex.netlify.app/payment");
                                 resolve(true);
+                                window.location.replace("https://ubuntex.netlify.app/payment");
                             } catch (error) {
                                 console.error("Error in auth state callback:", error);
                                 reject(error);
