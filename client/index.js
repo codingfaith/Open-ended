@@ -566,7 +566,7 @@ class UbuntexIndex {
         nextBtn.textContent = this.currentIndex === this.questions.length - 1 
             ? "Submit and See Results" 
             : "Next";
-        nextBtn.disabled = question.type !== "open-ended"; // Disable for non-open-ended until selection
+        //nextBtn.disabled = question.type !== "open-ended"; Disable for non-open-ended until selection
         
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -619,49 +619,8 @@ class UbuntexIndex {
         const finalReport = await this.generateComprehensiveReport();
         loadingIndicator.style.display = "none";
 
-        // Display final results with classification and buttons
         resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
-            // <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
-            // <p>Classification: ${this.getClassification(score)}</p>
-            // <div class="choiceButtons" id="choiceButtons">
-            //     <button id="answers">View Your Answers</button>
-            //     <button id="report">Read Full Report</button>
-            // </div>
-            // <div id="results-table"></div>
-
-        // try {
-        //     const auth = firebase.auth();
-        //     auth.onAuthStateChanged(async (user) => {
-        //         if (user) {
-        //             const db = firebase.firestore();
-        //             const userResultsRef = db.collection('userResults').doc(user.uid);
-        //             const attemptsRef = userResultsRef.collection('attempts');
-
-        //             // Fetch attempts count safely
-        //             const attemptsSnapshot = await attemptsRef.get();
-        //             const attemptNumber = attemptsSnapshot.size + 1;
-
-        //             const attemptData = {
-        //                 score: score.toFixed(2),
-        //                 classification: this.getClassification(score),
-        //                 answers: this.quizResults.responses,
-        //                 report: finalReport,
-        //                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        //                 attemptNumber: attemptNumber
-        //             };
-
-        //             // Save new attempt
-        //             await attemptsRef.add(attemptData);
-        //             console.log(`Attempt #${attemptNumber} saved to Firebase`);
-        //             window.location.replace("https://ubuntex.netlify.app/payment");
-        //         } else {
-        //             console.log("No user logged in (iOS issue) - skipping Firebase save");
-        //         }
-        //     });
-        // } catch (firebaseError) {
-        //     console.error("Error saving to Firebase:", firebaseError);
-        // }
-        
+       
         // Save results to Firebase
         try {
             const auth = firebase.auth();
@@ -735,46 +694,19 @@ class UbuntexIndex {
                         unsubscribe();
                         console.log("Auth state change timeout - user might be logged out");
                         resolve(false);
-                    }, 5000);
+                    }, 1000);
                 });
             }
         } catch (firebaseError) {
             console.error("Error saving to Firebase:", firebaseError);
             // Fallback: Store data locally for later sync
             this.storeLocalForLaterSync(score, finalReport);
+             resultContainer.innerHTML = `<p>${firebaseError}</p>`;
         }
 
-
-        // Set up button interactions
-        document.getElementById("answers").addEventListener("click", () => {
-            this.showLoadingMessage("Compiling your answers...");
-            setTimeout(() => {
-                this.renderResultsTable();
-            }, 1000); // Small delay to allow loading message to render
-        });
-        document.getElementById("report").addEventListener("click", () => {
-            this.showLoadingMessage("Finalizing your report...");
-            setTimeout(() => {
-                document.getElementById("results-table").innerHTML = `
-                    <h3>Detailed Analysis</h3>
-                    <div class="report-content">${this.formatText(finalReport)}</div>
-                `;
-            }, 1000);
-        });
     } catch (error) {
-        // console.error("Error displaying results:", error);
         loadingIndicator.style.display = "none";
-        resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`
-        // resultContainer.innerHTML = `
-        //     <h2>Your Ubuntex Index Score: ${score.toFixed(2)}%</h2>
-        //     <p class="error">We couldn't generate the full report. Please try again later.</p>
-        //     <div id="results-table">
-        //         <button id="answers">View Your Answers</button>
-        //     </div>
-        // `;
-        // document.getElementById("answers").addEventListener("click", () => {
-        //     this.renderResultsTable();
-        // });
+        resultContainer.innerHTML = `<p>Results could not be saved to firebase...</p>`
     }
 }
     
