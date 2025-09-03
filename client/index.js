@@ -651,18 +651,16 @@ class UbuntexIndex {
                 window.location.replace("https://ubuntex.netlify.app/payment");
             } 
         } catch (firebaseError) {
-            window.location.replace("https://ubuntex.netlify.app");
             console.error("Error saving to Firebase:", firebaseError);
             // Fallback: Store data locally for later sync
             this.storeLocalForLaterSync(score, finalReport);
             resultContainer.innerHTML = `<p>${firebaseError}</p>`;
+            window.location.replace("https://ubuntex.netlify.app");
         }
 
     } catch (error) {
         loadingIndicator.style.display = "none";
     }
-    resultContainer.innerHTML = `<p>Didn't work...</p>`
-    window.location.replace("https://ubuntex.netlify.app");
 }
     
     formatText(input) {
