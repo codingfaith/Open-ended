@@ -1,4 +1,6 @@
 import { initializeFirebase } from './auth.js';
+import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
+import { getFirestore, collection, doc, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
 
 const totalQuestions = 44;
 const progress = document.getElementById("progress");
@@ -605,35 +607,101 @@ class UbuntexIndex {
         this.displayResults(finalScore)
     }
 
-    async displayResults(score) {
-    // Get DOM elements
-    const quizContainer = document.getElementById("quiz-container");
-    const resultContainer = document.getElementById("result");
-    const loadingIndicator = document.getElementById("loading-indicator");
+    // async displayResults(score) {
+    // // Get DOM elements
+    // const quizContainer = document.getElementById("quiz-container");
+    // const resultContainer = document.getElementById("result");
+    // const loadingIndicator = document.getElementById("loading-indicator");
 
-    quizContainer.style.display = "none";
-    resultContainer.style.display = "block";
-    loadingIndicator.style.display = "block";
+    // quizContainer.style.display = "none";
+    // resultContainer.style.display = "block";
+    // loadingIndicator.style.display = "block";
 
-    try {
-        const finalReport = await this.generateComprehensiveReport();
-        loadingIndicator.style.display = "none";
+    // try {
+    //     const finalReport = await this.generateComprehensiveReport();
+    //     loadingIndicator.style.display = "none";
 
-        resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+    //     resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
        
-        // Save results to Firebase
-        try {
-            const auth = firebase.auth();
-            // Force getting the current user immediately (works better on iOS)
-            const currentUser = auth.currentUser;
+    //     // Save results to Firebase
+    //     try {
+    //         const auth = firebase.auth();
+    //         // Force getting the current user immediately (works better on iOS)
+    //         const currentUser = auth.currentUser;
             
-            if (currentUser) {
-                const db = firebase.firestore();
-                const userResultsRef = db.collection('userResults').doc(currentUser.uid);
-                const attemptsRef = userResultsRef.collection('attempts');
+    //         if (currentUser) {
+    //             const db = firebase.firestore();
+    //             const userResultsRef = db.collection('userResults').doc(currentUser.uid);
+    //             const attemptsRef = userResultsRef.collection('attempts');
 
-                // Fetch attempts count safely
-                const attemptsSnapshot = await attemptsRef.get();
+    //             // Fetch attempts count safely
+    //             const attemptsSnapshot = await attemptsRef.get();
+    //             const attemptNumber = attemptsSnapshot.size + 1;
+
+    //             const attemptData = {
+    //                 score: score.toFixed(2),
+    //                 classification: this.getClassification(score),
+    //                 answers: this.quizResults.responses,
+    //                 report: finalReport,
+    //                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    //                 attemptNumber: attemptNumber
+    //             };
+
+    //             // Save new attempt directly without waiting for onAuthStateChanged
+    //             await attemptsRef.add(attemptData);
+    //             console.log(`Attempt #${attemptNumber} saved to Firebase for user ${currentUser.uid}`);
+    //             window.location.replace("https://ubuntex.netlify.app/payment");
+    //         } 
+    //     } catch (firebaseError) {
+    //         console.error("Error saving to Firebase:", firebaseError);
+    //         // Fallback: Store data locally for later sync
+    //         this.storeLocalForLaterSync(score, finalReport);
+    //         resultContainer.innerHTML = `<p>${firebaseError}</p>`;
+    //         window.location.replace("https://ubuntex.netlify.app");
+    //     }
+
+    // } catch (error) {
+    //     loadingIndicator.style.display = "none";
+    // }
+    // }
+ 
+    async displayResults(score) { 
+        // Get DOM elements
+        const quizContainer = document.getElementById("quiz-container");
+        const resultContainer = document.getElementById("result");
+        const loadingIndicator = document.getElementById("loading-indicator");
+
+        quizContainer.style.display = "none";
+        resultContainer.style.display = "block";
+        loadingIndicator.style.display = "block";
+
+        try {
+            const finalReport = await this.generateComprehensiveReport();
+
+            // Hide spinner once report is ready
+            loadingIndicator.style.display = "none";
+            resultContainer.innerHTML = `<p>Saving results... please wait</p>`;
+
+            const auth = getAuth();
+            const db = getFirestore();
+
+            // Ensure persistence works on iOS
+            await setPersistence(auth, browserLocalPersistence).catch((err) => {
+                console.warn("Persistence error:", err);
+            });
+
+            // Save attempt function (arrow fn so "this" works)
+            const saveAttempt = async (user) => {
+                if (!user) {
+                    console.log("No user logged in (iOS issue) - skipping Firebase save");
+                    return;
+                }
+
+                const userResultsRef = doc(db, "userResults", user.uid);
+                const attemptsRef = collection(userResultsRef, "attempts");
+
+                // Count attempts
+                const attemptsSnapshot = await getDocs(attemptsRef);
                 const attemptNumber = attemptsSnapshot.size + 1;
 
                 const attemptData = {
@@ -641,27 +709,37 @@ class UbuntexIndex {
                     classification: this.getClassification(score),
                     answers: this.quizResults.responses,
                     report: finalReport,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    timestamp: serverTimestamp(),
                     attemptNumber: attemptNumber
                 };
 
-                // Save new attempt directly without waiting for onAuthStateChanged
-                await attemptsRef.add(attemptData);
-                console.log(`Attempt #${attemptNumber} saved to Firebase for user ${currentUser.uid}`);
-                window.location.replace("https://ubuntex.netlify.app/payment");
-            } 
-        } catch (firebaseError) {
-            console.error("Error saving to Firebase:", firebaseError);
-            // Fallback: Store data locally for later sync
-            this.storeLocalForLaterSync(score, finalReport);
-            resultContainer.innerHTML = `<p>${firebaseError}</p>`;
-            window.location.replace("https://ubuntex.netlify.app");
-        }
+                await addDoc(attemptsRef, attemptData);
+                console.log(`Attempt #${attemptNumber} saved to Firebase`);
 
-    } catch (error) {
-        loadingIndicator.style.display = "none";
+                // Redirect after save
+                resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+                window.location.replace("https://ubuntex.netlify.app/payment");
+            };
+
+            // Try immediate save
+            if (auth.currentUser) {
+                await saveAttempt(auth.currentUser);
+            }
+
+            // Fallback: wait for auth state (important for iOS)
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    saveAttempt(user);
+                }
+            });
+
+        } catch (error) {
+            loadingIndicator.style.display = "none";
+            console.error("Error in displayResults:", error);
+            resultContainer.innerHTML = `<p>Something went wrong. Please try again later.</p>`;
+        }
     }
-}
+
     
     formatText(input) {
         let formatted = input.replace(/## (Key Insights|Strengths|Growth Areas|Recommendations)/g, '<h2>$1</h2>')
