@@ -696,8 +696,8 @@ class UbuntexIndex {
                     console.log("No user logged in (iOS issue) - skipping Firebase save");
                     return;
                 }
-
-                const userResultsRef = doc(db, "userResults", user.uid);
+                const currentUser = auth.currentUser;
+                const userResultsRef = doc(db, "userResults", currentUser.uid);
                 const attemptsRef = collection(userResultsRef, "attempts");
 
                 // Count attempts
