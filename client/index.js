@@ -877,7 +877,7 @@ class UbuntexIndex {
     - Use proper markdown headers (##) for each section
     - Bold important terms like "empathy" or "communal responsibility"
     - Include specific examples from responses when possible
-    - Tone of report should address the individual quiz taker directly (using the word "you") not generalise.
+    - Tone of report should address the individual test taker directly (using the word "you") not generalise.
     
     Test Responses:
     ${JSON.stringify(reportData.responses, null, 2)}

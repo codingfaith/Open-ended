@@ -218,7 +218,7 @@ function setupAuthStateListener() {
     // Normalize path (remove trailing slashes and query params)
     const currentPath = window.location.pathname.replace(/\/$/, '').split('?')[0].toLowerCase();
     const isDashboard = currentPath.endsWith('/dashboard');
-    const isQuiz = currentPath.endsWith('/test');
+    const isQuiz = currentPath.endsWith('/quiz');
     
     console.log('Processed path:', { currentPath, isDashboard, isQuiz });
     
