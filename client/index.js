@@ -680,21 +680,17 @@ class UbuntexIndex {
             loadingIndicator.style.display = "none";
             resultContainer.innerHTML = `<p>Saving results... please wait</p>`;
 
-            // Initialize Firebase
             const { db, auth } = await initializeFirebase();
 
-            // Save attempt helper
+            await setPersistence(auth, browserLocalPersistence).catch((err) => {
+            console.warn("Persistence error:", err);
+            });
+
             const saveAttempt = async (user) => {
-            if (!user) {
-                console.log("No user logged in (iOS issue) - skipping Firebase save");
-                return;
-            }
+            const userResultsRef = doc(db, "userResults", user.uid);
+            const attemptsRef = collection(userResultsRef, "attempts");
 
-            const userResultsRef = db.collection("userResults").doc(user.uid);
-            const attemptsRef = userResultsRef.collection("attempts");
-
-            // Count attempts
-            const attemptsSnapshot = await attemptsRef.get();
+            const attemptsSnapshot = await getDocs(attemptsRef);
             const attemptNumber = attemptsSnapshot.size + 1;
 
             const attemptData = {
@@ -702,25 +698,29 @@ class UbuntexIndex {
                 classification: this.getClassification(score),
                 answers: this.quizResults.responses,
                 report: finalReport,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                timestamp: serverTimestamp(),
                 attemptNumber: attemptNumber,
             };
 
-            await attemptsRef.add(attemptData);
+            await addDoc(attemptsRef, attemptData);
             console.log(`Attempt #${attemptNumber} saved to Firebase`);
 
             resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
             window.location.replace("https://ubuntex.netlify.app/payment");
             };
 
-            //Try immediate save
-            if (auth.currentUser) {
-            await saveAttempt(auth.currentUser);
+            // Always wait for auth state change — fixes iOS Safari
+            onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                await saveAttempt(user);
+                } catch (err) {
+                console.error("Error saving on iOS:", err);
+                resultContainer.innerHTML = `<p>Could not save results. Please try again.</p>`;
+                }
+            } else {
+                console.warn("Still no user onAuthStateChanged (iOS).");
             }
-
-            //Fallback for iOS — wait for auth state
-            auth.onAuthStateChanged((user) => {
-            if (user) saveAttempt(user);
             });
 
         } catch (error) {
@@ -730,8 +730,6 @@ class UbuntexIndex {
         }
     }
 
-
-    
     formatText(input) {
         let formatted = input.replace(/## (Key Insights|Strengths|Growth Areas|Recommendations)/g, '<h2>$1</h2>')
             .replace(/\*\*(.*?)\*\*/g, (_, group) => `<strong><em>${group.trim()}</em></strong>`)
