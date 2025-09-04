@@ -18,19 +18,19 @@
   to = "/auth.html"
   status = 200
 
-[[redirects]]
-  from = "/contact"
-  to = "/contact.html"
-  status = 200
+ [[redirects]]
+  from = "/pay"
+  to = "/payment.html"
+  status = 200 
  
 [[redirects]]
   from = "/test"
   to = "/quiz.html"
-  status = 200
+  status = 200 
 
 [[redirects]]
-  from = "/pay"
-  to = "/payment.html"
+  from = "/contact"
+  to = "/contact.html"
   status = 200
 
 [[redirects]]
