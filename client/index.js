@@ -683,8 +683,7 @@ class UbuntexIndex {
             loadingIndicator.style.display = "none";
             resultContainer.innerHTML = `<p>Saving results... please wait</p>`;
 
-            const auth = getAuth();
-            const db = getFirestore();
+           const { db, auth } = await initializeFirebase();
 
             // Ensure persistence works on iOS
             await setPersistence(auth, browserLocalPersistence).catch((err) => {
