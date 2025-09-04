@@ -1,7 +1,7 @@
 
 import { initializeFirebase } from './auth.js';
 import { onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
-import { collection, doc, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
+import { getDocs, addDoc, serverTimestamp } from "firebase/firestore";
 
 const totalQuestions = 44;
 const progress = document.getElementById("progress");
@@ -701,7 +701,7 @@ class UbuntexIndex {
                 classification: this.getClassification(score),
                 answers: this.quizResults.responses,
                 report: finalReport,
-                timestamp: serverTimestamp(),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 attemptNumber: attemptNumber,
             };
 
