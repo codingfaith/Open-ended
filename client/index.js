@@ -682,8 +682,8 @@ class UbuntexIndex {
             loadingIndicator.style.display = "none";
             resultContainer.innerHTML = `<p>Saving results... please wait</p>`;
 
-            const currentUser = auth.currentUser;
             const { db, auth } = await initializeFirebase();
+            const currentUser = auth.currentUser;
 
             await setPersistence(auth, browserLocalPersistence).catch((err) => {
             console.warn("Persistence error:", err);
