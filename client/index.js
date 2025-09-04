@@ -1,5 +1,7 @@
 
 import { initializeFirebase } from './auth.js';
+import { setPersistence, browserLocalPersistence } from "firebase/auth";
+import { collection, doc, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
 
 const totalQuestions = 44;
 const progress = document.getElementById("progress");
@@ -664,70 +666,106 @@ class UbuntexIndex {
     //     loadingIndicator.style.display = "none";
     // }
     // }
- 
-    async displayResults(score) {
-        const quizContainer = document.getElementById("quiz-container");
-        const resultContainer = document.getElementById("result");
-        const loadingIndicator = document.getElementById("loading-indicator");
 
-        quizContainer.style.display = "none";
-        resultContainer.style.display = "block";
-        loadingIndicator.style.display = "block";
+async displayResults(score) {
+  const quizContainer = document.getElementById("quiz-container");
+  const resultContainer = document.getElementById("result");
+  const loadingIndicator = document.getElementById("loading-indicator");
 
-        try {
-            const finalReport = await this.generateComprehensiveReport();
+  quizContainer.style.display = "none";
+  resultContainer.style.display = "block";
+  loadingIndicator.style.display = "block";
 
-            loadingIndicator.style.display = "none";
-            resultContainer.innerHTML = `<p>Saving results... please wait</p>`;
+  try {
+    const finalReport = await this.generateComprehensiveReport();
 
-            const { db, auth } = await initializeFirebase();
+    loadingIndicator.style.display = "none";
+    resultContainer.innerHTML = `<p>Saving results... please wait</p>`;
 
-            await setPersistence(auth, browserLocalPersistence).catch((err) => {
-            console.warn("Persistence error:", err);
-            });
+    const { db, auth } = await initializeFirebase();
 
-            const saveAttempt = async (user) => {
-            const userResultsRef = doc(db, "userResults", user.uid);
-            const attemptsRef = collection(userResultsRef, "attempts");
+    // Ensure persistence works for iOS
+    await setPersistence(auth, browserLocalPersistence).catch(console.warn);
 
-            const attemptsSnapshot = await getDocs(attemptsRef);
-            const attemptNumber = attemptsSnapshot.size + 1;
+    const attemptData = {
+      score: score.toFixed(2),
+      classification: this.getClassification(score),
+      answers: this.quizResults.responses,
+      report: finalReport,
+      timestamp: serverTimestamp(),
+    };
 
-            const attemptData = {
-                score: score.toFixed(2),
-                classification: this.getClassification(score),
-                answers: this.quizResults.responses,
-                report: finalReport,
-                timestamp: serverTimestamp(),
-                attemptNumber: attemptNumber,
-            };
+    const saveAttempt = async (user) => {
+      if (!user) return;
 
-            await addDoc(attemptsRef, attemptData);
-            console.log(`Attempt #${attemptNumber} saved to Firebase`);
+      const userResultsRef = doc(db, "userResults", user.uid);
+      const attemptsRef = collection(userResultsRef, "attempts");
 
-            resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+      // Count previous attempts
+      const attemptsSnapshot = await getDocs(attemptsRef);
+      attemptData.attemptNumber = attemptsSnapshot.size + 1;
+
+      await addDoc(attemptsRef, attemptData);
+      console.log(`Attempt #${attemptData.attemptNumber} saved to Firebase`);
+
+      resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+      window.location.replace("https://ubuntex.netlify.app/payment");
+    };
+
+    // --- iOS-safe save logic ---
+    if (auth.currentUser) {
+      // Fast path for desktop/Android
+      await saveAttempt(auth.currentUser);
+    } else {
+      // iOS fallback: wait max 2s for auth state
+      await new Promise((resolve) => {
+        let resolved = false;
+        const timeout = setTimeout(() => {
+          if (!resolved) {
+            resolved = true;
+            console.warn("Auth not ready, saving offline");
+            // Save offline if user not ready
+            const offline = { ...attemptData, timestamp: Date.now(), offline: true };
+            const saved = JSON.parse(localStorage.getItem("pendingAttempts") || "[]");
+            saved.push(offline);
+            localStorage.setItem("pendingAttempts", JSON.stringify(saved));
+            resultContainer.innerHTML = `<p>Saved locally! Redirecting...</p>`;
             window.location.replace("https://ubuntex.netlify.app/payment");
-            };
+            resolve();
+          }
+        }, 2000);
 
-            // Always wait for auth state change — fixes iOS Safari
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    try {
-                    await saveAttempt(user);
-                    } catch (err) {
-                    console.error("Error saving on iOS:", err);
-                    resultContainer.innerHTML = `<p>Could not save results. Please try again.</p>`;
-                    }
-                } else {
-                    console.warn("Still no user onAuthStateChanged (iOS).");
-                }
-            });
-        } catch (error) {
-            loadingIndicator.style.display = "none";
-            console.error("Error in displayResults:", error);
-            resultContainer.innerHTML = `<p>Something went wrong. Please try again later.</p>`;
-        }
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+          if (user && !resolved) {
+            resolved = true;
+            clearTimeout(timeout);
+            unsubscribe();
+            await saveAttempt(user);
+            resolve();
+          }
+        });
+      });
     }
+
+  } catch (error) {
+    console.error("Error saving results:", error);
+    resultContainer.innerHTML = `<p>Could not save results. They will be stored locally and synced later.</p>`;
+
+    // Save offline as last resort
+    const offlineAttempt = {
+      score: score.toFixed(2),
+      classification: this.getClassification(score),
+      answers: this.quizResults.responses,
+      report: await this.generateComprehensiveReport(),
+      timestamp: Date.now(),
+      offline: true
+    };
+    const saved = JSON.parse(localStorage.getItem("pendingAttempts") || "[]");
+    saved.push(offlineAttempt);
+    localStorage.setItem("pendingAttempts", JSON.stringify(saved));
+  }
+}
+
 
     formatText(input) {
         let formatted = input.replace(/## (Key Insights|Strengths|Growth Areas|Recommendations)/g, '<h2>$1</h2>')
