@@ -676,129 +676,56 @@ class UbuntexIndex {
 
         try {
             const finalReport = await this.generateComprehensiveReport();
+
             loadingIndicator.style.display = "none";
             resultContainer.innerHTML = `<p>Saving results... please wait</p>`;
 
             const { db, auth } = await initializeFirebase();
 
-            // iOS Safari workaround: Try multiple persistence strategies
-            try {
-            await setPersistence(auth, browserLocalPersistence);
-            } catch (err) {
-            console.warn("Local persistence failed, trying session:", err);
-            try {
-                await setPersistence(auth, browserSessionPersistence);
-            } catch (sessionErr) {
-                console.warn("Session persistence also failed:", sessionErr);
-                // Continue without persistence - some iOS versions block all storage
-            }
-            }
+            await setPersistence(auth, browserLocalPersistence).catch((err) => {
+            console.warn("Persistence error:", err);
+            });
 
-            // Function to save attempt with retry logic for iOS
-            const saveAttempt = async (user, retryCount = 0) => {
-            try {
-                const userResultsRef = doc(db, "userResults", user.uid);
-                const attemptsRef = collection(userResultsRef, "attempts");
+            const saveAttempt = async (user) => {
+            const userResultsRef = doc(db, "userResults", user.uid);
+            const attemptsRef = collection(userResultsRef, "attempts");
 
-                const attemptsSnapshot = await getDocs(attemptsRef);
-                const attemptNumber = attemptsSnapshot.size + 1;
+            const attemptsSnapshot = await getDocs(attemptsRef);
+            const attemptNumber = attemptsSnapshot.size + 1;
 
-                const attemptData = {
+            const attemptData = {
                 score: score.toFixed(2),
                 classification: this.getClassification(score),
                 answers: this.quizResults.responses,
                 report: finalReport,
                 timestamp: serverTimestamp(),
                 attemptNumber: attemptNumber,
-                };
-
-                await addDoc(attemptsRef, attemptData);
-                console.log(`Attempt #${attemptNumber} saved to Firebase`);
-
-                resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
-                
-                // Use replace instead of redirect for better iOS compatibility
-                setTimeout(() => {
-                window.location.replace("https://ubuntex.netlify.app/payment");
-                }, 1000);
-                
-            } catch (error) {
-                if (retryCount < 3) {
-                console.log(`Retry ${retryCount + 1} for iOS save attempt`);
-                await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
-                return saveAttempt(user, retryCount + 1);
-                } else {
-                throw error;
-                }
-            }
             };
 
-            // Enhanced auth state handling for iOS
-            const handleAuthState = async () => {
-            return new Promise((resolve, reject) => {
-                const timeout = setTimeout(() => {
-                reject(new Error("Auth state change timeout (iOS Safari)"));
-                }, 10000); // 10 second timeout for iOS
+            await addDoc(attemptsRef, attemptData);
+            console.log(`Attempt #${attemptNumber} saved to Firebase`);
 
-                const unsubscribe = onAuthStateChanged(auth, async (user) => {
-                clearTimeout(timeout);
-                unsubscribe();
-                
+            resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+            window.location.replace("https://ubuntex.netlify.app/payment");
+            };
+
+            // Always wait for auth state change — fixes iOS Safari
+            onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     try {
                     await saveAttempt(user);
-                    resolve();
                     } catch (err) {
-                    console.error("Error saving attempt:", err);
-                    reject(err);
+                    console.error("Error saving on iOS:", err);
+                    resultContainer.innerHTML = `<p>Could not save results. Please try again.</p>`;
                     }
                 } else {
-                    // No user found - try to sign in anonymously for iOS
-                    try {
-                    console.log("No user found, attempting anonymous auth for iOS");
-                    const { signInAnonymously } = await import('firebase/auth');
-                    const anonUser = await signInAnonymously(auth);
-                    await saveAttempt(anonUser.user);
-                    resolve();
-                    } catch (anonError) {
-                    console.error("Anonymous auth also failed:", anonError);
-                    
-                    // Last resort: Store data locally and redirect anyway
-                    localStorage.setItem('pendingQuizResult', JSON.stringify({
-                        score: score.toFixed(2),
-                        classification: this.getClassification(score),
-                        answers: this.quizResults.responses,
-                        report: finalReport,
-                        timestamp: new Date().toISOString()
-                    }));
-                    
-                    resultContainer.innerHTML = `<p>Redirecting to payment...</p>`;
-                    setTimeout(() => {
-                        window.location.replace("https://ubuntex.netlify.app/payment");
-                    }, 1000);
-                    
-                    resolve(); // Don't reject here - we want to continue to payment
-                    }
+                    console.warn("Still no user onAuthStateChanged (iOS).");
                 }
-                });
             });
-            };
-
-            await handleAuthState();
-
         } catch (error) {
             loadingIndicator.style.display = "none";
             console.error("Error in displayResults:", error);
-            
-            // Even if saving fails, allow user to proceed to payment
-            resultContainer.innerHTML = `
-            <p>We encountered a temporary issue saving your results.</p>
-            <p>Redirecting to payment page...</p>
-            `;
-            
-            setTimeout(() => {
-            window.location.replace("https://ubuntex.netlify.app/payment");
-            }, 3000);
+            resultContainer.innerHTML = `<p>Something went wrong. Please try again later.</p>`;
         }
     }
 
