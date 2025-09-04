@@ -710,12 +710,12 @@ class UbuntexIndex {
             resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
             window.location.replace("https://ubuntex.netlify.app/payment");
             };
-
+            const currentUser = auth.currentUser;
             // Always wait for auth state change — fixes iOS Safari
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
+            onAuthStateChanged(auth, async (currentUser) => {
+                if (currentUser) {
                     try {
-                    await saveAttempt(user);
+                    await saveAttempt(currentUser);
                     } catch (err) {
                     console.error("Error saving on iOS:", err);
                     resultContainer.innerHTML = `<p>Could not save results. Please try again.</p>`;
