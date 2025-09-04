@@ -1,7 +1,7 @@
 
 import { initializeFirebase } from './auth.js';
-import { onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
-import { getDocs, addDoc, serverTimestamp } from "firebase/firestore";
+// import { onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
+// import { getDocs, addDoc, serverTimestamp } from "firebase/firestore";
 
 const totalQuestions = 44;
 const progress = document.getElementById("progress");
