@@ -24,9 +24,9 @@ to = "/contact.html"
 status = 200
  
 [[redirects]]
-  from = test"
-  to = "/quiz.html"
-  status = 200
+from = test"
+to = "/quiz.html"
+status = 200
 
 [[redirects]]
 from = pay"
