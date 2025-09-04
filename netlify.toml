@@ -24,7 +24,7 @@ to = "/contact.html"
 status = 200
  
 [[redirects]]
-from = test"
+from = "/test"
 to = "/quiz.html"
 status = 200
 
