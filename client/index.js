@@ -682,6 +682,7 @@ class UbuntexIndex {
             loadingIndicator.style.display = "none";
             resultContainer.innerHTML = `<p>Saving results... please wait</p>`;
 
+            const currentUser = auth.currentUser;
             const { db, auth } = await initializeFirebase();
 
             await setPersistence(auth, browserLocalPersistence).catch((err) => {
@@ -689,8 +690,8 @@ class UbuntexIndex {
             });
 
             const saveAttempt = async (user) => {
-            const userResultsRef = doc(db, "userResults", user.uid);
-            const attemptsRef = collection(userResultsRef, "attempts");
+            const userResultsRef = db.collection('userResults').doc(user.uid);
+            const attemptsRef = userResultsRef.collection('attempts');
 
             const attemptsSnapshot = await getDocs(attemptsRef);
             const attemptNumber = attemptsSnapshot.size + 1;
@@ -710,10 +711,10 @@ class UbuntexIndex {
             resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
             window.location.replace("https://ubuntex.netlify.app/payment");
             };
-            const currentUser = auth.currentUser;
+            
             // Always wait for auth state change — fixes iOS Safari
-            onAuthStateChanged(auth, async (currentUser) => {
-                if (currentUser) {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
                     try {
                     await saveAttempt(currentUser);
                     } catch (err) {
