@@ -1,6 +1,5 @@
+
 import { initializeFirebase } from './auth.js';
-import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
-import { getFirestore, collection, doc, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
 
 const totalQuestions = 44;
 const progress = document.getElementById("progress");
@@ -666,8 +665,7 @@ class UbuntexIndex {
     // }
     // }
  
-    async displayResults(score) { 
-        // Get DOM elements
+    async displayResults(score) {
         const quizContainer = document.getElementById("quiz-container");
         const resultContainer = document.getElementById("result");
         const loadingIndicator = document.getElementById("loading-indicator");
@@ -679,58 +677,50 @@ class UbuntexIndex {
         try {
             const finalReport = await this.generateComprehensiveReport();
 
-            // Hide spinner once report is ready
             loadingIndicator.style.display = "none";
             resultContainer.innerHTML = `<p>Saving results... please wait</p>`;
 
-           const { db, auth } = await initializeFirebase();
+            // Initialize Firebase
+            const { db, auth } = await initializeFirebase();
 
-            // Ensure persistence works on iOS
-            await setPersistence(auth, browserLocalPersistence).catch((err) => {
-                console.warn("Persistence error:", err);
-            });
-
-            // Save attempt function (arrow fn so "this" works)
+            // Save attempt helper
             const saveAttempt = async (user) => {
-                if (!user) {
-                    console.log("No user logged in (iOS issue) - skipping Firebase save");
-                    return;
-                }
-                const currentUser = auth.currentUser;
-                const userResultsRef = doc(db, "userResults", currentUser.uid);
-                const attemptsRef = collection(userResultsRef, "attempts");
-
-                // Count attempts
-                const attemptsSnapshot = await getDocs(attemptsRef);
-                const attemptNumber = attemptsSnapshot.size + 1;
-
-                const attemptData = {
-                    score: score.toFixed(2),
-                    classification: this.getClassification(score),
-                    answers: this.quizResults.responses,
-                    report: finalReport,
-                    timestamp: serverTimestamp(),
-                    attemptNumber: attemptNumber
-                };
-
-                await addDoc(attemptsRef, attemptData);
-                console.log(`Attempt #${attemptNumber} saved to Firebase`);
-
-                // Redirect after save
-                resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
-                window.location.replace("https://ubuntex.netlify.app/payment");
-            };
-
-            // Try immediate save
-            if (auth.currentUser) {
-                await saveAttempt(auth.currentUser);
+            if (!user) {
+                console.log("No user logged in (iOS issue) - skipping Firebase save");
+                return;
             }
 
-            // Fallback: wait for auth state (important for iOS)
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    saveAttempt(user);
-                }
+            const userResultsRef = db.collection("userResults").doc(user.uid);
+            const attemptsRef = userResultsRef.collection("attempts");
+
+            // Count attempts
+            const attemptsSnapshot = await attemptsRef.get();
+            const attemptNumber = attemptsSnapshot.size + 1;
+
+            const attemptData = {
+                score: score.toFixed(2),
+                classification: this.getClassification(score),
+                answers: this.quizResults.responses,
+                report: finalReport,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                attemptNumber: attemptNumber,
+            };
+
+            await attemptsRef.add(attemptData);
+            console.log(`Attempt #${attemptNumber} saved to Firebase`);
+
+            resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+            window.location.replace("https://ubuntex.netlify.app/payment");
+            };
+
+            //Try immediate save
+            if (auth.currentUser) {
+            await saveAttempt(auth.currentUser);
+            }
+
+            //Fallback for iOS — wait for auth state
+            auth.onAuthStateChanged((user) => {
+            if (user) saveAttempt(user);
             });
 
         } catch (error) {
@@ -739,6 +729,7 @@ class UbuntexIndex {
             resultContainer.innerHTML = `<p>Something went wrong. Please try again later.</p>`;
         }
     }
+
 
     
     formatText(input) {
