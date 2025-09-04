@@ -29,7 +29,7 @@ to = "/quiz.html"
 status = 200
 
 [[redirects]]
-from = pay"
+from = "/pay"
 to = "/payment.html"
 status = 200
 
