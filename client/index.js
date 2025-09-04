@@ -528,9 +528,7 @@ class UbuntexIndex {
             const valueDisplay = document.createElement("div");
             valueDisplay.className = "slider-value";
             valueDisplay.innerHTML = `
-            <span>
-                Selected: 5 <span class="scale-labels">(drag slider to change default)</span>
-            </span>`;
+                Selected: 5 <span class="slider-instruction">(drag slider to change default)</span>`;
             
             slider.oninput = () => {
                 valueDisplay.textContent = `Selected: ${slider.value}`;

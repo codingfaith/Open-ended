@@ -129,6 +129,11 @@ button {
     font-size: 0.8em;
     justify-content: space-between;
 }
+.slider-instruction {
+    color: #666;
+    font-size: 0.8em;
+    font-weight: lighter;
+}
 table { 
     width: 100%; 
     font-size: small;
