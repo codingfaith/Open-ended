@@ -663,7 +663,7 @@ class UbuntexIndex {
     //     }
     // }
 
-    waitForAuthState(auth, timeout = 5000) {
+    async waitForAuthState(auth, timeout = 5000) {
         return new Promise((resolve) => {
             const unsubscribe = auth.onAuthStateChanged((user) => {
             unsubscribe();
@@ -683,6 +683,8 @@ class UbuntexIndex {
         const resultContainer = document.getElementById("result");
         const loadingIndicator = document.getElementById("loading-indicator");
 
+        let finalReport;
+        
         quizContainer.style.display = "none";
         resultContainer.style.display = "block";
         loadingIndicator.style.display = "block";
@@ -695,7 +697,7 @@ class UbuntexIndex {
             const auth = firebase.auth();
 
             // ✅ Always wait for Firebase to restore session (important on iOS)
-            const user = await waitForAuthState(auth);
+            const user = await this.waitForAuthState(auth);
 
             if (user) {
             await this.saveToFirestore(user, score, finalReport);
