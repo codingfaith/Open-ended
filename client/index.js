@@ -1,6 +1,14 @@
 
 import { initializeFirebase } from './auth.js';
 
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    .then(() => {
+        console.log("Auth persistence set to LOCAL");
+    })
+    .catch((error) => {
+        console.error("Error setting auth persistence:", error);
+    });
+
 const totalQuestions = 44;
 const progress = document.getElementById("progress");
 const progressText = document.getElementById("progress-text");
@@ -603,7 +611,7 @@ class UbuntexIndex {
         const maxPossibleScore = 315
         const finalScore = (totalScore  / maxPossibleScore) * 100 
         localStorage.setItem('ubuntexTestCompleted', 'true') // Mark test as completed in localStorage
-
+    
         this.displayResults(finalScore)
     }
 
