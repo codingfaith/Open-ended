@@ -679,28 +679,21 @@ class UbuntexIndex {
         const user = await this.getUserWithIOSFallback();
         
         if (user) {
-            // Save to Firestore but don't wait for completion on iOS
-            if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                // Fire and forget for iOS to avoid blocking redirect
-                this.saveToFirestore(user, score, finalReport).catch(console.error);
-                resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
-                
-                // Use immediate redirect with shorter timeout for iOS
-                setTimeout(() => {
-                    window.location.href = "https://ubuntex.netlify.app/payment";
-                }, 1000);
-            } else {
-                // Normal flow for other browsers
-                await this.saveToFirestore(user, score, finalReport);
-                resultContainer.innerHTML = `<p>Run catch block...</p>`;
-                setTimeout(() => {
-                    window.location.href = "https://ubuntex.netlify.app";
-                }, 1000);
-            }
+            resultContainer.innerHTML = `<p>Saving your results...</p>`;
+            
+            // Wait for Firestore save to complete
+            await this.saveToFirestore(user, score, finalReport);
+            
+            resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+            
+            // Use consistent redirect approach
+            setTimeout(() => {
+                window.location.href = "https://ubuntex.netlify.app/payment";
+            }, 1000);
+            
         } else {
             console.warn("No authenticated user found.");
             this.storeLocalForLaterSync(score, finalReport);
-            // Use href instead of assign for better iOS compatibility
             window.location.href = "https://ubuntex.netlify.app";
         }
     } catch (error) {
@@ -723,7 +716,7 @@ async getUserWithIOSFallback() {
 
     // Wait for auth state with shorter timeout for iOS
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const timeout = isIOS ? 2000 : 5000;
+    const timeout = isIOS ? 3000 : 5000;
 
     return new Promise((resolve) => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -736,6 +729,27 @@ async getUserWithIOSFallback() {
             resolve(auth.currentUser); // Fallback to currentUser
         }, timeout);
     });
+}
+
+async saveToFirestore(user, score, finalReport) {
+    const db = firebase.firestore();
+    const userResultsRef = db.collection("userResults").doc(user.uid);
+    const attemptsRef = userResultsRef.collection("attempts");
+
+    const attemptsSnapshot = await attemptsRef.get();
+    const attemptNumber = attemptsSnapshot.size + 1;
+
+    const attemptData = {
+        score: score.toFixed(2),
+        classification: this.getClassification(score),
+        answers: this.quizResults.responses,
+        report: finalReport,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        attemptNumber: attemptNumber
+    };
+
+    await attemptsRef.add(attemptData);
+    console.log(`Attempt #${attemptNumber} saved for ${user.uid}`);
 }
 
     // async saveToFirestore(user, score, finalReport) {
@@ -773,26 +787,26 @@ async getUserWithIOSFallback() {
 
 
     // Helper method to save data to Firestore
-    async saveToFirestore(user, score, finalReport) {
-        const db = firebase.firestore();
-        const userResultsRef = db.collection("userResults").doc(user.uid);
-        const attemptsRef = userResultsRef.collection("attempts");
+    // async saveToFirestore(user, score, finalReport) {
+    //     const db = firebase.firestore();
+    //     const userResultsRef = db.collection("userResults").doc(user.uid);
+    //     const attemptsRef = userResultsRef.collection("attempts");
 
-        const attemptsSnapshot = await attemptsRef.get();
-        const attemptNumber = attemptsSnapshot.size + 1;
+    //     const attemptsSnapshot = await attemptsRef.get();
+    //     const attemptNumber = attemptsSnapshot.size + 1;
 
-        const attemptData = {
-            score: score.toFixed(2),
-            classification: this.getClassification(score),
-            answers: this.quizResults.responses,
-            report: finalReport,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            attemptNumber: attemptNumber
-        };
+    //     const attemptData = {
+    //         score: score.toFixed(2),
+    //         classification: this.getClassification(score),
+    //         answers: this.quizResults.responses,
+    //         report: finalReport,
+    //         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    //         attemptNumber: attemptNumber
+    //     };
 
-        await attemptsRef.add(attemptData);
-        console.log(`Attempt #${attemptNumber} saved for ${user.uid}`);
-    }
+    //     await attemptsRef.add(attemptData);
+    //     console.log(`Attempt #${attemptNumber} saved for ${user.uid}`);
+    // }
 
  
 
