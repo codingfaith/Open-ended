@@ -688,7 +688,7 @@ class UbuntexIndex {
                 // Use immediate redirect with shorter timeout for iOS
                 setTimeout(() => {
                     window.location.href = "https://ubuntex.netlify.app/payment";
-                }, 500);
+                }, 1000);
             } else {
                 // Normal flow for other browsers
                 await this.saveToFirestore(user, score, finalReport);
