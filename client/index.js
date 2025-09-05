@@ -665,7 +665,76 @@ class UbuntexIndex {
     //     }
     // }
 
-    async displayResults(score) {
+//     async displayResults(score) {
+//     const quizContainer = document.getElementById("quiz-container");
+//     const resultContainer = document.getElementById("result");
+//     const loadingIndicator = document.getElementById("loading-indicator");
+
+//     quizContainer.style.display = "none";
+//     resultContainer.style.display = "block";
+//     loadingIndicator.style.display = "block";
+
+//     try {
+//         const finalReport = await this.generateComprehensiveReport();
+//         loadingIndicator.style.display = "none";
+//         resultContainer.innerHTML = `<p>Generating your detailed report...</p>`;
+
+//         try {
+//             const auth = firebase.auth();
+
+//             //Use onAuthStateChanged to reliably get user on iOS
+//             auth.onAuthStateChanged(async (currentUser) => {
+//                 if (currentUser) {
+//                     const db = firebase.firestore();
+//                     const userResultsRef = db.collection("userResults").doc(currentUser.uid);
+//                     const attemptsRef = userResultsRef.collection("attempts");
+
+//                     const attemptsSnapshot = await attemptsRef.get();
+//                     const attemptNumber = attemptsSnapshot.size + 1;
+
+//                     const attemptData = {
+//                         score: score.toFixed(2),
+//                         classification: this.getClassification(score),
+//                         answers: this.quizResults.responses,
+//                         report: finalReport,
+//                         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+//                         attemptNumber: attemptNumber
+//                     };
+
+//                     try {
+//                         //Ensure the write fully completes
+//                         await attemptsRef.add(attemptData);
+//                         console.log(`Attempt #${attemptNumber} saved for ${currentUser.uid}`);
+
+//                         resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+//                         //Delay redirect slightly so iOS doesn't cancel request
+//                         setTimeout(() => {
+//                             window.location.replace("https://ubuntex.netlify.app/payment");
+//                         }, 500);
+//                     } catch (writeError) {
+//                         console.error("Error writing to Firestore:", writeError);
+//                         this.storeLocalForLaterSync(score, finalReport);
+//                         window.location.replace("https://ubuntex.netlify.app");
+//                     }
+//                 } else {
+//                     console.warn("No authenticated user found on iOS.");
+//                     this.storeLocalForLaterSync(score, finalReport);
+//                     window.location.replace("https://ubuntex.netlify.app");
+//                 }
+//             });
+//         } catch (firebaseError) {
+//             console.error("Firebase error:", firebaseError);
+//             this.storeLocalForLaterSync(score, finalReport);
+//             window.location.replace("https://ubuntex.netlify.app");
+//         }
+
+//     } catch (error) {
+//         loadingIndicator.style.display = "none";
+//         console.error("Error generating report:", error);
+//     }
+// }
+
+async displayResults(score) {
     const quizContainer = document.getElementById("quiz-container");
     const resultContainer = document.getElementById("result");
     const loadingIndicator = document.getElementById("loading-indicator");
@@ -679,59 +748,69 @@ class UbuntexIndex {
         loadingIndicator.style.display = "none";
         resultContainer.innerHTML = `<p>Generating your detailed report...</p>`;
 
-        try {
-            const auth = firebase.auth();
+        const auth = firebase.auth();
+        const currentUser = auth.currentUser; // Check current user immediately
 
-            //Use onAuthStateChanged to reliably get user on iOS
-            auth.onAuthStateChanged(async (currentUser) => {
-                if (currentUser) {
-                    const db = firebase.firestore();
-                    const userResultsRef = db.collection("userResults").doc(currentUser.uid);
-                    const attemptsRef = userResultsRef.collection("attempts");
-
-                    const attemptsSnapshot = await attemptsRef.get();
-                    const attemptNumber = attemptsSnapshot.size + 1;
-
-                    const attemptData = {
-                        score: score.toFixed(2),
-                        classification: this.getClassification(score),
-                        answers: this.quizResults.responses,
-                        report: finalReport,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                        attemptNumber: attemptNumber
-                    };
-
-                    try {
-                        //Ensure the write fully completes
-                        await attemptsRef.add(attemptData);
-                        console.log(`Attempt #${attemptNumber} saved for ${currentUser.uid}`);
-
-                        resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
-                        //Delay redirect slightly so iOS doesn't cancel request
-                        setTimeout(() => {
-                            window.location.replace("https://ubuntex.netlify.app/payment");
-                        }, 500);
-                    } catch (writeError) {
-                        console.error("Error writing to Firestore:", writeError);
-                        this.storeLocalForLaterSync(score, finalReport);
-                        window.location.replace("https://ubuntex.netlify.app");
-                    }
+        if (currentUser) {
+            await this.saveToFirestore(currentUser, score, finalReport);
+            resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+            // Increased delay for iOS compatibility
+            setTimeout(() => {
+                window.location.assign("https://ubuntex.netlify.app/payment");
+            }, 1000);
+        } else {
+            // Fallback: Wait for auth state change with a timeout
+            const authTimeout = new Promise((resolve) => setTimeout(resolve, 2000));
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    await this.saveToFirestore(user, score, finalReport);
+                    resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+                    setTimeout(() => {
+                        window.location.assign("https://ubuntex.netlify.app/payment");
+                    }, 1000);
                 } else {
-                    console.warn("No authenticated user found on iOS.");
+                    console.warn("No authenticated user found.");
                     this.storeLocalForLaterSync(score, finalReport);
-                    window.location.replace("https://ubuntex.netlify.app");
+                    window.location.assign("https://ubuntex.netlify.app");
                 }
             });
-        } catch (firebaseError) {
-            console.error("Firebase error:", firebaseError);
-            this.storeLocalForLaterSync(score, finalReport);
-            window.location.replace("https://ubuntex.netlify.app");
-        }
 
+            // Timeout if auth state doesn't resolve
+            await authTimeout;
+            if (!auth.currentUser) {
+                console.warn("Auth state timeout on iOS.");
+                this.storeLocalForLaterSync(score, finalReport);
+                window.location.assign("https://ubuntex.netlify.app");
+            }
+        }
     } catch (error) {
         loadingIndicator.style.display = "none";
-        console.error("Error generating report:", error);
+        console.error("Error generating report or saving to Firestore:", error);
+        this.storeLocalForLaterSync(score, finalReport);
+        window.location.assign("https://ubuntex.netlify.app");
     }
+}
+
+// Helper method to save data to Firestore
+async saveToFirestore(user, score, finalReport) {
+    const db = firebase.firestore();
+    const userResultsRef = db.collection("userResults").doc(user.uid);
+    const attemptsRef = userResultsRef.collection("attempts");
+
+    const attemptsSnapshot = await attemptsRef.get();
+    const attemptNumber = attemptsSnapshot.size + 1;
+
+    const attemptData = {
+        score: score.toFixed(2),
+        classification: this.getClassification(score),
+        answers: this.quizResults.responses,
+        report: finalReport,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        attemptNumber: attemptNumber
+    };
+
+    await attemptsRef.add(attemptData);
+    console.log(`Attempt #${attemptNumber} saved for ${user.uid}`);
 }
 
  
