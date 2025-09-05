@@ -695,7 +695,7 @@ class UbuntexIndex {
             resultContainer.innerHTML = `<p>Generating your detailed report...</p>`;
 
             const auth = firebase.auth();
-            const user = await waitForAuthState(auth, 5000);
+            const user = await this.waitForAuthState(auth, 5000);
 
             if (user) {
             await this.saveToFirestore(user, score, finalReport);
