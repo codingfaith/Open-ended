@@ -674,7 +674,7 @@ class UbuntexIndex {
         try {
             // Generate report with timeout
             const reportTimeout = new Promise((_, reject) => 
-                setTimeout(() => reject(new Error("Report generation timed out")), 5000)
+                setTimeout(() => reject(new Error("Report generation timed out")), 15000)
             );
             const finalReport = await Promise.race([
                 this.generateComprehensiveReport(),
@@ -701,7 +701,7 @@ class UbuntexIndex {
                     console.warn("Auth state timeout after 3s");
                     unsubscribe();
                     resolve(null);
-                }, 3000);
+                }, 10000);
             });
 
             if (user) {
@@ -709,7 +709,7 @@ class UbuntexIndex {
                 await this.saveToFirestore(user, score, finalReport);
                 resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
 
-                const delay = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 2500 : 1000;
+                const delay = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 5000 : 3000;
                 setTimeout(() => {
                     console.log("Initiating redirect to payment page");
                     window.location.assign("https://ubuntex.netlify.app/payment");
