@@ -677,12 +677,12 @@ class UbuntexIndex {
     try {
         const finalReport = await this.generateComprehensiveReport();
         loadingIndicator.style.display = "none";
-        resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+        resultContainer.innerHTML = `<p>Generating your detailed report...</p>`;
 
         try {
             const auth = firebase.auth();
 
-            // ✅ Use onAuthStateChanged to reliably get user on iOS
+            //Use onAuthStateChanged to reliably get user on iOS
             auth.onAuthStateChanged(async (currentUser) => {
                 if (currentUser) {
                     const db = firebase.firestore();
@@ -702,29 +702,34 @@ class UbuntexIndex {
                     };
 
                     try {
-                        // ✅ Ensure the write fully completes
+                        //Ensure the write fully completes
                         await attemptsRef.add(attemptData);
                         console.log(`Attempt #${attemptNumber} saved for ${currentUser.uid}`);
 
-                        // ✅ Delay redirect slightly so iOS doesn't cancel request
+                        resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+                        //Delay redirect slightly so iOS doesn't cancel request
                         setTimeout(() => {
-                            window.location.replace("https://ubuntex.netlify.app/payment");
+                            // window.location.replace("https://ubuntex.netlify.app/payment");
+                            window.location.href = "https://ubuntex.netlify.app/payment";
                         }, 500);
                     } catch (writeError) {
                         console.error("Error writing to Firestore:", writeError);
                         this.storeLocalForLaterSync(score, finalReport);
-                        window.location.replace("https://ubuntex.netlify.app");
+                        // window.location.replace("https://ubuntex.netlify.app");
+                        window.location.href = "https://ubuntex.netlify.app";
                     }
                 } else {
                     console.warn("No authenticated user found on iOS.");
                     this.storeLocalForLaterSync(score, finalReport);
-                    window.location.replace("https://ubuntex.netlify.app");
+                    // window.location.replace("https://ubuntex.netlify.app");
+                    window.location.href = "https://ubuntex.netlify.app";
                 }
             });
         } catch (firebaseError) {
             console.error("Firebase error:", firebaseError);
             this.storeLocalForLaterSync(score, finalReport);
-            window.location.replace("https://ubuntex.netlify.app");
+            // window.location.replace("https://ubuntex.netlify.app");
+            window.location.href = "https://ubuntex.netlify.app";
         }
 
     } catch (error) {
