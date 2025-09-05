@@ -734,6 +734,63 @@ class UbuntexIndex {
 //     }
 // }
 
+// async displayResults(score) {
+//     const quizContainer = document.getElementById("quiz-container");
+//     const resultContainer = document.getElementById("result");
+//     const loadingIndicator = document.getElementById("loading-indicator");
+
+//     quizContainer.style.display = "none";
+//     resultContainer.style.display = "block";
+//     loadingIndicator.style.display = "block";
+
+//     try {
+//         const finalReport = await this.generateComprehensiveReport();
+//         loadingIndicator.style.display = "none";
+//         resultContainer.innerHTML = `<p>Generating your detailed report...</p>`;
+
+//         const auth = firebase.auth();
+//         const currentUser = auth.currentUser; // Check current user immediately
+
+//         if (currentUser) {
+//             await this.saveToFirestore(currentUser, score, finalReport);
+//             resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+//             // Increased delay for iOS compatibility
+//             setTimeout(() => {
+//                 window.location.assign("https://ubuntex.netlify.app/payment");
+//             }, 1000);
+//         } else {
+//             // Fallback: Wait for auth state change with a timeout
+//             const authTimeout = new Promise((resolve) => setTimeout(resolve, 2000));
+//             auth.onAuthStateChanged(async (user) => {
+//                 if (user) {
+//                     await this.saveToFirestore(user, score, finalReport);
+//                     resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+//                     setTimeout(() => {
+//                         window.location.assign("https://ubuntex.netlify.app/payment");
+//                     }, 1000);
+//                 } else {
+//                     console.warn("No authenticated user found.");
+//                     this.storeLocalForLaterSync(score, finalReport);
+//                     window.location.assign("https://ubuntex.netlify.app");
+//                 }
+//             });
+
+//             // Timeout if auth state doesn't resolve
+//             await authTimeout;
+//             if (!auth.currentUser) {
+//                 console.warn("Auth state timeout on iOS.");
+//                 this.storeLocalForLaterSync(score, finalReport);
+//                 window.location.assign("https://ubuntex.netlify.app");
+//             }
+//         }
+//     } catch (error) {
+//         loadingIndicator.style.display = "none";
+//         console.error("Error generating report or saving to Firestore:", error);
+//         this.storeLocalForLaterSync(score, finalReport);
+//         window.location.assign("https://ubuntex.netlify.app");
+//     }
+// }
+
 async displayResults(score) {
     const quizContainer = document.getElementById("quiz-container");
     const resultContainer = document.getElementById("result");
@@ -749,39 +806,36 @@ async displayResults(score) {
         resultContainer.innerHTML = `<p>Generating your detailed report...</p>`;
 
         const auth = firebase.auth();
-        const currentUser = auth.currentUser; // Check current user immediately
 
-        if (currentUser) {
-            await this.saveToFirestore(currentUser, score, finalReport);
-            resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
-            // Increased delay for iOS compatibility
-            setTimeout(() => {
-                window.location.assign("https://ubuntex.netlify.app/payment");
-            }, 1000);
-        } else {
-            // Fallback: Wait for auth state change with a timeout
-            const authTimeout = new Promise((resolve) => setTimeout(resolve, 2000));
-            auth.onAuthStateChanged(async (user) => {
-                if (user) {
-                    await this.saveToFirestore(user, score, finalReport);
-                    resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
-                    setTimeout(() => {
-                        window.location.assign("https://ubuntex.netlify.app/payment");
-                    }, 1000);
-                } else {
-                    console.warn("No authenticated user found.");
-                    this.storeLocalForLaterSync(score, finalReport);
-                    window.location.assign("https://ubuntex.netlify.app");
+        // Always wait for user state on iOS
+        const user = await new Promise((resolve) => {
+            const unsubscribe = auth.onAuthStateChanged((u) => {
+                if (u) {
+                    unsubscribe();
+                    resolve(u);
                 }
             });
+            // Fallback if still nothing after 5s
+            setTimeout(() => {
+                unsubscribe();
+                resolve(null);
+            }, 5000);
+        });
 
-            // Timeout if auth state doesn't resolve
-            await authTimeout;
-            if (!auth.currentUser) {
-                console.warn("Auth state timeout on iOS.");
-                this.storeLocalForLaterSync(score, finalReport);
-                window.location.assign("https://ubuntex.netlify.app");
-            }
+        if (user) {
+            await this.saveToFirestore(user, score, finalReport);
+            resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+
+            // Add longer delay to allow Firestore commit on iOS Safari
+            const delay = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 2000 : 1000;
+            setTimeout(() => {
+                window.location.assign("https://ubuntex.netlify.app/payment");
+            }, delay);
+
+        } else {
+            console.warn("No authenticated user found (iOS issue).");
+            this.storeLocalForLaterSync(score, finalReport);
+            window.location.assign("https://ubuntex.netlify.app");
         }
     } catch (error) {
         loadingIndicator.style.display = "none";
@@ -790,6 +844,7 @@ async displayResults(score) {
         window.location.assign("https://ubuntex.netlify.app");
     }
 }
+
 
 // Helper method to save data to Firestore
 async saveToFirestore(user, score, finalReport) {
