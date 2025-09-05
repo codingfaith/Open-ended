@@ -607,208 +607,81 @@ class UbuntexIndex {
         this.displayResults(finalScore)
     }
 
-    // async displayResults(score) {
-    //     const quizContainer = document.getElementById("quiz-container");
-    //     const resultContainer = document.getElementById("result");
-    //     const loadingIndicator = document.getElementById("loading-indicator");
-
-    //     quizContainer.style.display = "none";
-    //     resultContainer.style.display = "block";
-    //     loadingIndicator.style.display = "block";
-
-    //     try {
-    //         const finalReport = await this.generateComprehensiveReport();
-    //         loadingIndicator.style.display = "none";
-    //         resultContainer.innerHTML = `<p>Generating your detailed report...</p>`;
-
-    //         const auth = firebase.auth();
-
-    //         // Always wait for user state on iOS
-    //         const user = await new Promise((resolve) => {
-    //             const unsubscribe = auth.onAuthStateChanged((u) => {
-    //                 if (u) {
-    //                     unsubscribe();
-    //                     resolve(u);
-    //                 }
-    //             });
-    //             // Fallback if still nothing after 5s
-    //             setTimeout(() => {
-    //                 unsubscribe();
-    //                 resolve(null);
-    //             }, 5000);
-    //         });
-
-    //         if (user) {
-    //             await this.saveToFirestore(user, score, finalReport);
-    //             resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
-
-    //             // Add longer delay to allow Firestore commit on iOS Safari
-    //             const delay = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 5000 : 3000;
-    //             setTimeout(() => {
-    //                 window.location.replace("https://ubuntex.netlify.app/payment");
-    //             }, delay);
-
-    //         } else {
-    //             console.warn("No authenticated user found (iOS issue).");
-    //             this.storeLocalForLaterSync(score, finalReport);
-    //             window.location.replace("https://ubuntex.netlify.app");
-    //         }
-    //     } catch (error) {
-    //         loadingIndicator.style.display = "none";
-    //         console.error("Error generating report or saving to Firestore:", error);
-    //         this.storeLocalForLaterSync(score, finalReport);
-    //         window.location.replace("https://ubuntex.netlify.app");
-    //     }
-    // }
-
     async displayResults(score) {
-    const quizContainer = document.getElementById("quiz-container");
-    const resultContainer = document.getElementById("result");
-    const loadingIndicator = document.getElementById("loading-indicator");
+        const quizContainer = document.getElementById("quiz-container");
+        const resultContainer = document.getElementById("result");
+        const loadingIndicator = document.getElementById("loading-indicator");
 
-    quizContainer.style.display = "none";
-    resultContainer.style.display = "block";
-    loadingIndicator.style.display = "block";
+        quizContainer.style.display = "none";
+        resultContainer.style.display = "block";
+        loadingIndicator.style.display = "block";
 
-    try {
-        const finalReport = await this.generateComprehensiveReport();
-        loadingIndicator.style.display = "none";
-        resultContainer.innerHTML = `<p>Generating your detailed report...</p>`;
+        try {
+            const finalReport = await this.generateComprehensiveReport();
+            loadingIndicator.style.display = "none";
+            resultContainer.innerHTML = `<p>Generating your detailed report...</p>`;
 
-        // Use a more reliable auth state detection for iOS
-        const user = await this.getUserWithIOSFallback();
-        
-        if (user) {
-            resultContainer.innerHTML = `<p>Saving your results...</p>`;
-            
-            // Wait for Firestore save to complete
-            await this.saveToFirestore(user, score, finalReport);
-            
-            resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
-            
-            // Use consistent redirect approach
-            setTimeout(() => {
-                window.location.href = "https://ubuntex.netlify.app/payment";
-            }, 1000);
-            
-        } else {
-            console.warn("No authenticated user found.");
+            const auth = firebase.auth();
+
+            // Always wait for user state on iOS
+            const user = await new Promise((resolve) => {
+                const unsubscribe = auth.onAuthStateChanged((u) => {
+                    if (u) {
+                        unsubscribe();
+                        resolve(u);
+                    }
+                });
+                // Fallback if still nothing after 5s
+                setTimeout(() => {
+                    unsubscribe();
+                    resolve(null);
+                }, 5000);
+            });
+
+            if (user) {
+                await this.saveToFirestore(user, score, finalReport);
+                resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+
+                // Add longer delay to allow Firestore commit on iOS Safari
+                const delay = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 5000 : 3000;
+                setTimeout(() => {
+                    window.location.replace("https://ubuntex.netlify.app/payment");
+                }, delay);
+
+            } else {
+                console.warn("No authenticated user found (iOS issue).");
+                this.storeLocalForLaterSync(score, finalReport);
+                window.location.replace("https://ubuntex.netlify.app");
+            }
+        } catch (error) {
+            loadingIndicator.style.display = "none";
+            console.error("Error generating report or saving to Firestore:", error);
             this.storeLocalForLaterSync(score, finalReport);
-            window.location.href = "https://ubuntex.netlify.app";
+            window.location.replace("https://ubuntex.netlify.app");
         }
-    } catch (error) {
-        loadingIndicator.style.display = "none";
-        console.error("Error generating report or saving to Firestore:", error);
-        this.storeLocalForLaterSync(score, finalReport);
-        window.location.href = "https://ubuntex.netlify.app";
     }
-}
-
-// Improved user detection with better iOS handling
-async getUserWithIOSFallback() {
-    const auth = firebase.auth();
-    
-    // Check if user is already available immediately
-    const currentUser = auth.currentUser;
-    if (currentUser) {
-        return currentUser;
-    }
-
-    // Wait for auth state with shorter timeout for iOS
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const timeout = isIOS ? 3000 : 5000;
-
-    return new Promise((resolve) => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            unsubscribe();
-            resolve(user);
-        });
-
-        setTimeout(() => {
-            unsubscribe();
-            resolve(auth.currentUser); // Fallback to currentUser
-        }, timeout);
-    });
-}
-
-async saveToFirestore(user, score, finalReport) {
-    const db = firebase.firestore();
-    const userResultsRef = db.collection("userResults").doc(user.uid);
-    const attemptsRef = userResultsRef.collection("attempts");
-
-    const attemptsSnapshot = await attemptsRef.get();
-    const attemptNumber = attemptsSnapshot.size + 1;
-
-    const attemptData = {
-        score: score.toFixed(2),
-        classification: this.getClassification(score),
-        answers: this.quizResults.responses,
-        report: finalReport,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        attemptNumber: attemptNumber
-    };
-
-    await attemptsRef.add(attemptData);
-    console.log(`Attempt #${attemptNumber} saved for ${user.uid}`);
-}
-
-    // async saveToFirestore(user, score, finalReport) {
-    //     try {
-    //         const db = firebase.firestore();
-    //         const userResultsRef = db.collection("userResults").doc(user.uid);
-    //         const attemptsRef = userResultsRef.collection("attempts");
-
-    //         // Prepare data for this attempt
-    //         const attemptData = {
-    //         score: score.toFixed(2),
-    //         classification: this.getClassification(score),
-    //         answers: this.quizResults.responses || [],
-    //         report: finalReport,
-    //         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    //         };
-
-    //         // ✅ Make sure the user doc exists
-    //         await userResultsRef.set(
-    //         {
-    //             lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
-    //         },
-    //         { merge: true }
-    //         );
-
-    //         // ✅ Force Firestore write to complete before redirect
-    //         await attemptsRef.add(attemptData);
-
-    //         console.log("Results saved successfully for user:", user.uid);
-    //     } catch (error) {
-    //         console.error("Error saving to Firestore:", error);
-    //         throw error; // bubble up so displayResults can handle fallback
-    //     }
-    // }
-
 
     // Helper method to save data to Firestore
-    // async saveToFirestore(user, score, finalReport) {
-    //     const db = firebase.firestore();
-    //     const userResultsRef = db.collection("userResults").doc(user.uid);
-    //     const attemptsRef = userResultsRef.collection("attempts");
+    async saveToFirestore(user, score, finalReport) {
+        const db = firebase.firestore();
+        const userResultsRef = db.collection("userResults").doc(user.uid);
+        const attemptsRef = userResultsRef.collection("attempts");
 
-    //     const attemptsSnapshot = await attemptsRef.get();
-    //     const attemptNumber = attemptsSnapshot.size + 1;
+        const attemptsSnapshot = await attemptsRef.get();
+        const attemptNumber = attemptsSnapshot.size + 1;
 
-    //     const attemptData = {
-    //         score: score.toFixed(2),
-    //         classification: this.getClassification(score),
-    //         answers: this.quizResults.responses,
-    //         report: finalReport,
-    //         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    //         attemptNumber: attemptNumber
-    //     };
+        const attemptData = {
+            score: score.toFixed(2),
+            classification: this.getClassification(score),
+            answers: this.quizResults.responses,
+            report: finalReport,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            attemptNumber: attemptNumber
+        };
 
-    //     await attemptsRef.add(attemptData);
-    //     console.log(`Attempt #${attemptNumber} saved for ${user.uid}`);
-    // }
-
- 
+        await attemptsRef.add(attemptData);
+        console.log(`Attempt #${attemptNumber} saved for ${user.uid}`);
+    }
 
     formatText(input) {
         let formatted = input.replace(/## (Key Insights|Strengths|Growth Areas|Recommendations)/g, '<h2>$1</h2>')
