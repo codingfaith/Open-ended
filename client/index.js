@@ -692,9 +692,9 @@ class UbuntexIndex {
             } else {
                 // Normal flow for other browsers
                 await this.saveToFirestore(user, score, finalReport);
-                resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
+                resultContainer.innerHTML = `<p>Run catch block...</p>`;
                 setTimeout(() => {
-                    window.location.href = "https://ubuntex.netlify.app/payment";
+                    window.location.href = "https://ubuntex.netlify.app";
                 }, 1000);
             }
         } else {
