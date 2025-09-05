@@ -683,34 +683,34 @@ class UbuntexIndex {
         const resultContainer = document.getElementById("result");
         const loadingIndicator = document.getElementById("loading-indicator");
 
-        let finalReport;
-        
+        let finalReport; // keep it in scope for catch
+
         quizContainer.style.display = "none";
         resultContainer.style.display = "block";
         loadingIndicator.style.display = "block";
 
         try {
-            const finalReport = await this.generateComprehensiveReport();
+            finalReport = await this.generateComprehensiveReport();
             loadingIndicator.style.display = "none";
             resultContainer.innerHTML = `<p>Generating your detailed report...</p>`;
 
             const auth = firebase.auth();
-
-            // ✅ Always wait for Firebase to restore session (important on iOS)
-            const user = await this.waitForAuthState(auth);
+            const user = await waitForAuthState(auth, 5000);
 
             if (user) {
             await this.saveToFirestore(user, score, finalReport);
             resultContainer.innerHTML = `<p>Redirecting to payment page...</p>`;
 
-            // ✅ Give iOS more time to flush Firestore writes
-            const delay = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 2000 : 1000;
+            // Longer delay on iOS to flush Firestore writes
+            const delay = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 5000 : 3000;
             setTimeout(() => {
                 window.location.assign("https://ubuntex.netlify.app/payment");
             }, delay);
 
             } else {
-            console.warn("No authenticated user found (Safari issue).");
+            console.warn("No authenticated user found. Forcing Safari reset...");
+            // 🔄 Force reset like "clear history"
+            await auth.signOut();
             this.storeLocalForLaterSync(score, finalReport);
             window.location.assign("https://ubuntex.netlify.app");
             }
