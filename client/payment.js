@@ -53,3 +53,4 @@ function payWithPaystack() {
     });
     handler.openIframe(); // Open the Paystack payment pop-up
 }
+document.getElementById('payButton').addEventListener('click', payWithPaystack);
