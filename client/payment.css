@@ -7,7 +7,7 @@ body {
     text-align: center;
     font-family: "Poppins", sans-serif;
 }
-a {
+button {
     width: 100%;
     border: none;
     outline: none;
@@ -19,7 +19,6 @@ a {
     border-radius: 5px;
     background:green; 
     font-family: inherit; 
-    text-decoration: none;
 }
 a:hover {
     font-size: larger;
