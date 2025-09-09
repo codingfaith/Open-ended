@@ -3,9 +3,11 @@ import { initializeFirebase } from './auth.js';
 // Paystack Payment Function
 function payWithPaystack() {
     const user = firebase.auth().currentUser;
+    const email = user.email;
 
     let handler = PaystackPop.setup({
         key: 'pk_live_7752e289054750e49dadba1b158c1b7c9c676846', 
+        email: email,
         amount: 99, 
         currency: 'ZAR',
         ref: 'tx_' + Math.floor((Math.random() * 1000000000) + 1), // Unique transaction reference
