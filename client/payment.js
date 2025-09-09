@@ -8,7 +8,7 @@ function payWithPaystack() {
     let handler = PaystackPop.setup({
         key: 'pk_live_7752e289054750e49dadba1b158c1b7c9c676846', 
         email: email,
-        amount: 99, 
+        amount: 9900, 
         currency: 'ZAR',
         ref: 'tx_' + Math.floor((Math.random() * 1000000000) + 1), // Unique transaction reference
         callback: function(response) {
