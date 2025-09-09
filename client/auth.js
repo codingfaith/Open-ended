@@ -15,6 +15,7 @@ if (typeof firebase === 'undefined') {
 } else {
   document.addEventListener('DOMContentLoaded', initAuthSystem);
 }
+
 // Utility Functions
 function clearError() {
   const errorElement = document.getElementById('auth-error');
@@ -102,7 +103,7 @@ async function ensureFirebaseLoaded() {
   });
 }
 
-//initialize firebase
+// Initialize Firebase
 export async function initializeFirebase() {
   if (initializationPromise) {
     return initializationPromise;
@@ -163,8 +164,10 @@ export async function initializeFirebase() {
 
       // 7. Configure Firestore persistence
       try {
-        await db.enablePersistence({ synchronizeTabs: true });
-        console.debug('Firestore persistence enabled');
+        db = firebase.firestore(app, {
+          cache: firebase.firestore.indexedDBLocalPersistence
+        });
+        console.debug('Firestore persistence enabled with indexedDBLocalPersistence');
       } catch (persistenceError) {
         console.warn('Firestore persistence failed:', persistenceError);
       }
@@ -299,7 +302,7 @@ async function handleLogin(e) {
   }
 }
 
-//logout function
+// Logout function
 export async function handleLogout(e) {
   console.log('clicked logout');
   if (e) {
@@ -347,7 +350,6 @@ export async function handleLogout(e) {
     // Redirect with cache-buster and using replace to prevent back button issues
     const redirectUrl = new URL('/index', window.location.origin);
     redirectUrl.searchParams.set('logout', 'success');
-    // redirectUrl.searchParams.set('_', ''); Hidden cache-buster
     console.log('[Logout] Redirecting to:', redirectUrl.toString());
     window.location.replace(redirectUrl.toString());
 
