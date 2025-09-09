@@ -229,17 +229,17 @@ function setupAuthStateListener() {
     try {
       if (user) {
         // Authenticated user logic
-        if (isQuiz) {
-          // Allow to stay on quiz page
+        if (isQuiz  || isPayment) {
+          // Allow to stay on quiz/payment page
           return;
         }
-        if (!isDashboard || !isPayment) {
+        if (!isDashboard) {
           console.log('Redirecting to dashboard...');
           window.location.replace('/dashboard');
         }
       } else {
         // Unauthenticated user logic
-        if (isDashboard || isQuiz) {
+        if (isDashboard || isQuiz  || isPayment) {
           console.log('Redirecting to login...');
           window.location.replace('/index');
         }
