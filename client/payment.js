@@ -30,7 +30,7 @@ function payWithPaystack() {
                                 paymentTimestamp: firebase.firestore.FieldValue.serverTimestamp()
                             }).then(() => {
                                 // Redirect to results page
-                                window.location.href = 'results.html';
+                               window.location.replace("https://ubuntex.netlify.app/dashboard");
                             }).catch((error) => {
                                 console.error('Error updating attempt:', error);
                                 alert('Payment recorded, but failed to update attempt. Contact support.');
