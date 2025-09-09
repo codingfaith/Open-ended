@@ -221,6 +221,7 @@ function setupAuthStateListener() {
     // Normalize path (remove trailing slashes and query params)
     const currentPath = window.location.pathname.replace(/\/$/, '').split('?')[0].toLowerCase();
     const isDashboard = currentPath.endsWith('/dashboard');
+    const isPayment = currentPath.endsWith('/payment');
     const isQuiz = currentPath.endsWith('/quiz');
     
     console.log('Processed path:', { currentPath, isDashboard, isQuiz });
@@ -232,7 +233,7 @@ function setupAuthStateListener() {
           // Allow to stay on quiz page
           return;
         }
-        if (!isDashboard) {
+        if (!isDashboard || !isPayment) {
           console.log('Redirecting to dashboard...');
           window.location.replace('/dashboard');
         }
