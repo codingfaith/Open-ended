@@ -775,11 +775,11 @@ class UbuntexIndex {
 
     // Helper method to get classification
     getClassification(score) {
-        if (score <= 65.49) return "Ubuntex Level 6";
-        if (score <= 72.50) return "Ubuntex Level 5";
-        if (score <= 78.50) return "Ubuntex Level 4";
-        if (score <= 83.50) return "Ubuntex Level 3";
-        if (score <= 87.50) return "Ubuntex Level 2";
+        if (score < 65.50) return "Ubuntex Level 6";
+        if (score < 72.50) return "Ubuntex Level 5";
+        if (score < 78.50) return "Ubuntex Level 4";
+        if (score < 83.50) return "Ubuntex Level 3";
+        if (score < 87.50) return "Ubuntex Level 2";
         if (score <= 100) return "Ubuntex Level 1";
         return "Score could not be calculated";
     }
