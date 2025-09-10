@@ -144,6 +144,11 @@
   transform: translateZ(0);
 }
 
+.attempt-card {
+  display: flex;
+  justify-content: space-between;
+}
+
 #admin-results-container {
   width: 96%;
   margin: auto;

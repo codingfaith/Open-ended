@@ -1,5 +1,5 @@
 import { handleLogout, initializeFirebase } from './auth.js';
-
+import { payWithPaystack } from './payment.js'
 // DOM elements with null checks for iOS
 const dashboardImg = document.getElementById("dashboard-img");
 const previousBtn = document.getElementById("dashboard-results");
@@ -314,6 +314,12 @@ function displayData(data) {
   // Add to DOM
   dashboardResult.appendChild(contentDiv);
   document.querySelector(".downloadReportBtn").addEventListener("click", downloadPDF);
+  // Add event listeners to all pay-to-access-btn buttons
+  document.querySelectorAll('.pay-to-access-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      payWithPaystack(); // Call the imported payWithPaystack function
+    });
+  });
 
   // Add event listeners for report toggles
   contentDiv.querySelectorAll('.report-toggle-btn').forEach(button => {

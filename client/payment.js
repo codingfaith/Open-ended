@@ -1,7 +1,7 @@
 import { initializeFirebase } from './auth.js';
 
 // Paystack Payment Function
-function payWithPaystack() {
+export function payWithPaystack() {
     const user = firebase.auth().currentUser;
     const email = user.email;
 
