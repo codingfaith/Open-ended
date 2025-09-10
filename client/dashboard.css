@@ -132,6 +132,24 @@
   padding: 10px;
 }
 
+.pay-to-access-btn {
+    width: 100%;
+    border: none;
+    outline: none;
+    color:white;
+    cursor: pointer;
+    font-size: large;
+    padding: 5px 1px;
+    font-weight: bold;
+    border-radius: 5px;
+    background:green; 
+    font-family: inherit; 
+}
+.pay-to-access-btn {
+    font-size: larger;
+    background: darkgreen;
+}
+
 /* iPhone fixes */
 /* Prevent touch highlights */
 * {
@@ -142,11 +160,6 @@
 /* Fix for Safari rendering */
 .attempt-card, .show-dash-report {
   transform: translateZ(0);
-}
-
-.attempt-card {
-  display: flex;
-  justify-content: space-between;
 }
 
 #admin-results-container {
