@@ -314,13 +314,16 @@ function displayData(data) {
   // Add to DOM
   dashboardResult.appendChild(contentDiv);
   document.querySelector(".downloadReportBtn").addEventListener("click", downloadPDF);
-  // Add event listeners to all pay-to-access-btn buttons
-  document.querySelectorAll('.pay-to-access-btn').forEach(button => {
-    button.addEventListener('click', () => {
-      payWithPaystack(); // Call the imported payWithPaystack function
-    });
-  });
 
+  // Check if pay-to-access-btn elements exist before adding event listeners
+  const payButtons = document.querySelectorAll('.pay-to-access-btn');
+  if (payButtons.length > 0) {
+    payButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        payWithPaystack(); // Call the imported payWithPaystack function
+      });
+    });
+  }
   // Add event listeners for report toggles
   contentDiv.querySelectorAll('.report-toggle-btn').forEach(button => {
     button.addEventListener('click', function() {
