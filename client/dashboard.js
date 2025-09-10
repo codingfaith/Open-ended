@@ -303,7 +303,7 @@ function displayData(data) {
             </div>
           ` : `
             <span class="attempt-date">${formatAttemptDate(attempt.timestamp)}</span>
-            <button class="pay-to-access-btn">Pay to access results</button>
+            <button class="pay-to-access-btn" data-attempt-number="${attempt.attemptNumber}">Pay to access results</button>
           `}
         </div>
         <hr>
@@ -320,7 +320,8 @@ function displayData(data) {
   if (payButtons.length > 0) {
     payButtons.forEach(button => {
       button.addEventListener('click', () => {
-        payWithPaystack(); // Call the imported payWithPaystack function
+        const attemptNumber = button.dataset.attemptNumber;
+        payWithPaystack(attemptNumber);
       });
     });
   }

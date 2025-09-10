@@ -680,7 +680,7 @@ class UbuntexIndex {
         };
 
         await attemptsRef.add(attemptData);
-        console.log(`Attempt #${attemptNumber} saved for ${user.uid}`);
+        console.log(`Attempt #${attemptNumber} saved.`);
     }
 
     formatText(input) {

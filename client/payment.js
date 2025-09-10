@@ -1,7 +1,7 @@
 import { initializeFirebase } from './auth.js';
 
 // Paystack Payment Function
-export function payWithPaystack() {
+export function payWithPaystack(attemptNumber = null) {
     const user = firebase.auth().currentUser;
     const email = user.email;
 
@@ -12,21 +12,24 @@ export function payWithPaystack() {
         currency: 'ZAR',
         ref: 'tx_' + Math.floor((Math.random() * 1000000000) + 1), // Unique transaction reference
         callback: function(response) {
+
             // Update the most recent attempt in Firestore
             if (user) {
                 const db = firebase.firestore();
                 const attemptsRef = db.collection('userResults').doc(user.uid).collection('attempts');
 
-                // Query the most recent attempt (ordered by timestamp or attemptNumber)
-                attemptsRef
-                    .orderBy('timestamp', 'desc')
-                    .limit(1)
+               // Query the specific attempt by attemptNumber, or fallback to latest
+                const query = attemptNumber
+                    ? attemptsRef.where('attemptNumber', '==', parseInt(attemptNumber))
+                    : attemptsRef.orderBy('timestamp', 'desc').limit(1);
+
+                query
                     .get()
                     .then((querySnapshot) => {
                         if (!querySnapshot.empty) {
-                            const latestAttemptDoc = querySnapshot.docs[0];
+                            const attemptDoc = querySnapshot.docs[0];
                             // Update the attempt with payment status
-                            latestAttemptDoc.ref.update({
+                            attemptDoc.ref.update({
                                 payment: 'success',
                                 paymentReference: response.reference,
                                 paymentTimestamp: firebase.firestore.FieldValue.serverTimestamp()
@@ -55,6 +58,4 @@ export function payWithPaystack() {
     });
     handler.openIframe(); // Open the Paystack payment pop-up
 }
-if (document.getElementById('payButton')){
-    document.getElementById('payButton').addEventListener('click', payWithPaystack);
-}
+document.getElementById('payButton')?.addEventListener('click', () => payWithPaystack());
