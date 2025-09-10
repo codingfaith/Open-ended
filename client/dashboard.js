@@ -268,7 +268,7 @@ function displayData(data) {
   // Clear previous content
   dashboardResult.innerHTML = '';
 
-  // Create new content container
+// Create new content container
   const contentDiv = document.createElement('div');
   contentDiv.className = 'user-results-content';
 
@@ -290,16 +290,21 @@ function displayData(data) {
     <div class="attempts-list">
       ${data.attempts.map((attempt, index) => `
         <div class="attempt-card">
-          <span class="attempt-date">${formatAttemptDate(attempt.timestamp)}</span>
-          <span class="attempt-score">Score: ${attempt.score}%</span>
-          <span class="attempt-class">${attempt.classification}</span>
-          <button class="report-toggle-btn" data-index="${index}">
-            See report
-          </button>
-          <div class="report-content hide" id="report-${index}">
-            ${formatText(attempt.report)}
-            <button class="downloadReportBtn"}>Download Report</button>
-          </div>
+          ${attempt.payment === "success" ? `
+            <span class="attempt-date">${formatAttemptDate(attempt.timestamp)}</span>
+            <span class="attempt-score">Score: ${attempt.score}%</span>
+            <span class="attempt-class">${attempt.classification}</span>
+            <button class="report-toggle-btn" data-index="${index}">
+              See report
+            </button>
+            <div class="report-content hide" id="report-${index}">
+              ${formatText(attempt.report)}
+              <button class="downloadReportBtn">Download Report</button>
+            </div>
+          ` : `
+            <span class="attempt-date">${formatAttemptDate(attempt.timestamp)}</span>
+            <button class="pay-to-access-btn">Pay to access results</button>
+          `}
           <hr>
         </div>
       `).join('')}
