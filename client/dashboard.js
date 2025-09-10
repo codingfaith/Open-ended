@@ -384,6 +384,7 @@ function displayAdminData(adminData) {
       <div class="attempt-stats">
         <span class="attempt-score">Score: ${attempt.score}%</span><br>
         <span class="attempt-class">${attempt.classification}</span><br>
+        <span class="attempt-payment">Payment Status: ${attempt?.payment ? attempt.payment.charAt(0).toUpperCase() + attempt.payment.slice(1) : 'Not Paid'}</span><br>
         <button class="admin-answers-toggle" data-index="${index}">
           Toggle Answers
         </button><br>
