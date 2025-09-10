@@ -136,18 +136,16 @@
     width: 100%;
     border: none;
     outline: none;
-    color:white;
+    color:#2b304a;
     cursor: pointer;
     font-size: large;
     padding: 5px 1px;
-    font-weight: bold;
     border-radius: 5px;
-    background:green; 
+    background:white; 
     font-family: inherit; 
 }
-.pay-to-access-btn {
+.pay-to-access-btn:hover {
     font-size: larger;
-    background: darkgreen;
 }
 
 /* iPhone fixes */
@@ -160,6 +158,11 @@
 /* Fix for Safari rendering */
 .attempt-card, .show-dash-report {
   transform: translateZ(0);
+}
+.attempt-card {
+  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 #admin-results-container {

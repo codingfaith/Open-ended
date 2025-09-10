@@ -305,10 +305,10 @@ function displayData(data) {
             <span class="attempt-date">${formatAttemptDate(attempt.timestamp)}</span>
             <button class="pay-to-access-btn">Pay to access results</button>
           `}
-          <hr>
         </div>
       `).join('')}
     </div>
+    <hr>
   `;
 
   // Add to DOM
