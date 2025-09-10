@@ -306,9 +306,9 @@ function displayData(data) {
             <button class="pay-to-access-btn">Pay to access results</button>
           `}
         </div>
+        <hr>
       `).join('')}
     </div>
-    <hr>
   `;
 
   // Add to DOM
