@@ -62,27 +62,27 @@ class UbuntexIndex {
                 category: "empathy"
             },{        
             //ratings
-                text: "On a 10-point scale where 1 means very low and 10 means very high, how would you rate your ability to understand yourself?", //6
+                text: "On a 10-point scale where 0 means very low and 10 means very high, how would you rate your ability to understand yourself?", //6
                 scale: 10,
                 type: "scale",
                 category: "empathy" //6
             },{
-                text: "On a 10-point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in the world?", //7
+                text: "On a 10-point scale where 0 means very low and 10 means very high, how would you rate your ability to understand others in the world?", //7
                 scale: 10,
                 type: "scale",
                 category: "empathy" //7
             },{
-                text: "On a 10-point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in your community?", //8
+                text: "On a 10-point scale where 0 means very low and 10 means very high, how would you rate your ability to understand others in your community?", //8
                 scale: 10,
                 type: "scale",
                 category: "empathy" //8
             },{
-                text: "On a 10-point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in your country?", //9
+                text: "On a 10-point scale where 0 means very low and 10 means very high, how would you rate your ability to understand others in your country?", //9
                 scale: 10,
                 type: "scale",
                 category: "empathy" //9
             },{
-                text: "On a 10-point scale where 1 means very low and 10 means very high, how would you rate your ability to understand others in your family?", //10
+                text: "On a 10-point scale where 0 means very low and 10 means very high, how would you rate your ability to understand others in your family?", //10
                 scale: 10,
                 type: "scale",
                 category: "empathy" //10
