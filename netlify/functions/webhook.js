@@ -33,21 +33,17 @@ exports.handler = async (event, context) => {
   }
 
   // Respond with 200 OK immediately to acknowledge (prevents retries)
-  // Handle the event asynchronously if needed, but for simplicity, we do it here
   if (payload.event === 'charge.success') {
     try {
-      // Initialize Firebase Admin SDK if not already (singleton pattern)
       if (!admin.apps.length) {
         const serviceAccount = {
           projectId: process.env.FIREBASE_PROJECT_ID,
           privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'), // Restore newlines
           clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-          // Add other optional fields if you set them as env vars
         };
 
         admin.initializeApp({
           credential: admin.credential.cert(serviceAccount),
-          // If Realtime Database: databaseURL: process.env.FIREBASE_DATABASE_URL
         });
       }
 
@@ -62,10 +58,9 @@ exports.handler = async (event, context) => {
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         });
     }
-      // Update the user's payment status in Firestore (adjust path as needed)
+      // Update the user's payment status in Firestore
       await db.collection('users').doc(userId).update({
         paymentStatus: 'success',
-        // Optionally add more fields like transaction reference, amount, etc.
         transactionReference: payload.data.reference,
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
@@ -73,7 +68,6 @@ exports.handler = async (event, context) => {
       console.log(`Payment verified and status updated for user: ${userId}`);
     } catch (err) {
       console.error('Error updating Firebase:', err);
-      // You could queue a retry here, but for now, just log
     }
   } else {
     console.log(`Unhandled event: ${payload.event}`);
