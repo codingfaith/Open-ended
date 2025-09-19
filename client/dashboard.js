@@ -287,13 +287,14 @@ function displayData(data) {
   // Build attempts list
   contentDiv.innerHTML = `
     <h3 style="text-align:center;">Your Test Attempts</h3>
+    <h4 class="score-levels">(NB: Highest scores Level 1, Lowest scores Level 6)</h4>
     <div class="attempts-list">
       ${data.attempts.map((attempt, index) => `
         <div class="attempt-card">
           ${attempt.payment === "success" ? `
             <span class="attempt-date">${formatAttemptDate(attempt.timestamp)}</span>
             <span class="attempt-score">Score: ${attempt.score}%</span>
-            <span class="attempt-class">${attempt.classification} <span class="score-levels">(NB: Highest scores Level 1, Lowest scores Level 6)</span></span>
+            <span class="attempt-class">${attempt.classification}</span></span>
             <button class="report-toggle-btn" data-index="${index}">
               See report
             </button>
