@@ -306,7 +306,7 @@ function displayData(data) {
             <button class="pay-to-access-btn" data-attempt-number="${attempt.attemptNumber}">Pay to access results</button>
           `}
         </div>
-        <hr>
+        <hr><br>
       `).join('')}
     </div>
   `;
