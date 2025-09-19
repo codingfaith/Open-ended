@@ -144,6 +144,10 @@
   background:white; 
   font-family: inherit; 
 }
+.score-levels {
+  font-size: small;
+  font-style: italic;
+}
 .pay-to-access-btn:hover {
   color: white;
   background: skyblue;

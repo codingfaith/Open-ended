@@ -293,7 +293,7 @@ function displayData(data) {
           ${attempt.payment === "success" ? `
             <span class="attempt-date">${formatAttemptDate(attempt.timestamp)}</span>
             <span class="attempt-score">Score: ${attempt.score}%</span>
-            <span class="attempt-class">${attempt.classification}</span>
+            <span class="attempt-class">${attempt.classification} <span class="score-levels">(NB: Highest scores Level 1, Lowest scores Level 6)</span></span>
             <button class="report-toggle-btn" data-index="${index}">
               See report
             </button>
