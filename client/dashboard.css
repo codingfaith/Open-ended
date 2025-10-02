@@ -209,15 +209,12 @@
 .report-name {
   text-align: center;
 }
-.report-heading,
-.report-metadata {
-  display: flex;
-}
 .report-heading {
+  display: flex;
   justify-content: space-between;
 }
 .report-metadata {
-  justify-content: space-around;
+  text-align: center;
 }
 .report-heading h1 {
   align-self: center;
