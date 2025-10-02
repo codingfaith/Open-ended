@@ -297,7 +297,7 @@ function displayData(data) {
             </button>
             <div class="report-content hide" id="report-${index}">
               <div class="report-heading">
-                <img src="Plus94_logo2.png" alt="company logo" class="logo" >
+                <img src="https://ubuntex.netlify.app/assets/Plus94_logo2-CJbCr5Cg.png" alt="company logo" class="logo" >
                 <h1>Ubuntex</h1>
               </div>
               <div class="report-metadata">
