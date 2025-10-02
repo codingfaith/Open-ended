@@ -287,7 +287,6 @@ function displayData(data) {
   // Build attempts list
   contentDiv.innerHTML = `
     <h3 style="text-align:center;">Your Test Attempts</h3>
-    <h4 class="score-levels">(NB: Highest scores translate to Ubuntex Level 1, Lowest scores to Ubuntex Level 6)</h4>
     <div class="attempts-list">
       ${data.attempts.map((attempt, index) => `
         <div class="attempt-card">
@@ -301,8 +300,11 @@ function displayData(data) {
                 <img src="./Plus94_logo2.png" alt="Plus94 logo" class="p94_logo">
                 <h1>Ubuntex</h1>
               </div>
-              <span class="attempt-score">Score: ${attempt.score}%</span>
-              <span class="attempt-class">${attempt.classification}</span></span>
+              <div class="report-metadata">
+                <span class="attempt-score">Score: ${attempt.score}%</span>
+                <span class="attempt-class">${attempt.classification}</span></span>
+              </div>
+              <h4 class="score-levels">(NB: Highest scores translate to Ubuntex Level 1, Lowest scores to Ubuntex Level 6)</h4>  
               <h2 class="report-name">Report for ${data.userProfile.firstName} ${data.userProfile.lastName}</h2>
               ${formatText(attempt.report)}
               <button class="downloadReportBtn">Download Report</button>

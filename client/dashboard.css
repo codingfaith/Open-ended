@@ -17,6 +17,10 @@
   border-radius: 10px;
   background: #ffffff;   
 }
+.report-toggle-btn {
+  width:100%;
+  display: block;
+}
 .view-user-btn,
 .admin-report-toggle,
 .admin-answers-toggle {
@@ -195,7 +199,8 @@
   font-style: italic;
   text-align: center;
 }
-.report-heading {
+.report-heading,
+.report-metadata {
   display: flex;
   justify-content: space-between;
 }
