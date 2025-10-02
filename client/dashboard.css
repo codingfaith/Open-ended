@@ -114,7 +114,7 @@
 }
 .downloadReportBtn {
   color: #ffffff;
-  background: #4c5582;
+  background: #000000;
 }
 .downloadReportBtn {
   width: 100%;
@@ -143,6 +143,7 @@
   padding: 10px;
   color: #000000;
   background: #ffffff;
+  box-shadow: 1px 1px 2px 2px #ccc;
 }
 
 .pay-to-access-btn {
