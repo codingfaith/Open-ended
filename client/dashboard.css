@@ -191,6 +191,10 @@
   color: #ffffff;
   text-align: center;
 }
+#report-name {
+  font-style: italic;
+  text-align: center;
+}
 #admin-greeting {
   justify-self: center;
 }
