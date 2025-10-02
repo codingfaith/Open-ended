@@ -297,12 +297,12 @@ function displayData(data) {
             </button>
             <div class="report-content hide" id="report-${index}">
               <div class="report-heading">
-                <img src="./Plus94_logo2.png" alt="Plus94 logo" class="p94_logo">
+                <img src="Plus94_logo2.png" alt="company logo" class="logo" >
                 <h1>Ubuntex</h1>
               </div>
               <div class="report-metadata">
                 <span class="attempt-score">Score: ${attempt.score}%</span>
-                <span class="attempt-class">${attempt.classification}</span></span>
+                <span class="attempt-class">Classification: ${attempt.classification}</span>
               </div>
               <h4 class="score-levels">(NB: Highest scores translate to Ubuntex Level 1, Lowest scores to Ubuntex Level 6)</h4>  
               <h2 class="report-name">Report for ${data.userProfile.firstName} ${data.userProfile.lastName}</h2>
