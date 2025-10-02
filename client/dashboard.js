@@ -293,8 +293,6 @@ function displayData(data) {
         <div class="attempt-card">
           ${attempt.payment === "success" ? `
             <span class="attempt-date">${formatAttemptDate(attempt.timestamp)}</span>
-            <span class="attempt-score">Score: ${attempt.score}%</span>
-            <span class="attempt-class">${attempt.classification}</span></span>
             <button class="report-toggle-btn" data-index="${index}">
               See report
             </button>
@@ -303,6 +301,8 @@ function displayData(data) {
                 <img src="./Plus94_logo2.png" alt="Plus94 logo" class="p94_logo">
                 <h1>Ubuntex</h1>
               </div>
+              <span class="attempt-score">Score: ${attempt.score}%</span>
+              <span class="attempt-class">${attempt.classification}</span></span>
               <h2 class="report-name">Report for ${data.userProfile.firstName} ${data.userProfile.lastName}</h2>
               ${formatText(attempt.report)}
               <button class="downloadReportBtn">Download Report</button>
