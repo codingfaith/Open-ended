@@ -214,6 +214,7 @@
   justify-content: space-between;
 }
 .report-metadata {
+  margin: auto;
   text-align: center;
 }
 .report-heading h1 {
