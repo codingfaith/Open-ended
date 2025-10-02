@@ -134,6 +134,7 @@
 
 .report-content {
   padding: 10px;
+  border: 1px solid red;
 }
 
 .pay-to-access-btn {
@@ -203,6 +204,9 @@
 .report-metadata {
   display: flex;
   justify-content: space-between;
+}
+.report-heading h1 {
+  align-self: center;
 }
 #admin-greeting {
   justify-self: center;
