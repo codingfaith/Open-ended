@@ -36,6 +36,7 @@
 .last-reportBtn:hover,
 .downloadReportBtn:hover, 
 #dashboard-results:hover,
+.report-toggle-btn:hover,
 .admin-report-toggle:hover,
 .admin-answers-toggle:hover {
   color: #ffffff;
