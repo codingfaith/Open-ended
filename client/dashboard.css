@@ -213,10 +213,8 @@
   display: flex;
   justify-content: space-between;
 }
-.report-metadata {
-  margin: auto;
+.report-metadata p {
   text-align: center;
-  border: 1px solid red;
 }
 .report-heading h1 {
   align-self: center;
