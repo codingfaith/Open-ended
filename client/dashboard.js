@@ -299,11 +299,11 @@ function displayData(data) {
               See report
             </button>
             <div class="report-content hide" id="report-${index}">
-              <div>
+              <div class="report-heading">
                 <img src="./Plus94_logo2.png" alt="Plus94 logo" class="p94_logo">
                 <h1>Ubuntex</h1>
               </div>
-              <h1 id="report-name">Report for ${data.userProfile.firstName} ${data.userProfile.lastName}</h1>
+              <h2 class="report-name">Report for ${data.userProfile.firstName} ${data.userProfile.lastName}</h2>
               ${formatText(attempt.report)}
               <button class="downloadReportBtn">Download Report</button>
             </div>
