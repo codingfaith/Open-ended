@@ -99,15 +99,22 @@
 .last-reportBtn {
   font-size: smaller;  
 }
+.last-reportBtn,
+.downloadReportBtn {
+  color:#4c5582;
+  background:#ffffff;
+}
 
 .last-reportBtn,
 .downloadReportBtn {
   border: none;
   outline: none;
   padding: 10px;
-  color:#4c5582;
   border-radius: 5px;
-  background:#ffffff;  
+}
+.downloadReportBtn {
+  color: #ffffff;
+  background: #4c5582;
 }
 .downloadReportBtn {
   width: 100%;
@@ -134,7 +141,8 @@
 
 .report-content {
   padding: 10px;
-  border: 1px solid red;
+  color: #000000;
+  background: #ffffff;
 }
 
 .pay-to-access-btn {
