@@ -461,6 +461,7 @@ function displayAdminData(adminData) {
   // Add to DOM
   adminDashboard.appendChild(contentDiv);
   adminView.classList.remove('hide');
+  document.querySelector(".downloadReportBtn").addEventListener("click", downloadPDF);
 
   // Add event listeners
   contentDiv.querySelectorAll('.admin-answers-toggle').forEach(button => {
