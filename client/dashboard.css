@@ -140,7 +140,8 @@
   text-align: center;
 }
 
-.report-content {
+.report-content,
+.admin-report-content {
   padding: 10px;
   color: #000000;
   background: #ffffff;
