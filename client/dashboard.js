@@ -398,12 +398,7 @@ function displayAdminData(adminData) {
   <div class="attempts-list">
   ${adminData.attempts.map((attempt, index) => `
     <div class="admin-attempt-card">
-      <div class="attempt-meta">
-        <span class="attempt-date">Date and time: ${formatAttemptDate(attempt.timestamp)}</span>
-      </div>
       <div class="attempt-stats">
-        <span class="attempt-score">Score: ${attempt.score}%</span><br>
-        <span class="attempt-class">${attempt.classification}</span><br>
         <span class="attempt-payment">Payment Status: ${attempt?.payment ? attempt.payment.charAt(0).toUpperCase() + attempt.payment.slice(1) : 'Not Paid'}</span><br>
         <button class="admin-answers-toggle" data-index="${index}">
           Toggle Answers
@@ -414,7 +409,27 @@ function displayAdminData(adminData) {
         <hr>
       </div>
       <div class="admin-report-content hide" id="admin-report-${index}">
-        ${formatText(attempt.report)}<hr>
+        <div class="report-heading">
+          <img src="https://ubuntex.netlify.app/assets/Plus94_logo2-CJbCr5Cg.png" alt="company logo" class="logo" >
+          <h1>Ubuntex</h1>
+        </div>
+        <p class="attempt-date">Date and time: ${formatAttemptDate(attempt.timestamp)}</p>
+        <p class="attempt-score">Score: ${attempt.score}%</p>
+        <p class="attempt-class">${attempt.classification}</p>
+        ${formatText(attempt.report)}
+          <div class="ubuntex-classification">
+              <p><strong>Ubuntex Classification Breakdown</strong></p>
+              <p>Level 6 : Scores under 65.50%</p>
+              <p>Level 5 : Scores 65.50% to 72.49%</p>
+              <p>Level 4 : Scores 72.50% to 78.49%</p>
+              <p>Level 3 : Scores 78.50% to 83.49%</p>
+              <p>Level 2 : Scores 83.50% to 87.49%</p>
+              <p>Level 1 : Scores 87.50% and above</p>
+              <p> I am, because we are!</p>
+          </div>
+            <button class="downloadReportBtn">Download Report</button>
+          </div>
+        <hr>
       </div>
   
       <div class="admin-answers-content hide" id="admin-answers-${index}">
