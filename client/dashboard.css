@@ -212,6 +212,9 @@
 .ubuntex-classification span {
   text-align: center;
 }
+.ubuntex-classification {
+  border: 1px solid red;
+}
 .report-heading {
   display: flex;
   justify-content: space-between;
