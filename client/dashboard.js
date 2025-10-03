@@ -413,9 +413,11 @@ function displayAdminData(adminData) {
           <img src="https://ubuntex.netlify.app/assets/Plus94_logo2-CJbCr5Cg.png" alt="company logo" class="logo" >
           <h1>Ubuntex</h1>
         </div>
-        <p class="attempt-date">Date and time: ${formatAttemptDate(attempt.timestamp)}</p>
-        <p class="attempt-score">Score: ${attempt.score}%</p>
-        <p class="attempt-class">${attempt.classification}</p>
+        <div class="report-metadata">
+          <p class="attempt-date">Date and time: ${formatAttemptDate(attempt.timestamp)}</p>
+          <p class="attempt-score">Score: ${attempt.score}%</p>
+          <p class="attempt-class">${attempt.classification}</p>
+        </div>  
         ${formatText(attempt.report)}
           <div class="ubuntex-classification">
               <p><strong>Ubuntex Classification Breakdown</strong></p>
