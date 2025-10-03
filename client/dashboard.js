@@ -107,7 +107,7 @@ async function calculateGlobalAverageScore(db) {
       if (!attemptsSnapshot.empty) {
         const attempt = attemptsSnapshot.docs[0].data();
         totalScore += parseFloat(attempt.score)
-        console.log(attempt.score)
+        // console.log(attempt.score)
         userCount++;
       }
     });
@@ -499,6 +499,7 @@ function formatAttemptDate(timestamp) {
 }
 
 function downloadPDF() {
+  console.log("Attempting download");
   const element = document.querySelector(".report-content, .admin-report-content");
   document.querySelector(".downloadReportBtn").style.display = "none";
   
