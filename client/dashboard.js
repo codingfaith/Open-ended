@@ -160,7 +160,7 @@ async function displayUserResults(userDocs, db) {
     userCard.setAttribute('data-uid', doc.id);
     userCard.innerHTML = `
       <h3>${user.firstName || ''} ${user.lastName || ''}</h3>
-      <p>Last login: ${user.lastLogin?.toDate().toLocaleString() || 'Unknown'}</p>
+      <p>Registeration date: ${user.lastLogin?.toDate().toLocaleString() || 'Unknown'}</p>
       <button class="view-user-btn" aria-label="View results for ${user.firstName || 'user'}">View Results</button><hr>`;
     
     const viewBtn = userCard.querySelector('.view-user-btn');
