@@ -212,7 +212,7 @@
 .ubuntex-classification span {
   text-align: center;
 }
-.ubuntex-classification {
+.ubuntex-classification span {
   border: 1px solid red;
 }
 .report-heading {
