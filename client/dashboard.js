@@ -421,14 +421,14 @@ function displayAdminData(adminData) {
         </div>  
         ${formatText(attempt.report)}
           <div class="ubuntex-classification">
-              <p><strong>Ubuntex Classification Breakdown</strong></p>
-              <span>Level 6 : Scores under 65.50%</span><br>
-              <span>Level 5 : Scores 65.50% to 72.49%</span><br>
-              <span>Level 4 : Scores 72.50% to 78.49%</span><br>
-              <span>Level 3 : Scores 78.50% to 83.49%</span><br>
-              <span>Level 2 : Scores 83.50% to 87.49%</span><br>
-              <span>Level 1 : Scores 87.50% and above</span><br>
-              <p> ✊🏾 I am, because we are! ✊🏾</p>
+            <p><strong>Ubuntex Classification Breakdown</strong></p>
+            <span>Level 6 : Scores under 65.50%</span><br>
+            <span>Level 5 : Scores 65.50% to 72.49%</span><br>
+            <span>Level 4 : Scores 72.50% to 78.49%</span><br>
+            <span>Level 3 : Scores 78.50% to 83.49%</span><br>
+            <span>Level 2 : Scores 83.50% to 87.49%</span><br>
+            <span>Level 1 : Scores 87.50% and above</span><br>
+            <p> ✊🏾 I am, because we are! ✊🏾</p>
           </div>
             <button class="downloadReportBtn">Download Report</button>
           </div>
