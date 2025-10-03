@@ -629,7 +629,7 @@ function downloadPDF() {
         Object.assign(element.style, originalStyles);
         
         // Save the PDF with page numbers
-        pdf.save();
+        pdf.save(`ubuntex-report-${Date.now()}.pdf`);
       })
       .catch((error) => {
         console.error('PDF generation failed:', error);
