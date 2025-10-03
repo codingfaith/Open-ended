@@ -500,7 +500,6 @@ function formatAttemptDate(timestamp) {
 }
 
 function downloadPDF() {
-  console.log("Attempting download");
   const element = document.querySelector(".report-content, .admin-report-content");
   document.querySelector(".downloadReportBtn").style.display = "none";
   
@@ -524,7 +523,7 @@ function downloadPDF() {
   element.style.margin = '0 auto';
 
   const opt = {
-    margin: [5, 5, 5, 5], // top, left, bottom, right
+    margin: [5, 5, 10, 5], // top, left, bottom, right
     filename: 'ubuntex-report.pdf',
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { 
