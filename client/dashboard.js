@@ -499,67 +499,6 @@ function formatAttemptDate(timestamp) {
   return new Date(timestamp.seconds * 1000).toLocaleString();
 }
 
-// function downloadPDF() {
-//   const element = document.querySelector(".report-content, .admin-report-content");
-//   document.querySelector(".downloadReportBtn").style.display = "none";
-  
-//   if (!element) {
-//     console.error("Could not find .report-content element");
-//     return;
-//   }
-
-//   // Save original styles
-//   const originalStyles = {
-//     visibility: element.style.visibility,
-//     position: element.style.position,
-//     overflow: element.style.overflow,
-//     margin: element.style.margin
-//   };
-
-//   // Make element visible and centered
-//   element.style.visibility = 'visible';
-//   element.style.position = 'static';
-//   element.style.overflow = 'visible';
-//   element.style.margin = '0 auto';
-
-//   const opt = {
-//     margin: [5, 5, 15, 5], // top, left, bottom, right
-//     filename: 'ubuntex-report.pdf',
-//     image: { type: 'jpeg', quality: 0.98 },
-//     html2canvas: { 
-//       scale: 2,
-//       useCORS: true,
-//       scrollY: 0,
-//       x: 0,
-//       y: 0,
-//       windowWidth: element.scrollWidth,
-//       windowHeight: element.scrollHeight
-//     },
-//     jsPDF: { 
-//       unit: 'mm', 
-//       format: 'a4', 
-//       orientation: 'portrait'
-//     }
-//   };
-
-//   setTimeout(() => {
-//     html2pdf()
-//       .set(opt)
-//       .from(element)
-//       .toPdf()
-//       .get('pdf')
-//       .then((pdf) => {
-//         console.log('PDF generated successfully');
-//         Object.assign(element.style, originalStyles);
-//       })
-//       .catch((error) => {
-//         console.error('PDF generation failed:', error);
-//         Object.assign(element.style, originalStyles);
-//       })
-//       .save();
-//   }, 1000);
-// }
-
 function downloadPDF() {
   const element = document.querySelector(".report-content, .admin-report-content");
   document.querySelector(".downloadReportBtn").style.display = "none";
