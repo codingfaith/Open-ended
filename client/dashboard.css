@@ -208,7 +208,8 @@
   text-align: center;
 }
 .report-name,
-.ubuntex-classification p {
+.ubuntex-classification p,
+.ubuntex-classification span {
   text-align: center;
 }
 .report-heading {
