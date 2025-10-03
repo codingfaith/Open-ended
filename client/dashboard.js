@@ -432,7 +432,6 @@ function displayAdminData(adminData) {
           </div>
             <button class="downloadReportBtn">Download Report</button>
           </div>
-        <hr>
       </div>
   
       <div class="admin-answers-content hide" id="admin-answers-${index}">
