@@ -416,7 +416,7 @@ function displayAdminData(adminData) {
         <div class="report-metadata">
           <p class="attempt-date">Date and time: ${formatAttemptDate(attempt.timestamp)}</p>
           <p class="attempt-score">Score: ${attempt.score}%</p>
-          <p class="attempt-class">${attempt.classification}</p>
+          <p class="attempt-class">Classification: ${attempt.classification}</p>
         </div>  
         ${formatText(attempt.report)}
           <div class="ubuntex-classification">
