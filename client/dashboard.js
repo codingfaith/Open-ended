@@ -308,6 +308,16 @@ function displayData(data) {
               </div>
               <h4 class="score-levels">(NB: Highest scores translate to Ubuntex Level 1, Lowest scores to Ubuntex Level 6)</h4>  
               ${formatText(attempt.report)}
+              <div class="ubuntex-classification">
+                <p><strong>Ubuntex Classification Breakdown</strong></p>
+                <p>Level 6 : Scores under 65.50%</p>
+                <p>Level 5 : Scores 65.50% to 72.49%</p>
+                <p>Level 4 : Scores 72.50% to 78.49%</p>
+                <p>Level 3 : Scores 78.50% to 83.49%</p>
+                <p>Level 2 : Scores 83.50% to 87.49%</p>
+                <p>Level 1 : Scores 87.50% and above</p>
+                <p> I am, because we are!</p>
+              </div>
               <button class="downloadReportBtn">Download Report</button>
             </div>
           ` : `

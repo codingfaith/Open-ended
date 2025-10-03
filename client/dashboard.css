@@ -115,7 +115,7 @@
 }
 .downloadReportBtn {
   color: #ffffff;
-  background: #000000;
+  background: midnightblue;
 }
 .downloadReportBtn {
   width: 100%;
@@ -206,7 +206,8 @@
   color: #ffffff;
   text-align: center;
 }
-.report-name {
+.report-name,
+.ubuntex-classification p {
   text-align: center;
 }
 .report-heading {
