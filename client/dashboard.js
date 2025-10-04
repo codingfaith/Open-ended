@@ -316,7 +316,7 @@ function displayData(data) {
                 <span>Level 3 : Scores 78.50% to 83.49%</span>
                 <span>Level 2 : Scores 83.50% to 87.49%</span>
                 <span>Level 1 : Scores 87.50% and above</span>
-                <p>I am, because we are! 🫱🏻‍🫲🏾</p>
+                <p>I am, because we are! 🤝🏾</p>
               </div>
               <button class="downloadReportBtn">Download Report</button>
             </div>
@@ -428,7 +428,7 @@ function displayAdminData(adminData) {
             <span>Level 3 : Scores 78.50% to 83.49%</span>
             <span>Level 2 : Scores 83.50% to 87.49%</span>
             <span>Level 1 : Scores 87.50% and above</span>
-            <p> I am, because we are! 🫱🏻‍🫲🏾</p>
+            <p> I am, because we are! 🤝🏾</p>
           </div>
             <button class="downloadReportBtn">Download Report</button>
           </div>
