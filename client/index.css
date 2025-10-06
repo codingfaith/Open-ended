@@ -140,7 +140,8 @@ nav a:hover {
 @media screen and (max-width: 355px) {
     .assessment p,
     .admin-user-card p,
-    .attempts-list span {
+    .attempts-list span,
+    .spanContainer {
         font-size: medium;
     }
     .assessment {
