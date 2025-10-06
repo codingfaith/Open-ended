@@ -220,7 +220,7 @@
 .spanContainer {
   margin: auto;
   width: fit-content;
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Ubuntu", sans-serif;
 }
 .report-heading {
   display: flex;
