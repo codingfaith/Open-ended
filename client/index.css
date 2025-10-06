@@ -129,7 +129,8 @@ nav a:hover {
     .redirect, 
     .assessment p,
     .admin-user-card p,
-    .attempts-list span {
+    .attempts-list span,
+    .spanContainer {
         font-size: large;
     }
     .assessment {
