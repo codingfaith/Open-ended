@@ -218,6 +218,7 @@
   display: block;
 }
 .spanContainer {
+  margin: auto;
   width: fit-content;
   border: 1px solid black;
 }
