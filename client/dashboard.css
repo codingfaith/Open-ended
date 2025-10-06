@@ -265,3 +265,8 @@
 }.answers-table tbody tr:nth-child(odd) {
   background-color: #394062;
 }
+@media screen and (max-width: 400px) {
+   .spanContainer {
+    font-size: smaller;
+   }
+}
