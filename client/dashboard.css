@@ -220,7 +220,7 @@
 .spanContainer {
   margin: auto;
   width: fit-content;
-  font-family: "Poppins";
+  font-variant-numeric: tabular-nums;
 }
 .report-heading {
   display: flex;
