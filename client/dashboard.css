@@ -221,8 +221,7 @@
   margin: auto;
   width: fit-content;
 }
-#number {
-  display: inline-block;
+.spanContainer span {
   font-feature-settings: 'tnum';
 }
 .report-heading {
