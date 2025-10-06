@@ -208,10 +208,13 @@
   text-align: center;
 }
 .report-name,
+.report-metadata p,
+.report-metadata span,
 .ubuntex-classification p,
 .ubuntex-classification span {
   text-align: center;
 }
+.report-metadata span,
 .ubuntex-classification span {
   display: block;
 }
@@ -221,9 +224,6 @@
 }
 .report-metadata {
   box-shadow: 1px 1px 2px 2px #ccc;
-}
-.report-metadata span {
-  text-align: center;
 }
 .report-heading h1 {
   align-self: center;
