@@ -415,9 +415,9 @@ function displayAdminData(adminData) {
         </div>
         <h2 class="report-name">Ubuntu Index Report for ${adminData.userProfile?.firstName} ${adminData.userProfile?.lastName}</h2>
         <div class="report-metadata">
-          <p class="attempt-date">Test Date: ${formatAttemptDate(attempt.timestamp)}</p>
-          <p class="attempt-score">Test Score: ${attempt.score}%</p>
-          <p class="attempt-class">Classification: ${attempt.classification}</p>
+          <span class="attempt-date">Test Date: ${formatAttemptDate(attempt.timestamp)}</span>
+          <span class="attempt-score">Test Score: ${attempt.score}%</span>
+          <span class="attempt-class">Classification: ${attempt.classification}</span>
         </div>  
         ${formatText(attempt.report)}
           <div class="ubuntex-classification">
