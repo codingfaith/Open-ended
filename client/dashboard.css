@@ -220,9 +220,8 @@
 .spanContainer {
   margin: auto;
   width: fit-content;
-}
-.spanContainer span {
-  font-feature-settings: 'tnum';
+  font-family: 'Poppins', sans-serif;
+  font-variant-numeric: tabular-nums; 
 }
 .report-heading {
   display: flex;
