@@ -220,7 +220,7 @@
 .spanContainer {
   margin: auto;
   width: fit-content;
-  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
 }
 .report-heading {
   display: flex;
