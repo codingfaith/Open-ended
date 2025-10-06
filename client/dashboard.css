@@ -221,8 +221,9 @@
   margin: auto;
   width: fit-content;
 }
-.number {
-  font-feature-settings: 'tnum'!important;
+#number {
+  display: inline;
+  font-feature-settings: 'tnum';
 }
 .report-heading {
   display: flex;

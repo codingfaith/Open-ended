@@ -316,7 +316,7 @@ function displayData(data) {
                   <span>Level 4 : Scores 72.50% to 78.49%</span>
                   <span>Level 3 : Scores 78.50% to 83.49%</span>
                   <span>Level 2 : Scores 83.50% to 87.49%</span>
-                  <span>Level <span class="number">1</span> : Scores 87.50% and above</span>
+                  <span>Level <span id="number">1</span> : Scores 87.50% and above</span>
                 </div>
                 <p>I am, because we are!</p>
               </div>
