@@ -129,8 +129,7 @@ nav a:hover {
     .redirect, 
     .assessment p,
     .admin-user-card p,
-    .attempts-list span,
-    .spanContainer {
+    .attempts-list span {
         font-size: large;
     }
     .assessment {
@@ -141,8 +140,7 @@ nav a:hover {
 @media screen and (max-width: 355px) {
     .assessment p,
     .admin-user-card p,
-    .attempts-list span,
-    .spanContainer {
+    .attempts-list span {
         font-size: medium;
     }
     .assessment {
