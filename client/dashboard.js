@@ -418,8 +418,7 @@ function displayAdminData(adminData) {
           <span class="attempt-date">Test Date: ${formatAttemptDate(attempt.timestamp)}</span>
           <span class="attempt-score">Test Score: ${attempt.score}%</span>
           <span class="attempt-class">Classification: ${attempt.classification}</span>
-        </div>
-        <h4 class="score-levels">(NB: Highest scores translate to Ubuntex Level 1, Lowest scores to Ubuntex Level 6)</h4>  
+        </div> 
         ${formatText(attempt.report)}
           <div class="ubuntex-classification">
             <p><strong>Ubuntex Classification Breakdown</strong></p>
