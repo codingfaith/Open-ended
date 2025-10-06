@@ -220,7 +220,7 @@
 .spanContainer {
   margin: auto;
   width: fit-content;
-  font-family: inherit;
+  font-family: sans-serif;
 }
 .report-heading {
   display: flex;
