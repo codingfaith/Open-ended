@@ -220,6 +220,7 @@
 .spanContainer {
   margin: auto;
   width: fit-content;
+  letter-spacing: 2px;
   /* font-family: "Ubuntu", sans-serif; */
   font-family: "Roboto", sans-serif;
 }
