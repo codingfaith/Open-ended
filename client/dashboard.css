@@ -213,15 +213,13 @@
 .ubuntex-classification p {
   text-align: center;
 }
-.report-metadata span {
+.report-metadata span,
+.ubuntex-classification span {
   display: block;
 }
 .spanContainer {
   margin: auto;
   width: fit-content;
-}
-.number {
-  font-feature-settings: 'tnum';
 }
 .report-heading {
   display: flex;
