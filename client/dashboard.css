@@ -222,7 +222,7 @@
   width: fit-content;
 }
 #number {
-  display: inline;
+  display: inline-block;
   font-feature-settings: 'tnum';
 }
 .report-heading {
