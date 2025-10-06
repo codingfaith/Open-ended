@@ -300,7 +300,7 @@ function displayData(data) {
                 <img src="https://ubuntex.netlify.app/assets/Plus94_logo2-CJbCr5Cg.png" alt="company logo" class="logo" >
                 <h1>Ubuntex</h1>
               </div>
-              <h2 class="report-name">Ubuntu Index Report for ${data.userProfile.firstName} ${data.userProfile.lastName}</h2>
+              <h3 class="report-name">Ubuntu Index Report for ${data.userProfile.firstName} ${data.userProfile.lastName}</h3>
               <div class="report-metadata">
                 <span class="attempt-date">Test Date: ${formatAttemptDate(attempt.timestamp)}</span>
                 <span class="attempt-score">Test Score: ${attempt.score}%</span>
@@ -413,12 +413,13 @@ function displayAdminData(adminData) {
           <img src="https://ubuntex.netlify.app/assets/Plus94_logo2-CJbCr5Cg.png" alt="company logo" class="logo" >
           <h1>Ubuntex</h1>
         </div>
-        <h2 class="report-name">Ubuntu Index Report for ${adminData.userProfile?.firstName} ${adminData.userProfile?.lastName}</h2>
+        <h3 class="report-name">Ubuntu Index Report for ${adminData.userProfile?.firstName} ${adminData.userProfile?.lastName}</h3>
         <div class="report-metadata">
           <span class="attempt-date">Test Date: ${formatAttemptDate(attempt.timestamp)}</span>
           <span class="attempt-score">Test Score: ${attempt.score}%</span>
           <span class="attempt-class">Classification: ${attempt.classification}</span>
-        </div>  
+        </div>
+        <h4 class="score-levels">(NB: Highest scores translate to Ubuntex Level 1, Lowest scores to Ubuntex Level 6)</h4>  
         ${formatText(attempt.report)}
           <div class="ubuntex-classification">
             <p><strong>Ubuntex Classification Breakdown</strong></p>
