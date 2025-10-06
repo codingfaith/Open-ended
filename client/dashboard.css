@@ -210,15 +210,15 @@
 .report-name,
 .report-metadata p,
 .report-metadata span,
-.ubuntex-classification p,
-.ubuntex-classification span {
+.ubuntex-classification p {
   text-align: center;
 }
 .report-metadata span,
 .ubuntex-classification span {
   display: block;
 }
-.ubuntex-classification {
+.spanContainer {
+  width: fit-content;
   border: 1px solid black;
 }
 .report-heading {
