@@ -550,8 +550,7 @@ function downloadPDF(button) {
       orientation: 'portrait'
     },
     pagebreak: { 
-      mode: ['avoid-all', 'h2', 'ul', 'li', '.paragraph', '.section-content'],
-      before: ['h2']
+      mode: ['avoid-all', 'h2', 'ul', 'li', '.paragraph', '.section-content']
     }
   };
 
