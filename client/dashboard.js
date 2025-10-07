@@ -670,6 +670,8 @@ function formatText(input) {
       let processedText = pointText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       // Remove colons for smoothness
       processedText = processedText.replace(/:/g, '');
+      // Trim trailing period/comma if present (to avoid doubles)
+      processedText = processedText.replace(/[.!?]+$/, '');
       // Wrap in span and end with period for sentence flow
       pointsBuffer.push(`<span class="point">${processedText}.</span>`);
       return;
