@@ -548,6 +548,9 @@ function downloadPDF(button) {
       unit: 'mm', 
       format: 'a4', 
       orientation: 'portrait'
+    },
+    pagebreak: { 
+      mode: ['avoid-all', 'h2', 'p.paragraph', '.section-content']
     }
   };
 
