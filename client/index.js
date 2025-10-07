@@ -683,12 +683,64 @@ class UbuntexIndex {
         console.log(`Attempt #${attemptNumber} saved.`);
     }
 
-    formatText(input) {
-        let formatted = input.replace(/## (Key Insights|Strengths|Growth Areas|Recommendations)/g, '<h2>$1</h2>')
-            .replace(/\*\*(.*?)\*\*/g, (_, group) => `<strong><em>${group.trim()}</em></strong>`)
-            .replace(/[:\-]/g, "");
-        return formatted;
+    // formatText(input) {
+    //     let formatted = input.replace(/## (Key Insights|Strengths|Growth Areas|Recommendations)/g, '<h2>$1</h2>')
+    //         .replace(/\*\*(.*?)\*\*/g, (_, group) => `<strong><em>${group.trim()}</em></strong>`)
+    //         .replace(/[:\-]/g, "");
+    //     return formatted;
+    // }
+
+ formatText(input) {
+  // Split into lines for processing
+  let lines = input.split('\n');
+  let formatted = '';
+  let inSection = false;
+  let pointsBuffer = []; // Collect points for the current section
+
+  lines.forEach(line => {
+    line = line.trim();
+
+    // Handle headings: Start new section, flush previous points
+    if (line.match(/^## (Key Insights|Strengths|Growth Areas|Recommendations)$/)) {
+      // Flush previous section's points into a <p>
+      if (inSection && pointsBuffer.length > 0) {
+        const paraContent = pointsBuffer.join(' '); // Join points with space for flow
+        formatted += `<p class="paragraph">${paraContent}</p></div>`;
+        pointsBuffer = [];
+      }
+      inSection = true;
+      const headingText = line.replace(/^## /, '');
+      formatted += `<h2>${headingText}</h2><div class="section-content">`;
+      return;
     }
+
+    // Handle bullet points: Add to buffer as spans
+    if (line.startsWith('- ')) {
+      const pointText = line.substring(2).trim(); // Remove "- "
+      // Bold inline: **text** -> <strong>text</strong>
+      let processedText = pointText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      // Remove colons for smoothness
+      processedText = processedText.replace(/:/g, '');
+      // Wrap in span and end with period for sentence flow
+      pointsBuffer.push(`<span class="point">${processedText}.</span>`);
+      return;
+    }
+
+    // Non-bullet text: Add as a plain span (fallback)
+    if (line) {
+      let processedText = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/:/g, '');
+      pointsBuffer.push(`<span class="point">${processedText}.</span>`);
+    }
+  });
+
+  // Flush the last section
+  if (inSection && pointsBuffer.length > 0) {
+    const paraContent = pointsBuffer.join(' '); // Join with space
+    formatted += `<p class="paragraph">${paraContent}</p></div>`;
+  }
+
+  return formatted;
+}
     
     downloadPDF() {
     const element = document.getElementById("results-table");
