@@ -334,7 +334,6 @@ function displayData(data) {
 
   // Add to DOM
   dashboardResult.appendChild(contentDiv);
-  // document.querySelector(".downloadReportBtn").addEventListener("click", downloadPDF);
   document.querySelectorAll('.downloadReportBtn').forEach(btn => {
   btn.addEventListener('click', (e) => downloadPDF(e.target));
 });
@@ -467,7 +466,6 @@ function displayAdminData(adminData) {
   // Add to DOM
   adminDashboard.appendChild(contentDiv);
   adminView.classList.remove('hide');
-  // document.querySelector(".downloadReportBtn").addEventListener("click", downloadPDF);
   document.querySelectorAll('.downloadReportBtn').forEach(btn => {
   btn.addEventListener('click', (e) => downloadPDF(e.target));
 });
@@ -507,84 +505,6 @@ function formatAttemptDate(timestamp) {
   if (!timestamp || !timestamp.seconds) return 'Unknown date';
   return new Date(timestamp.seconds * 1000).toLocaleString();
 }
-
-// function downloadPDF() {
-//   const element = document.querySelector(".report-content, .admin-report-content");
-//   document.querySelector(".downloadReportBtn").style.display = "none";
-  
-//   if (!element) {
-//     console.error("Could not find .report-content element");
-//     return;
-//   }
-
-//   // Save original styles
-//   const originalStyles = {
-//     visibility: element.style.visibility,
-//     position: element.style.position,
-//     overflow: element.style.overflow,
-//     margin: element.style.margin
-//   };
-
-//   // Make element visible and centered
-//   element.style.visibility = 'visible';
-//   element.style.position = 'static';
-//   element.style.overflow = 'visible';
-//   element.style.margin = '0 auto';
-
-//   const opt = {
-//     margin: [5, 5, 25, 5], // top, left, bottom, right
-//     filename: 'ubuntex-report.pdf',
-//     image: { type: 'jpeg', quality: 0.98 },
-//     html2canvas: { 
-//       scale: 2,
-//       useCORS: true,
-//       scrollY: 0,
-//       x: 0,
-//       y: 0,
-//       windowWidth: element.scrollWidth,
-//       windowHeight: element.scrollHeight
-//     },
-//     jsPDF: { 
-//       unit: 'mm', 
-//       format: 'a4', 
-//       orientation: 'portrait'
-//     }
-//   };
-
-//   setTimeout(() => {
-//     html2pdf()
-//       .set(opt)
-//       .from(element)
-//       .toPdf()
-//       .get('pdf')
-//       .then((pdf) => {
-//         console.log('PDF generated successfully');
-        
-//         // Add page numbers to each page
-//         const pageCount = pdf.internal.getNumberOfPages();
-//         for (let i = 1; i <= pageCount; i++) {
-//           pdf.setPage(i);
-//           pdf.setFontSize(10);
-//           pdf.text(
-//             `Page ${i} of ${pageCount}`,
-//             pdf.internal.pageSize.width / 2,
-//             pdf.internal.pageSize.height - 10,
-//             { align: 'center' }
-//           );
-//         }
-        
-//         // Restore original styles after PDF modifications
-//         Object.assign(element.style, originalStyles);
-        
-//         // Save the PDF with page numbers
-//         pdf.save('ubuntex-report');
-//       })
-//       .catch((error) => {
-//         console.error('PDF generation failed:', error);
-//         Object.assign(element.style, originalStyles);
-//       });
-//   }, 1000);
-// }
 
 function downloadPDF(button) {
   const element = button.closest(".report-content, .admin-report-content");
@@ -628,6 +548,9 @@ function downloadPDF(button) {
       unit: 'mm', 
       format: 'a4', 
       orientation: 'portrait'
+    },
+    pagebreak: { 
+      mode: ['avoid-all', '.row', 'tr']
     }
   };
 
@@ -665,6 +588,8 @@ function downloadPDF(button) {
       });
   }, 1000);
 }
+
+
 
 // Modified getUserAttemptsWithProfile to work with any user ID
 async function getUserAttemptsWithProfile(userId, db) {
