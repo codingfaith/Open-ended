@@ -541,7 +541,7 @@ function downloadPDF(button) {
       scrollY: 0,
       x: 0,
       y: 0,
-      windowWidth: element.scrollWidth,
+      windowWidth: 794,
       windowHeight: element.scrollHeight
     },
     jsPDF: { 
