@@ -690,6 +690,7 @@ class UbuntexIndex {
     //     return formatted;
     // }
 
+    // format report
     formatText(input) {
         // Split into lines for easier processing
         let lines = input.split('\n');
@@ -698,70 +699,80 @@ class UbuntexIndex {
         let listBuffer = [];
 
         lines.forEach(line => {
-            line = line.trim();
+        line = line.trim();
 
-            // Handle headings
-            if (line.match(/^## (Key Insights|Strengths|Growth Areas|Recommendations)$/)) {
-            // Close any open list
-            if (inList && listBuffer.length > 0) {
-                formatted += `<ul>${listBuffer.join('')}</ul>`;
-                listBuffer = [];
-                inList = false;
-            }
-            // Add heading and a wrapper div for content
-            const headingText = line.replace(/^## /, '');
-            formatted += `<h2>${headingText}</h2><div class="section-content">`;
-            return;
-            }
-
-            // Handle bullet points (start a list if not already)
-            if (line.startsWith('- ')) {
-            const bulletText = line.substring(2).trim(); // Remove "- "
-            if (!inList) {
-                listBuffer = [];
-                inList = true;
-            }
-            // Bold inline: **text** -> <strong>text</strong> (dropped <em> for pure bold; adjust if you want italic too)
-            let processedText = bulletText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            listBuffer.push(`<li>${processedText}</li>`);
-            return;
-            }
-
-            // Non-bullet, non-heading: Treat as paragraph (e.g., after lists)
-            if (line) {
-            // Close list if open
-            if (inList && listBuffer.length > 0) {
-                formatted += `<ul>${listBuffer.join('')}</ul>`;
-                listBuffer = [];
-                inList = false;
-            }
-            // Bold inline
-            let processedText = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            // Remove colons if needed (your original had [:], but kept - for lists)
-            processedText = processedText.replace(/:/g, ''); // Only colons; dashes are for bullets
-            formatted += `<p class="paragraph">${processedText}</p>`;
-            }
-
-            // Add <br> for empty lines if desired (but better to use <p> spacing)
-            if (!line) {
-            formatted += '<br>';
-            }
-        });
-
-        // Close any final list or section
+        // Handle headings
+        if (line.match(/^## (Key Insights|Strengths|Growth Areas|Recommendations)$/)) {
+        // Close any open list
         if (inList && listBuffer.length > 0) {
             formatted += `<ul>${listBuffer.join('')}</ul>`;
+            listBuffer = [];
+            inList = false;
         }
-        // Close the last section if open (assuming one per report)
-        if (formatted.includes('<div class="section-content">')) {
-            formatted = formatted.replace(/<div class="section-content">$/, '<div class="section-content"></div>');
-        } else {
-            formatted += '</div>'; // Fallback close
+        // Add heading and a wrapper div for content
+        const headingText = line.replace(/^## /, '');
+        formatted += `<h2>${headingText}</h2><div class="section-content">`;
+        return;
         }
 
-        return formatted;
+        // Handle bullet points (start a list if not already)
+        if (line.startsWith('- ')) {
+        const bulletText = line.substring(2).trim(); // Remove "- "
+        if (!inList) {
+            listBuffer = [];
+            inList = true;
+        }
+        // Bold inline: **text** -> <strong>text</strong> (dropped <em> for pure bold; adjust if you want italic too)
+        let processedText = bulletText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        listBuffer.push(`<li>${processedText}</li>`);
+        return;
+        }
+
+        // Non-bullet, non-heading: Treat as paragraph (e.g., after lists)
+        if (line) {
+        // Close list if open
+        if (inList && listBuffer.length > 0) {
+            formatted += `<ul>${listBuffer.join('')}</ul>`;
+            listBuffer = [];
+            inList = false;
+        }
+        // Bold inline
+        let processedText = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        // Remove colons if needed (your original had [:], but kept - for lists)
+        processedText = processedText.replace(/:/g, ''); // Only colons; dashes are for bullets
+        formatted += `<p class="paragraph">${processedText}</p>`;
+        }
+
+        // Add <br> for empty lines if desired (but better to use <p> spacing)
+        if (!line) {
+        formatted += '<br>';
+        }
+        });
+    // Close any final list or section
+    if (inList && listBuffer.length > 0) {
+        formatted += `<ul>${listBuffer.join('')}</ul>`;
     }
-    
+    // Close the last section if open (assuming one per report)
+    if (formatted.includes('<div class="section-content">')) {
+        formatted = formatted.replace(/<div class="section-content">$/, '<div class="section-content"></div>');
+    } else {
+        formatted += '</div>'; // Fallback close
+    }
+
+    return formatted;
+    }
+ 
+    downloadPDF() {
+    const element = document.getElementById("results-table");
+    const opt = {
+        margin:       0.5,
+        filename:     'ubuntex-report.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+    }
 
     renderResultsTable() {
         // First verify we have all responses
