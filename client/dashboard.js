@@ -632,13 +632,6 @@ function iOSErrorMessage(error) {
 }
 
 // format report
-// function formatText(input) {
-//     let formatted = input.replace(/## (Key Insights|Strengths|Growth Areas|Recommendations)/g, '<h2>$1</h2>')
-//         .replace(/\*\*(.*?)\*\*/g, (_, group) => `<strong><em>${group.trim()}</em></strong>`)
-//         .replace(/[:\-]/g, "");
-//     return formatted;
-// }
-
 function formatText(input) {
   // Split into lines for processing
   let lines = input.split('\n');
