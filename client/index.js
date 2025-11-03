@@ -645,19 +645,19 @@ class UbuntexIndex {
                 // Add longer delay to allow Firestore commit on iOS Safari
                 const delay = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 5000 : 3000;
                 setTimeout(() => {
-                    window.location.replace("https://ubuntex.netlify.app/payment");
+                    window.location.replace("https://ubuntex.plus94.tech/payment");
                 }, delay);
 
             } else {
                 console.warn("No authenticated user found (iOS issue).");
                 this.storeLocalForLaterSync(score, finalReport);
-                window.location.replace("https://ubuntex.netlify.app");
+                window.location.replace("https://ubuntex.plus94.tech");
             }
         } catch (error) {
             loadingIndicator.style.display = "none";
             console.error("Error generating report or saving to Firestore:", error);
             this.storeLocalForLaterSync(score, finalReport);
-            window.location.replace("https://ubuntex.netlify.app");
+            window.location.replace("https://ubuntex.plus94.tech");
         }
     }
 
