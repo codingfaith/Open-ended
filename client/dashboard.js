@@ -297,7 +297,9 @@ function displayData(data) {
             </button>
             <div class="report-content hide" id="report-${index}">
               <div class="report-heading">
-                <img src="https://ubuntex.netlify.app/assets/Plus94_logo2-CJbCr5Cg.png" alt="company logo" class="logo" >
+                <img src="https://ubuntex.plus94.tech/assets/Plus94_logo2.png" 
+                onerror="this.onerror=null; this.src='https://ubuntex.netlify.app/assets/Plus94_logo2-CJbCr5Cg.png';" 
+                alt="Plus94 Logo" class="logo">
                 <h1>Ubuntex</h1>
               </div>
               <h3 class="report-name">Ubuntu Index Report for ${data.userProfile.firstName} ${data.userProfile.lastName}</h3>
