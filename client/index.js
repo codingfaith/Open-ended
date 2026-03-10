@@ -843,7 +843,7 @@ class UbuntexIndex {
     };
 
     // Prompt for OpenAI
-    const prompt = `Analyze these results and provide a detailed report on the responses given by the individual, using MARKDOWN FORMATTING with these sections:
+    const prompt = `Analyze these results and provide a detailed report on the responses given by the individual, use UK English for spellings and using MARKDOWN FORMATTING with these sections:
 
     ## Key Insights
     - Provide 2-3 bullet points summarizing the overall results

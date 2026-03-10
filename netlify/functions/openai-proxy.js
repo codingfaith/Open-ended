@@ -11,7 +11,7 @@ const makeOpenAIRequest = async (prompt, isReport = false) => {
                     {
                         role: "system",
                         content: isReport 
-                            ? "You are an Ubuntu principles analyst. Provide detailed feedback in markdown format." 
+                            ? "You are an Ubuntu principles analyst. Provide detailed feedback in markdown format. Use UK English for spellings" 
                             : "You are a scoring tool. Return ONLY a number from 0-10."
                     },
                     { role: "user", content: prompt }
