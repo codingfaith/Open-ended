@@ -1,12 +1,12 @@
 // netlify/functions/getConfig.js
 exports.handler = async () => {
   const config = {
-    apiKey: process.env.FIREBASE_A__API_KEY,
-    authDomain: process.env.FIREBASE_A__AUTH_DOMAIN,
-    projectId: process.env.FIREBASE_A__PROJECT_ID,
-    storageBucket: process.env.FIREBASE_A__STORAGE_BUCKET,
-    messagingSenderId: process.env.FIREBASE_A__MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_A__APP_ID,
+    apiKey: process.env.FIREBASE_A_API_KEY,
+    authDomain: process.env.FIREBASE_A_AUTH_DOMAIN,
+    projectId: process.env.FIREBASE_A_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_A_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_A_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_A_APP_ID,
   };
 
   const missing = Object.entries(config).filter(([key, value]) => !value);
