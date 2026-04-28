@@ -2,6 +2,35 @@
 const admin = require('firebase-admin');
 const crypto = require('crypto');
 
+// 🔥 Get correct Firebase app
+const getFirebaseApp = (project) => {
+  const existingApp = admin.apps.find(app => app.name === project);
+  if (existingApp) return existingApp;
+
+  let config;
+
+  if (project === "projectA") {
+    config = {
+      projectId: process.env.FIREBASE_A_PROJECT_ID,
+      privateKey: process.env.FIREBASE_A_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      clientEmail: process.env.FIREBASE_A_CLIENT_EMAIL,
+    };
+  } else if (project === "projectB") {
+    config = {
+      projectId: process.env.FIREBASE_B_PROJECT_ID,
+      privateKey: process.env.FIREBASE_B_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      clientEmail: process.env.FIREBASE_B_CLIENT_EMAIL,
+    };
+  } else {
+    throw new Error("Unknown project");
+  }
+
+  return admin.initializeApp(
+    { credential: admin.credential.cert(config) },
+    project
+  );
+};
+
 exports.handler = async (event, context) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
@@ -10,10 +39,10 @@ exports.handler = async (event, context) => {
   const secret = process.env.PAYSTACK_SECRET_KEY;
   if (!secret) {
     console.error('Missing Paystack secret key');
-    return { statusCode: 500, body: 'Server configuration error' };
+    return { statusCode: 500, body: 'Server error' };
   }
 
-  // Verify the signature to ensure it's from Paystack
+  // ✅ Verify Paystack signature
   const hash = crypto.createHmac('sha512', secret)
     .update(event.body)
     .digest('hex');
@@ -23,56 +52,82 @@ exports.handler = async (event, context) => {
     return { statusCode: 400, body: 'Invalid signature' };
   }
 
-  // Parse the event body
   let payload;
   try {
     payload = JSON.parse(event.body);
   } catch (err) {
-    console.error('Error parsing payload:', err);
-    return { statusCode: 400, body: 'Invalid payload' };
+    console.error('Invalid JSON');
+    return { statusCode: 400, body: 'Bad request' };
   }
 
-  // Respond with 200 OK immediately to acknowledge (prevents retries)
   if (payload.event === 'charge.success') {
     try {
-      if (!admin.apps.length) {
-        const serviceAccount = {
-          projectId: process.env.FIREBASE_PROJECT_ID,
-          privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'), // Restore newlines
-          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        };
+      const project = payload.data?.metadata?.project;
+      const userId = payload.data?.metadata?.userId;
+      const attemptNumber = payload.data?.metadata?.attemptNumber;
+      const reference = payload.data?.reference;
 
-        admin.initializeApp({
-          credential: admin.credential.cert(serviceAccount),
-        });
+      if (!project || !userId) {
+        console.error('Missing metadata');
+        return { statusCode: 200, body: 'OK' };
       }
 
-      const db = admin.firestore(); 
+      const app = getFirebaseApp(project);
+      const db = app.firestore();
 
-      // Extract user ID from metadata 
-    const userId = payload.data.metadata.userId;
-    if (userId) {
-        await admin.firestore().collection('users').doc(userId).update({
-            paymentStatus: 'success',
-            transactionReference: payload.data.reference,
-            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-        });
-    }
-      // Update the user's payment status in Firestore
+      // 🔁 Prevent duplicate processing
+      const txRef = db.collection('transactions').doc(reference);
+      const existing = await txRef.get();
+
+      if (existing.exists) {
+        console.log('Duplicate webhook:', reference);
+        return { statusCode: 200, body: 'OK' };
+      }
+
+      // ✅ Save transaction
+      await txRef.set({
+        reference,
+        project,
+        userId,
+        amount: payload.data.amount,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
+      // ✅ Update user
       await db.collection('users').doc(userId).update({
         paymentStatus: 'success',
-        transactionReference: payload.data.reference,
+        transactionReference: reference,
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
 
-      console.log(`Payment verified and status updated for user: ${userId}`);
+      // ✅ Update attempt (IMPORTANT)
+      if (attemptNumber) {
+        const attemptsRef = db.collection('userResults')
+          .doc(userId)
+          .collection('attempts');
+
+        const query = await attemptsRef
+          .where('attemptNumber', '==', parseInt(attemptNumber))
+          .limit(1)
+          .get();
+
+        if (!query.empty) {
+          await query.docs[0].ref.update({
+            payment: 'success',
+            paymentReference: reference,
+            paymentTimestamp: admin.firestore.FieldValue.serverTimestamp()
+          });
+
+          console.log(`✅ Attempt updated for ${userId}`);
+        }
+      }
+
+      console.log(`✅ Payment processed for ${userId} (${project})`);
+
     } catch (err) {
-      console.error('Error updating Firebase:', err);
+      console.error('Webhook error:', err);
     }
-  } else {
-    console.log(`Unhandled event: ${payload.event}`);
   }
 
-  // Always return 200 OK to Paystack
   return { statusCode: 200, body: 'OK' };
 };
