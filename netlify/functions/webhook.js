@@ -9,10 +9,22 @@ const getFirebaseApp = (project) => {
 
   let config;
 
+  const getPrivateKey = (prefix) => {
+  return [
+    process.env[`${prefix}_KEY_1`],
+    process.env[`${prefix}_KEY_2`],
+    process.env[`${prefix}_KEY_3`],
+    process.env[`${prefix}_KEY_4`],
+  ]
+    .filter(Boolean) // avoids undefined parts
+    .join('')
+    .replace(/\\n/g, '\n');
+  };
+
   if (project === "projectA") {
     config = {
       projectId: process.env.FIREBASE_A_PROJECT_ID,
-      privateKey: process.env.FIREBASE_A_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      privateKey: getPrivateKey("FIREBASE_A"),
       clientEmail: process.env.FIREBASE_A_CLIENT_EMAIL,
     };
   } else if (project === "projectB") {
