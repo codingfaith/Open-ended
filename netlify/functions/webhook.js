@@ -30,7 +30,7 @@ const getFirebaseApp = (project) => {
   } else if (project === "projectB") {
     config = {
       projectId: process.env.FIREBASE_B_PROJECT_ID,
-      privateKey: process.env.FIREBASE_B_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      privateKey: getPrivateKey("FIREBASE_B"),
       clientEmail: process.env.FIREBASE_B_CLIENT_EMAIL,
     };
   } else {
