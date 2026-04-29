@@ -17,7 +17,6 @@ exports.handler = async () => {
       body: JSON.stringify({ error: "Missing Firebase config values", missing: missing.map(([k]) => k) })
     };
   }
-
   return {
     statusCode: 200,
     body: JSON.stringify({ firebaseConfig: config })
