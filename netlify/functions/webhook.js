@@ -11,15 +11,15 @@ const getFirebaseApp = (project) => {
 
   if (project === "projectA") {
     config = {
-      projectId: process.env.FIREBASE_A_PROJECT_ID,
-      privateKey: process.env.FIREBASE_A_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      clientEmail: process.env.FIREBASE_A_CLIENT_EMAIL,
+      projectId: process.env.FBA_PROJECT_ID,
+      privateKey: process.env.FBA_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      clientEmail: process.env.FBA_CLIENT_EMAIL,
     };
   } else if (project === "projectB") {
     config = {
-      projectId: process.env.FIREBASE_B_PROJECT_ID,
-      privateKey: process.env.FIREBASE_B_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      clientEmail: process.env.FIREBASE_B_CLIENT_EMAIL,
+      projectId: process.env.FBB_PROJECT_ID,
+      privateKey: process.env.FBB_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      clientEmail: process.env.FBB_CLIENT_EMAIL,
     };
   } else {
     throw new Error("Unknown project");
