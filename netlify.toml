@@ -48,4 +48,9 @@
 package = "netlify-plugin-inline-functions-env"
 
   [plugins.inputs]
-    include = ["FBA_PRIVATE_KEY", "FBB_PRIVATE_KEY"]
+    include = [
+     "FBA_PRIVATE_KEY",
+     "FBB_PRIVATE_KEY",
+     "PAYSTACK_SECRET_KEY",
+     "OPENAI_API_KEY"
+    ]
