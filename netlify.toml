@@ -43,3 +43,9 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[plugins]]
+package = "netlify-plugin-inline-functions-env"
+
+  [plugins.inputs]
+    include = ["FIREBASE_A_PRIVATE_KEY", "FIREBASE_B_PRIVATE_KEY"]
