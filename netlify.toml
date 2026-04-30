@@ -48,4 +48,4 @@
 package = "netlify-plugin-inline-functions-env"
 
   [plugins.inputs]
-    include = ["FIREBASE_A_PRIVATE_KEY", "FIREBASE_B_PRIVATE_KEY"]
+    include = ["FBA_PRIVATE_KEY", "FBB_PRIVATE_KEY"]
