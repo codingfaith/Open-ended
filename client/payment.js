@@ -40,7 +40,7 @@ export function payWithPaystack(attemptNumber = null) {
                                 paymentTimestamp: firebase.firestore.FieldValue.serverTimestamp()
                             }).then(() => {
                                 // Redirect to results page
-                                window.location.replace("https://ubuntex.netlify.app/dashboard");
+                                window.location.replace("http://ubuntex.plus94.tech/dashboard");
                             }).catch((error) => {
                                 console.error('Error updating attempt:', error);
                                 alert('Payment recorded, but failed to update attempt. Contact support.');
