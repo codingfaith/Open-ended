@@ -1,520 +1,701 @@
-// Firebase instances
-let db = null;
-let auth = null;
-let isFirebaseReady = false;
-let authStateUnsubscribe = null;
-let initializationPromise = null;
+import { handleLogout, initializeFirebase } from './auth.js';
+import { payWithPaystack } from './payment.js'
+// DOM elements with null checks for iOS
+const dashboardImg = document.getElementById("dashboard-img");
+const previousBtn = document.getElementById("dashboard-results");
+const dashboardResult = document.getElementById("previous-results");
+const dashboardErrorMessage = document.getElementById("dashboard-error-message") || document.createElement('div');
+const resultsBtnTxt = document.getElementById('results-btnTxt') || document.createElement('span');
+const adminView = document.getElementById('admin-results-container');
+let usersNum = 0;
+let average = 0;
+let message =  document.getElementById('message');
+// iOS-specific event listener with passive option
+const addIOSSafeListener = (element, event, handler) => {
+  if (!element) return;
+  element.addEventListener(event, handler, { passive: true });
+};
 
-window.isLoggingOut = false;
-
-// --------------------
-// Utility Functions
-// --------------------
-
-function clearError() {
-  const errorElement = document.getElementById('auth-error');
-  if (errorElement) errorElement.textContent = '';
-}
-
-function showError(message, type = 'error') {
-  const errorElement = document.getElementById('auth-error');
-  if (!errorElement) return;
-
-  errorElement.textContent = message;
-  errorElement.style.color = type === 'success' ? 'green' : 'orange';
-  errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-function setLoading(button, isLoading) {
-  if (!button) return;
-
-  const buttonText = button.querySelector('.button-text');
-  const spinner = button.querySelector('.loading-spinner');
-
-  if (buttonText) buttonText.style.display = isLoading ? 'none' : 'block';
-  if (spinner) spinner.style.display = isLoading ? 'block' : 'none';
-
-  button.disabled = isLoading;
-}
-
-function validateEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).toLowerCase());
-}
-
-function disableForms() {
-  document.querySelectorAll('#login-btn, #signup-btn').forEach(btn => {
-    btn.disabled = true;
-  });
-}
-
-// --------------------
-// Firebase Loading
-// --------------------
-
-async function ensureFirebaseLoaded() {
-  if (typeof firebase !== 'undefined' && firebase.initializeApp) {
-    return true;
+// Toggle dashboard visibility with iOS-safe classList
+addIOSSafeListener(previousBtn, "click", () => {
+  if (!dashboardResult || !dashboardImg || !resultsBtnTxt) return;
+  
+  if (dashboardResult.classList.contains("hide")) {
+    dashboardResult.classList.remove("hide");
+    dashboardResult.classList.add("show");
+    resultsBtnTxt.textContent = "←Go back";
+  } else {
+    dashboardResult.classList.remove("show");
+    dashboardResult.classList.add("hide");
+    resultsBtnTxt.textContent = "See previous results";
   }
 
-  return new Promise(resolve => {
-    const maxWaitTime = 10000;
-    const checkInterval = 100;
-    let elapsedTime = 0;
-
-    const interval = setInterval(() => {
-      elapsedTime += checkInterval;
-
-      if (typeof firebase !== 'undefined' && firebase.initializeApp) {
-        clearInterval(interval);
-        resolve(true);
-      }
-
-      if (elapsedTime >= maxWaitTime) {
-        clearInterval(interval);
-        resolve(false);
-      }
-    }, checkInterval);
-  });
-}
-
-export async function initializeFirebase() {
-  if (initializationPromise) return initializationPromise;
-
-  initializationPromise = (async () => {
-    try {
-      if (typeof firebase === 'undefined' || !firebase.initializeApp) {
-        throw new Error('Firebase SDK not loaded');
-      }
-
-      const configResponse = await Promise.race([
-        fetch('/.netlify/functions/getConfig'),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Config fetch timeout')), 5000)
-        )
-      ]);
-
-      if (!configResponse.ok) {
-        throw new Error(`Config fetch failed: ${configResponse.status}`);
-      }
-
-      const { firebaseConfig } = await configResponse.json();
-
-      if (!firebaseConfig?.apiKey) {
-        throw new Error('Invalid Firebase configuration');
-      }
-
-      const app = firebase.apps.length
-        ? firebase.app()
-        : firebase.initializeApp(firebaseConfig);
-
-      auth = firebase.auth(app);
-      db = firebase.firestore(app);
-
-      try {
-        await db.enablePersistence();
-        console.debug('Firestore offline persistence enabled');
-      } catch (error) {
-        console.warn('Firestore persistence skipped:', error.code || error.message);
-      }
-
-      isFirebaseReady = true;
-      console.log('Firebase initialized successfully');
-
-      return { auth, db };
-
-    } catch (error) {
-      isFirebaseReady = false;
-      initializationPromise = null;
-      console.error('Firebase initialization failed:', error);
-      throw error;
-    }
-  })();
-
-  return initializationPromise;
-}
-
-export function checkAuthReady() {
-  if (!isFirebaseReady || !auth || !db) {
-    throw new Error('Authentication service not ready - please wait');
-  }
-
-  return { auth, db };
-}
-
-// --------------------
-// Main Initialization
-// --------------------
-
-async function initAuthSystem() {
-  try {
-    const urlParams = new URLSearchParams(window.location.search);
-    const logoutStatus = urlParams.get('logout');
-
-    if (logoutStatus === 'success') {
-      showError('You have been logged out successfully', 'success');
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-
-    if (logoutStatus === 'error') {
-      showError('Logout failed. Please try again.', 'error');
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-
-    const firebaseLoaded = await ensureFirebaseLoaded();
-
-    if (!firebaseLoaded) {
-      showError('Authentication system failed to load. Please refresh the page.');
-      disableForms();
-      return;
-    }
-
-    await initializeFirebase();
-    setupEventListeners();
-    setupAuthStateListener();
-
-  } catch (error) {
-    console.error('Auth system initialization failed:', error);
-    showError('System error. Please refresh the page.');
-    disableForms();
-  }
-}
-
-// --------------------
-// Auth State Listener
-// --------------------
-
-function setupAuthStateListener() {
-  if (authStateUnsubscribe) authStateUnsubscribe();
-
-  let isHandlingRedirect = false;
-  let lastRedirectTime = 0;
-
-  authStateUnsubscribe = auth.onAuthStateChanged(user => {
-    const now = Date.now();
-
-    if (window.isLoggingOut || isHandlingRedirect || now - lastRedirectTime < 2000) {
-      return;
-    }
-
-    const currentPath = window.location.pathname
-      .replace(/\/$/, '')
-      .toLowerCase();
-
-    const publicPages = ['', '/', '/index'];
-    const protectedPages = ['/dashboard', '/quiz', '/payment'];
-
-    const isPublicPage = publicPages.includes(currentPath);
-    const isProtectedPage = protectedPages.includes(currentPath);
-
-    isHandlingRedirect = true;
-    lastRedirectTime = now;
-
-    if (user && isPublicPage) {
-      window.location.replace('/dashboard');
-      return;
-    }
-
-    if (!user && isProtectedPage) {
-      window.location.replace('/index');
-      return;
-    }
-
-    setTimeout(() => {
-      isHandlingRedirect = false;
-    }, 1000);
-  });
-}
-
-// --------------------
-// Login
-// --------------------
-
-let isLoginProcessing = false;
-
-async function handleLogin(e) {
-  e.preventDefault();
-
-  if (isLoginProcessing) return;
-
-  const emailInput = document.getElementById('login-email');
-  const passwordInput = document.getElementById('login-password');
-  const loginBtn = document.getElementById('login-btn');
-
-  if (!emailInput || !passwordInput || !loginBtn) return;
-
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
-
-  if (!validateEmail(email)) {
-    showError('Please enter a valid email address');
-    return;
-  }
-
-  try {
-    isLoginProcessing = true;
-    setLoading(loginBtn, true);
-    clearError();
-
-    checkAuthReady();
-
-    await auth.signInWithEmailAndPassword(email, password);
-
-  } catch (error) {
-    showError(getFriendlyError(error));
-  } finally {
-    isLoginProcessing = false;
-    setLoading(loginBtn, false);
-  }
-}
-
-// --------------------
-// Signup
-// --------------------
-
-let isSignupProcessing = false;
-
-async function handleSignup(e) {
-  e.preventDefault();
-
-  if (isSignupProcessing) return;
-
-  const emailInput = document.getElementById('signup-email');
-  const passwordInput = document.getElementById('signup-password');
-  const firstNameInput = document.getElementById('signup-firstname');
-  const lastNameInput = document.getElementById('signup-lastname');
-  const signupBtn = document.getElementById('signup-btn');
-  const loginForm = document.getElementById('login-form');
-  const signupForm = document.getElementById('signup-form');
-
-  if (
-    !emailInput ||
-    !passwordInput ||
-    !firstNameInput ||
-    !lastNameInput ||
-    !signupBtn ||
-    !loginForm ||
-    !signupForm
-  ) {
-    return;
-  }
-
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
-  const firstName = firstNameInput.value.trim();
-  const lastName = lastNameInput.value.trim();
-
-  if (!validateEmail(email)) {
-    showError('Please enter a valid email address');
-    return;
-  }
-
-  if (password.length < 6) {
-    showError('Password must be at least 6 characters');
-    return;
-  }
-
-  if (!firstName || !lastName) {
-    showError('Please enter your full name');
-    return;
-  }
-
-  try {
-    isSignupProcessing = true;
-    setLoading(signupBtn, true);
-    clearError();
-
-    checkAuthReady();
-
-    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-
-    await db.collection('users').doc(userCredential.user.uid).set({
-      firstName,
-      lastName,
-      email,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    await userCredential.user.sendEmailVerification();
-
-    showError('Signup successful! Please check your email for verification.', 'success');
-
-    signupForm.style.display = 'none';
-    loginForm.style.display = 'flex';
-
-    emailInput.value = '';
-    passwordInput.value = '';
-    firstNameInput.value = '';
-    lastNameInput.value = '';
-
-  } catch (error) {
-    showError(getFriendlyError(error));
-  } finally {
-    isSignupProcessing = false;
-    setLoading(signupBtn, false);
-  }
-}
-
-// --------------------
-// Logout
-// --------------------
-
-export async function handleLogout(e) {
-  if (e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
-  const logoutBtn = document.getElementById('logout-btn');
-
-  try {
-    window.isLoggingOut = true;
-
-    if (logoutBtn) setLoading(logoutBtn, true);
-
-    if (!auth || !firebase.apps.length) {
-      await initializeFirebase();
-    }
-
-    if (!auth) {
-      throw new Error('Auth unavailable after initialization');
-    }
-
-    await auth.signOut();
-
-    Object.keys(localStorage).forEach(key => {
-      if (key.startsWith('firebase:')) {
-        localStorage.removeItem(key);
-      }
-    });
-
-    sessionStorage.clear();
-
-    const redirectUrl = new URL('/index', window.location.origin);
-    redirectUrl.searchParams.set('logout', 'success');
-
-    window.location.replace(redirectUrl.toString());
-
-  } catch (error) {
-    console.error('Logout failed:', error);
-
-    const redirectUrl = new URL('/index', window.location.origin);
-    redirectUrl.searchParams.set('logout', 'error');
-    redirectUrl.searchParams.set('code', error.code || 'internal');
-
-    window.location.replace(redirectUrl.toString());
-
-  } finally {
-    if (logoutBtn) setLoading(logoutBtn, false);
-  }
-}
-
-// --------------------
-// Friendly Error Messages
-// --------------------
-
-function getFriendlyError(error) {
-  const code = error?.code || error;
-
-  switch (code) {
-    case 'auth/invalid-email':
-    case 'auth/invalid-email-address':
-      return 'Invalid email address';
-
-    case 'auth/user-disabled':
-      return 'Account disabled by administrator';
-
-    case 'auth/user-not-found':
-    case 'auth/wrong-password':
-    case 'auth/invalid-credential':
-      return 'Invalid email or password';
-
-    case 'auth/operation-not-allowed':
-      return 'Email/password login is disabled for this app';
-
-    case 'auth/configuration-not-found':
-      return 'Invalid Firebase configuration. Please contact support.';
-
-    case 'auth/requires-recent-login':
-      return 'Please re-authenticate to update sensitive data';
-
-    case 'auth/provider-already-linked':
-      return 'Account already connected to another provider';
-
-    case 'auth/email-already-in-use':
-      return 'Email already registered';
-
-    case 'auth/weak-password':
-      return 'Password must be at least 6 characters';
-
-    case 'auth/network-request-failed':
-      return 'Network error. Check your connection';
-
-    case 'auth/too-many-requests':
-      return 'Too many attempts. Try again later or reset password';
-
-    case 'auth/timeout':
-      return 'Request timed out. Try again';
-
-    default:
-      console.warn('Unhandled auth error:', code);
-      return typeof error === 'string'
-        ? error
-        : 'Something went wrong. Please try again.';
-  }
-}
-
-// --------------------
-// Event Listeners
-// --------------------
-
-function setupEventListeners() {
-  const showSignup = document.getElementById('show-signup');
-  const showLogin = document.getElementById('show-login');
-  const loginForm = document.getElementById('login-form');
-  const signupForm = document.getElementById('signup-form');
-  const logoutBtn = document.getElementById('logout-btn');
-
-  showSignup?.addEventListener('click', e => {
-    e.preventDefault();
-    clearError();
-
-    if (loginForm) loginForm.style.display = 'none';
-    if (signupForm) signupForm.style.display = 'flex';
-  });
-
-  showLogin?.addEventListener('click', e => {
-    e.preventDefault();
-    clearError();
-
-    if (signupForm) signupForm.style.display = 'none';
-    if (loginForm) loginForm.style.display = 'flex';
-  });
-
-  loginForm?.addEventListener('submit', handleLogin);
-  signupForm?.addEventListener('submit', handleSignup);
-
-  document.getElementById('login-btn')?.addEventListener('click', handleLogin);
-  document.getElementById('signup-btn')?.addEventListener('click', handleSignup);
-  logoutBtn?.addEventListener('click', handleLogout);
-}
-
-// --------------------
-// Start App
-// --------------------
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initAuthSystem);
-} else {
-  initAuthSystem();
-}
-
-// --------------------
-// Cleanup
-// --------------------
-
-window.addEventListener('beforeunload', () => {
-  if (authStateUnsubscribe) {
-    authStateUnsubscribe();
-  }
+  if (dashboardImg.classList.contains("hide")) {
+    dashboardImg.classList.remove("hide");
+    dashboardImg.classList.add("show");
+  } else {
+    dashboardImg.classList.remove("show");
+    dashboardImg.classList.add("hide");
+  } 
 });
+
+// Main execution wrapper with iOS timers
+async function initDashboard() {
+  try {
+    showLoading(true);
+    
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    const { auth, db } = await initializeFirebase();
+
+    const user = await new Promise((resolve) => {
+      const unsubscribe = auth.onAuthStateChanged(user => {
+        unsubscribe();
+        resolve(user);
+      });
+    });
+
+    if (!user) {
+      showError('Please log in to view your results');
+      return;
+    }
+
+    if (await checkAdmin()) {
+      message.style.display = "block";
+      document.getElementById('dashboard-assess').innerHTML =` 
+        <h3 id="admin-greeting"></h3>
+        <div id="admin-previous-results"></div>`;
+      loadRecentUsers(db);
+    } else {
+      adminView.style.display = "none";
+      const data = await getUserAttemptsWithProfile(user.uid, db);
+      console.log('User data loaded');
+      requestAnimationFrame(() => displayData(data));
+    }
+
+  } catch (error) {
+    console.error('Dashboard failed:', error);
+    showError(iOSErrorMessage(error));
+  } finally {
+    showLoading(false);
+  }
+}
+
+// Check if current user is admin
+async function checkAdmin() {
+  const { auth, db } = await initializeFirebase();
+  const user = auth.currentUser;
+  if (!user) return false;
+
+  const userDoc = await db.collection("users").doc(user.uid).get();
+  return userDoc.data()?.role === "admin"; // Returns true/false
+}
+
+async function calculateGlobalAverageScore(db) {
+  try {
+    const usersSnapshot = await db.collection("users").get();
+    let totalScore = 0;
+    let userCount = 0;
+
+    const scorePromises = usersSnapshot.docs.map(async (userDoc) => {
+      const attemptsSnapshot = await db.collection("userResults")
+        .doc(userDoc.id)
+        .collection("attempts")
+        .limit(1)
+        .get();
+
+      if (!attemptsSnapshot.empty) {
+        const attempt = attemptsSnapshot.docs[0].data();
+        totalScore += parseFloat(attempt.score)
+        // console.log(attempt.score)
+        userCount++;
+      }
+    });
+
+    await Promise.all(scorePromises);
+
+    // Round to 2 decimal places
+    const averageScore = userCount > 0 
+      ? Math.round((totalScore / userCount) * 100) / 100
+      : 0;
+    return averageScore;
+  
+  } catch (error) {
+    console.error("Error calculating global average:", error);
+    throw error;
+  }
+}
+
+async function displayUserResults(userDocs, db) {
+  if (!adminView) return;
+  average = await calculateGlobalAverageScore(db);
+  message.innerHTML = `<h3>${usersNum} users have taken the test!</h3>
+  Their average score is ${average}% <br><span style="font-size:small">(scroll below to see users)</span>`;
+
+  document.getElementById('logoutContainer').innerHTML = `
+  <button id="logout-buttonAdmin" class="logout-buttonAdmin" type="button">
+    <span class="button-text">Log Out</span>
+    <span class="loading-spinner" style="display:none;">
+        <svg class="spinner" viewBox="0 0 50 50">
+        <circle cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+        </svg>
+    </span>
+  </button>`;
+  document.getElementById('logoutContainer').style.display="flex";
+  document.getElementById('logout-buttonAdmin').addEventListener('click', handleLogout)
+  // Clear existing content safely
+  while (adminView.firstChild) {
+    adminView.removeChild(adminView.firstChild);
+  }
+
+  if (userDocs.length === 0) {
+    adminView.innerHTML = '<p>No users found</p>';
+    return;
+  }
+
+  userDocs.forEach(doc => {
+    const user = doc.data();
+    const userCard = document.createElement('div');
+    userCard.className = 'admin-user-card';
+    userCard.setAttribute('data-uid', doc.id);
+    userCard.innerHTML = `
+      <h3>${user.firstName || ''} ${user.lastName || ''}</h3>
+      <p>Registered: ${user.lastLogin?.toDate().toLocaleString() || 'Unknown'}</p>
+      <button class="view-user-btn" aria-label="View results for ${user.firstName || 'user'}">View Results</button><hr>`;
+    
+    const viewBtn = userCard.querySelector('.view-user-btn');
+    if (viewBtn) {
+      addIOSSafeListener(viewBtn, 'click', async function() {
+        try {
+          showLoading(true);
+          const data = await getUserAttemptsWithProfile(doc.id, db);
+          displayAdminData(data);
+          adminView.scrollIntoView({ behavior: "smooth" });
+        } catch (error) {
+          console.error("Error loading user data:", error);
+          showError("Failed to load user data");
+        } finally {
+          showLoading(false);
+        }
+      });
+    }
+    adminView.appendChild(userCard);
+  });
+}
+
+async function loadRecentUsers(db) {
+  try {
+    showLoading(true);
+    
+    // First get all recent users
+    const usersSnapshot = await db.collection("users")
+      .orderBy("lastLogin", "desc")
+      .limit(100) // Add reasonable limit
+      .get();
+
+    // Check each user for attempts
+    const usersWithAttempts = await Promise.all(
+      usersSnapshot.docs.map(async (userDoc) => {
+        const attemptsSnapshot = await db.collection("userResults")
+          .doc(userDoc.id)
+          .collection("attempts")
+          .limit(1) // We only need to know if at least one exists
+          .get();
+        
+        return {
+          userDoc,
+          hasAttempts: !attemptsSnapshot.empty
+        };
+      })
+    );
+
+    // Filter to only users with attempts
+    const filteredUsers = usersWithAttempts
+      .filter(user => user.hasAttempts)
+      .map(user => user.userDoc);
+
+    console.log(`Found ${filteredUsers.length} users with attempts`);
+    usersNum = filteredUsers.length;
+    displayUserResults(filteredUsers, db);
+    
+  } catch (error) {
+    console.error("Error loading recent users:", error);
+    showError("Failed to load users with results");
+  } finally {
+    showLoading(false);
+  }
+}
+
+
+// Add this helper function for better error messages
+function getFriendlyErrorMessage(error) {
+  if (error.message.includes('network')) {
+    return 'Network error. Please check your internet connection.';
+  }
+  if (error.message.includes('permission')) {
+    return 'You don\'t have permission to view this content.';
+  }
+  return 'An unexpected error occurred. Please try again.';
+}
+
+// Update your error handling to use this:
+function showError(message) {
+  if (!dashboardErrorMessage) return;
+  
+  dashboardErrorMessage.textContent = getFriendlyErrorMessage(
+    typeof message === 'string' ? { message } : message
+  );
+  dashboardErrorMessage.style.display = 'block';
+  
+  setTimeout(() => {
+    dashboardErrorMessage.style.display = 'none';
+  }, 5000);
+}
+
+//for regular users
+function displayData(data) {
+  // Validate input and required elements
+  const greeting = document.getElementById('greeting');
+  
+  if (!dashboardResult || !greeting) {
+    console.error('Missing required elements for user view');
+    return;
+  }
+
+  // Update greeting
+  greeting.textContent = `Hi ${data.userProfile?.firstName || 'User'}!`;
+
+  // Clear previous content
+  dashboardResult.innerHTML = '';
+
+// Create new content container
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'user-results-content';
+
+  // Handle case with no attempts
+  if (!data.attempts?.length) {
+    contentDiv.innerHTML = `
+      <div class="no-attempts">
+        <p>You have no results to show yet.</p>
+        <p>Complete your first quiz to see your results here! 😊</p>
+      </div>
+    `;
+    dashboardResult.appendChild(contentDiv);
+    return;
+  }
+
+  // Build attempts list
+  contentDiv.innerHTML = `
+    <h3 style="text-align:center;">Your Test Attempts</h3>
+    <div class="attempts-list">
+      ${data.attempts.map((attempt, index) => `
+        <div class="attempt-card">
+          ${attempt.payment === "success" ? `
+            <span class="attempt-date">${formatAttemptDate(attempt.timestamp)}</span>
+            <button class="report-toggle-btn" data-index="${index}">
+              See report
+            </button>
+            <div class="report-content hide" id="report-${index}">
+              <div class="report-heading">
+                <img src="https://ubuntex.plus94.tech/assets/Plus94_logo2-CJbCr5Cg.png" alt="Plus94 Logo" class="logo">
+                <h1>Ubuntex</h1>
+              </div>
+              <h3 class="report-name">Ubuntu Index Report for ${data.userProfile.firstName} ${data.userProfile.lastName}</h3>
+              <div class="report-metadata">
+                <span class="attempt-date">Test Date: ${formatAttemptDate(attempt.timestamp)}</span>
+                <span class="attempt-score">Test Score: ${attempt.score}%</span>
+                <span class="attempt-class">Classification: ${attempt.classification}</span>
+              </div>
+
+              ${formatText(attempt.report)}
+              <div class="ubuntex-classification">
+                <p><strong>Ubuntex Classification Breakdown</strong></p>
+                <div class="spanContainer">
+                  <span>Level 6 : Scores under 65.50%</span>
+                  <span>Level 5 : Scores 65.50% to 72.49%</span>
+                  <span>Level 4 : Scores 72.50% to 78.49%</span>
+                  <span>Level 3 : Scores 78.50% to 83.49%</span>
+                  <span>Level 2 : Scores 83.50% to 87.49%</span>
+                  <span>Level 1 : Scores 87.50% and above</span>
+                </div>
+                <p>I am, because we are!</p>
+              </div>
+              <button class="downloadReportBtn">Download Report</button>
+            </div>
+          ` : `
+            <span class="attempt-date">${formatAttemptDate(attempt.timestamp)}</span>
+            <button class="pay-to-access-btn" data-attempt-number="${attempt.attemptNumber}">Pay to access results</button>
+          `}
+        </div>
+        <hr><br>
+      `).join('')}
+    </div>
+  `;
+
+  // Add to DOM
+  dashboardResult.appendChild(contentDiv);
+  document.querySelectorAll('.downloadReportBtn').forEach(btn => {
+  btn.addEventListener('click', (e) => downloadPDF(e.target));
+});
+
+  // Check if pay-to-access-btn elements exist before adding event listeners
+  const payButtons = document.querySelectorAll('.pay-to-access-btn');
+  if (payButtons.length > 0) {
+    payButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const attemptNumber = button.dataset.attemptNumber;
+        payWithPaystack(attemptNumber);
+      });
+    });
+  }
+  // Add event listeners for report toggles
+  contentDiv.querySelectorAll('.report-toggle-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const index = this.getAttribute('data-index');
+      const reportDiv = document.getElementById(`report-${index}`);
+      
+      if (reportDiv) {
+        reportDiv.classList.toggle('hide');
+        this.textContent = reportDiv.classList.contains('hide') 
+          ? 'See report' 
+          : 'Hide report';
+      }
+    });
+  });
+}
+
+//for admins
+function displayAdminData(adminData) {
+  // Validate input and required elements
+  const adminDashboard = document.getElementById("admin-previous-results");
+  const adminGreeting = document.getElementById('admin-greeting');
+  
+  if (!adminGreeting || !adminView) {
+    console.error('Missing required elements for admin view');
+    return;
+  }
+
+  // Clear previous content
+  adminDashboard.innerHTML = '';
+  
+  // Update admin greeting
+  adminGreeting.textContent = `Viewing results for ${adminData.userProfile?.firstName || 'User'} ${adminData.userProfile?.lastName || ''}`;
+
+
+  // Create new content container
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'admin-results-content';
+
+  // Handle case with no attempts
+  if (!adminData.attempts?.length) {
+    contentDiv.innerHTML = `
+      <div class="no-attempts">
+        <p>No attempts found for this user.</p>
+      </div>
+    `;
+    adminDashboard.appendChild(contentDiv);
+    return;
+  }
+
+  // Build admin attempts list with additional admin features
+  contentDiv.innerHTML = `
+  <div class="attempts-list">
+  ${adminData.attempts.map((attempt, index) => `
+    <div class="admin-attempt-card">
+      <div class="attempt-stats">
+        <span class="attempt-payment">Payment Status: ${attempt?.payment ? attempt.payment.charAt(0).toUpperCase() + attempt.payment.slice(1) : 'Not Paid'}</span><br>
+        <button class="admin-answers-toggle" data-index="${index}">
+          Toggle Answers
+        </button><br>
+        <button class="admin-report-toggle" data-index="${index}">
+          Toggle Full Report
+        </button>
+        <hr>
+      </div>
+      <div class="admin-report-content hide" id="admin-report-${index}">
+        <div class="report-heading">
+          <img src="https://ubuntex.plus94.tech/assets/Plus94_logo2-CJbCr5Cg.png" alt="Plus94 Logo" class="logo">
+          <h1>Ubuntex</h1>
+        </div>
+        <h3 class="report-name">Ubuntu Index Report for ${adminData.userProfile?.firstName} ${adminData.userProfile?.lastName}</h3>
+        <div class="report-metadata">
+          <span class="attempt-date">Test Date: ${formatAttemptDate(attempt.timestamp)}</span>
+          <span class="attempt-score">Test Score: ${attempt.score}%</span>
+          <span class="attempt-class">Classification: ${attempt.classification}</span>
+        </div> 
+        ${formatText(attempt.report)}
+        <div class="ubuntex-classification">
+          <p><strong>Ubuntex Classification Breakdown</strong></p>
+          <div class="spanContainer">
+            <span>Level 6 : Scores under 65.50%</span>
+            <span>Level 5 : Scores 65.50% to 72.49%</span>
+            <span>Level 4 : Scores 72.50% to 78.49%</span>
+            <span>Level 3 : Scores 78.50% to 83.49%</span>
+            <span>Level 2 : Scores 83.50% to 87.49%</span>
+            <span>Level 1 : Scores 87.50% and above</span>
+          </div>
+          <p>I am, because we are!</p>  
+        </div>
+        <button class="downloadReportBtn">Download Report</button>
+      </div><br><br>
+      
+      <div class="admin-answers-content hide" id="admin-answers-${index}">
+        <table class="answers-table">
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>User Answer</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${attempt.answers.map(answer => `
+              <tr>
+                <td>${answer.question}</td>
+                <td>${answer.userAnswer}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <hr>
+      </div>
+    </div>
+  `).join('')}
+</div>
+  `;
+
+  // Add to DOM
+  adminDashboard.appendChild(contentDiv);
+  adminView.classList.remove('hide');
+  document.querySelectorAll('.downloadReportBtn').forEach(btn => {
+  btn.addEventListener('click', (e) => downloadPDF(e.target));
+});
+
+  // Add event listeners
+  contentDiv.querySelectorAll('.admin-answers-toggle').forEach(button => {
+    button.addEventListener('click', function() {
+      const index = this.getAttribute('data-index');
+      const reportDiv = document.getElementById(`admin-answers-${index}`);
+      
+      if (reportDiv) {
+        reportDiv.classList.toggle('hide');
+        this.textContent = reportDiv.classList.contains('hide') 
+          ? 'Show Answers' 
+          : 'Hide Answers';
+      }
+    });
+  });
+
+  contentDiv.querySelectorAll('.admin-report-toggle').forEach(button => {
+    button.addEventListener('click', function() {
+      const index = this.getAttribute('data-index');
+      const reportDiv = document.getElementById(`admin-report-${index}`);
+      
+      if (reportDiv) {
+        reportDiv.classList.toggle('hide');
+        this.textContent = reportDiv.classList.contains('hide') 
+          ? 'Show Full Report' 
+          : 'Hide Full Report';
+      }
+    });
+  });
+}
+
+// Helper function for date formatting
+function formatAttemptDate(timestamp) {
+  if (!timestamp || !timestamp.seconds) return 'Unknown date';
+  return new Date(timestamp.seconds * 1000).toLocaleString();
+}
+
+function downloadPDF(button) {
+  const element = button.closest(".report-content, .admin-report-content");
+  const originalButtonDisplay = button.style.display;
+  button.style.display = "none";
+  
+  if (!element) {
+    console.error("Could not find .report-content or .admin-report-content element relative to button");
+    button.style.display = originalButtonDisplay;
+    return;
+  }
+
+  // Save original styles
+  const originalStyles = {
+    visibility: element.style.visibility,
+    position: element.style.position,
+    overflow: element.style.overflow,
+    margin: element.style.margin
+  };
+
+  // Make element visible and centered
+  element.style.visibility = 'visible';
+  element.style.position = 'static';
+  element.style.overflow = 'visible';
+  element.style.margin = '0 auto';
+
+  const opt = {
+    margin: [5, 5, 15, 5], // top, left, bottom, right
+    filename: 'ubuntex-report.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      scrollY: 0,
+      x: 0,
+      y: 0,
+      windowWidth: element.scrollWidth,
+      windowHeight: element.scrollHeight
+    },
+    jsPDF: { 
+      unit: 'mm', 
+      format: 'a4', 
+      orientation: 'portrait'
+    },
+    pagebreak: { 
+      mode: ['avoid-all', 'h2', 'p.paragraph','span.point', '.section-content']
+    }
+  };
+
+  setTimeout(() => {
+    html2pdf()
+      .set(opt)
+      .from(element)
+      .toPdf()
+      .get('pdf')
+      .then((pdf) => {
+        console.log('PDF generated successfully');
+        
+        // Add page numbers to each page
+        const pageCount = pdf.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+          pdf.setPage(i);
+          pdf.setFontSize(10);
+          pdf.text(
+            `Page ${i} of ${pageCount}`,
+            pdf.internal.pageSize.width / 2,
+            pdf.internal.pageSize.height - 10,
+            { align: 'center' }
+          );
+        }
+        
+        // Restore original styles
+        Object.assign(element.style, originalStyles);
+        
+        // Save the PDF with page numbers
+        pdf.save('ubuntex-report');
+      })
+      .catch((error) => {
+        console.error('PDF generation failed:', error);
+        Object.assign(element.style, originalStyles);
+      });
+  }, 1000);
+}
+
+// Modified getUserAttemptsWithProfile to work with any user ID
+async function getUserAttemptsWithProfile(userId, db) {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    
+    const [userDoc, attemptsSnapshot] = await Promise.all([
+      db.collection("users").doc(userId).get({ signal: controller.signal }),
+      db.collection("userResults").doc(userId)
+        .collection("attempts")
+        .orderBy("timestamp", "desc")
+        .get({ signal: controller.signal })
+    ]);
+
+    clearTimeout(timeout);
+
+    if (!userDoc.exists) throw new Error("User profile not found");
+
+    return {
+      userProfile: userDoc.data(),
+      attempts: attemptsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        date: doc.data().timestamp?.toDate().toLocaleString()
+      }))
+    };
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      throw new Error('Request timed out');
+    }
+    throw error;
+  }
+}
+
+// iOS-specific error messaging
+function iOSErrorMessage(error) {
+  if (error.message.includes('Firebase')) {
+    return 'Connection issue. Check your network and refresh.';
+  }
+  return 'Failed to load. Please try again.';
+}
+
+// format report
+function formatText(input) {
+  // Split into lines for processing
+  let lines = input.split('\n');
+  let formatted = '';
+  let inSection = false;
+  let pointsBuffer = []; // Collect points for the current section
+
+  lines.forEach(line => {
+    line = line.trim();
+
+    // Handle headings: Start new section, flush previous points
+    if (line.match(/^## (Key Insights|Strengths|Growth Areas|Recommendations)$/)) {
+      // Flush previous section's points into a <p>
+      if (inSection && pointsBuffer.length > 0) {
+        const paraContent = pointsBuffer.join(' '); // Join points with space for flow
+        formatted += `<p class="paragraph">${paraContent}</p></div>`;
+        pointsBuffer = [];
+      }
+      inSection = true;
+      const headingText = line.replace(/^## /, '');
+      formatted += `<h2>${headingText}</h2><div class="section-content">`;
+      return;
+    }
+
+    // Handle bullet points: Add to buffer as spans
+    if (line.startsWith('- ')) {
+      const pointText = line.substring(2).trim(); // Remove "- "
+      // Bold inline: **text** -> <strong>text</strong>
+      let processedText = pointText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      // Remove colons for smoothness
+      processedText = processedText.replace(/:/g, '');
+      // Trim trailing period/comma if present (to avoid doubles)
+      processedText = processedText.replace(/[.!?]+$/, '');
+      // Wrap in span and end with period for sentence flow
+      pointsBuffer.push(`<span class="point">${processedText}.</span>`);
+      return;
+    }
+
+    // Non-bullet text: Add as a plain span (fallback)
+    if (line) {
+      let processedText = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/:/g, '');
+      pointsBuffer.push(`<span class="point">${processedText}.</span>`);
+    }
+  });
+
+  // Flush the last section
+  if (inSection && pointsBuffer.length > 0) {
+    const paraContent = pointsBuffer.join(' '); // Join with space
+    formatted += `<p class="paragraph">${paraContent}</p></div>`;
+  }
+
+  return formatted;
+}
+
+// UI Helpers with iOS-safe operations
+function showLoading(show) {
+  const loader = document.getElementById('dashboard-loader');
+  if (!loader) return;
+  loader.style.display = show ? 'block' : 'none';
+}
+
+// iOS-safe DOM ready check
+if (document.readyState !== 'loading') {
+  initDashboard();
+} else {
+  document.addEventListener('DOMContentLoaded', initDashboard);
+}
