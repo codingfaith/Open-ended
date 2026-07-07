@@ -17,7 +17,7 @@ const makeOpenAIRequest = async (prompt, isReport = false) => {
                     { role: "user", content: prompt }
                 ],
                 temperature: isReport ? 0.5 : 0.2,
-                max_tokens: isReport ? 500 : 3
+                max_tokens: isReport ? 1500 : 3
             },
             {
                 headers: {
