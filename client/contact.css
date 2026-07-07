@@ -2,7 +2,7 @@
     padding: 0.5em;
     color: #ffffff;
     border-radius: 10px;
-    background: #4c5582;
+    background: #010739;
 }
 .contact-details,
 .contact-container {
@@ -15,39 +15,45 @@
     color: #ffffff;
     flex-direction: column;
 }
-.contact-container,
 #contact-landing-container {
-    background: #c7beb7;
+    background-color: #010739;
+    background-position: center;
+    background-image: url("signin-background.png");
 }
-.contact-container img {
-    width:100%;
-    height: auto;
-    max-width: 250px;
-    overflow: hidden;
-    border-bottom-right-radius: 10px; 
+.contact-container {
+    margin: auto;
+    color: #010739;
+    margin-top: 15px;
+    max-width: 400px;
+    border-radius: 10px;
+    background: #ffffff;
 }
 input,
 button,textarea {
-    border: none;
+    padding: 5px;
     outline: none;
     font-size: medium;
-    font-family: inherit;   
+    border-radius: 5px;
+    font-family: inherit; 
+    border: 1px solid #808080;  
 }
 textarea {
     resize: none;
     height: 100px;
 }
 .contact-container span {
+    color: #1a2a54;
     text-align: center;
 }
 button {
+    border: none;
+    color: #ffffff;
     cursor: pointer;
-    color: #12222f;
-    border-radius: 10px;
-    box-shadow: 1px 1px 1px 1px gray;   
+    background: #1a2a54;
+    box-shadow: 1px 1px 1px 1px #ccc;   
 }
 button:hover {
-    color: skyblue;
+    background: #23718e;
 }
 .hidden {
   position: absolute;

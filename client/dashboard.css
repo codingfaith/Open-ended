@@ -11,7 +11,7 @@
   border: none;
   outline: none;
   cursor: pointer;
-  color: #4c5582;
+  color: #010739;
   font-size: large;
   padding: 5px 10px;
   border-radius: 10px;
@@ -40,7 +40,7 @@
 .admin-report-toggle:hover,
 .admin-answers-toggle:hover {
   color: #ffffff;
-  background: skyblue;
+  background: #7681c0;
 }
 #dashboard-assess,
 #dashboard-assessAdmin {
@@ -101,7 +101,7 @@
   font-size: smaller;  
 }
 .last-reportBtn {
-  color:#4c5582;
+  color:#010739;
   background:#ffffff;
 }
 
@@ -167,7 +167,7 @@
 }
 .pay-to-access-btn:hover {
   color: white;
-  background: skyblue;
+  background: #7681c0;
 }
 
 /* iPhone fixes */
@@ -194,10 +194,10 @@
   height: 260px;
   overflow-y: scroll;
   margin-bottom: 10px;
-  background: #394062;
+  background: #010739;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
-  box-shadow: 1px 1px 2px 2px #626a92;
+  box-shadow: 1px 1px 1px 1px #000;
 }
 .admin-user-card {
   font-size: small;
@@ -263,7 +263,7 @@
 .answers-table tbody tr:nth-child(even) {
   background-color: #2b304a;
 }.answers-table tbody tr:nth-child(odd) {
-  background-color: #394062;
+  background-color: #010739;
 }
 @media screen and (max-width: 400px) {
    .spanContainer {

@@ -32,16 +32,20 @@ p {
 }
 .ubuntu-text p {
     margin: 0;
-    color: #4c5582;
+    color: #010739;
     font-weight: bold;
     font-size: x-large;
 }
 .landing-container {
     margin: auto;
+    max-width: 992px;
     min-height: 100vh;
-    max-width: 800px;
-    background: #4c5582;
+    background-size: cover;
+    background-color: #010739;
+    background-position: center;
+    background-repeat: no-repeat;
     box-shadow: 1px 1px 2px 2px #ccc;
+    background-image: url("signin-background.png");
 }
 .landing-container h1 {
     margin: 0;
@@ -66,7 +70,7 @@ p {
     padding: 10px;
     display: block;
     cursor: pointer;
-    color: #4c5582;
+    color: #010739;
     text-align: center;
     border-radius: 10px;
     text-decoration: none;
@@ -99,7 +103,7 @@ nav a {
     text-decoration: none;
 }
 nav a:hover {
-    color: #4c5582;
+    color: #010739;
     text-decoration: underline;
 }
 #downloadReportBtn {
@@ -109,7 +113,7 @@ nav a:hover {
     padding: 10px;
     margin: 10px 0;   
     cursor: pointer;
-    color:#4c5582;  
+    color:#010739;  
     font-size: large;
     border-radius: 5px;
     background:#ffffff;  
