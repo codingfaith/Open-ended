@@ -40,6 +40,7 @@ export function payWithPaystack(attemptNumber = null) {
                                 paymentTimestamp: firebase.firestore.FieldValue.serverTimestamp()
                             }).then(() => {
                                 // Redirect to results page
+                                localStorage.setItem("paymentStatus", "true");
                                 window.location.replace("http://ubuntex.plus94.tech/dashboard");
                             }).catch((error) => {
                                 console.error('Error updating attempt:', error);

@@ -334,6 +334,15 @@ function displayData(data) {
 
   // Add to DOM
   dashboardResult.appendChild(contentDiv);
+  const paid = localStorage.getItem("paymentStatus") === "true";
+  if (paid) {
+    dashboardResult.classList.remove("hide");
+    dashboardResult.classList.add("show");
+    resultsBtnTxt.textContent = "←Go back";
+    dashboardImg.classList.remove("show");
+    dashboardImg.classList.add("hide");
+  }
+  localStorage.removeItem("paymentStatus");
   document.querySelectorAll('.downloadReportBtn').forEach(btn => {
   btn.addEventListener('click', (e) => downloadPDF(e.target));
 });
