@@ -4,7 +4,13 @@
     padding: 1em;
 }
 #auth-container {
-    color: #ffffff;
+    margin: auto;
+    color: #1b234d;
+    margin-top: 15px;
+    max-width: 400px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    background: #ffffff;
 }
 #auth-container h2 {
     margin: 0;
@@ -20,7 +26,6 @@
 input,
 #login-btn,
 #signup-btn {
-    border: none;
     outline: none;
     padding: 0.5em;
     font-size: medium;
@@ -28,31 +33,34 @@ input,
 }
 #login-btn,
 #signup-btn {
+    border: none;
     cursor: pointer;
-    color: #010739;
+    color: #ffffff;
     font-weight: 500;
     border-radius: 10px;
+    background: #1a2a54;
     box-shadow: 1px 1px 1px 1px gainsboro;   
 }
 #show-login,
 #show-signup {
-    outline:none;
+   outline:none;
     border: none;
-    color: aqua;
     cursor: pointer;
     font-size: large;
+    color:  #23718e;
     font-family: inherit;
     background: transparent;
     text-decoration: underline;
 }
 #login-btn:hover,
 #signup-btn:hover {
+    border: none;
     color: #ffffff;
-    background: skyblue;
+    background: #23718e;
 }
- #show-login:hover,
+#show-login:hover,
 #show-signup:hover {
-    color: skyblue;
+    color: #23718e;
 }
 #auth-error {
     width: 100%;
@@ -61,6 +69,34 @@ input,
     text-align: center;
     font-size: smaller;
     font-style: italic;
+}
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input {
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 45px;
+}
+.toggle-password {
+    top: 50%;
+    right: 12px;
+    padding: 0;
+    border: none;
+    color: #666;
+    display: flex;
+    cursor: pointer;
+    position: absolute;
+    align-items: center;
+    background: transparent;
+    justify-content: center;
+    transform: translateY(-50%);
+}
+
+.toggle-password:hover {
+    color: #333;
 }
 /* media queries */
 @media screen and (max-width: 400px) {
