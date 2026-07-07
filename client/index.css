@@ -63,7 +63,7 @@ p {
     font-size: larger;
 }
 .highlight {
-    color: #23718e;
+    color: #00a4b4;
 }
 .assessment a {
     width: 100%;
@@ -78,7 +78,7 @@ p {
 }
 #read-more {
     padding: 0;
-    color: #23718e;
+    color: #00a4b4;
     text-align: left;
     width: fit-content;
     font-style: italic;
@@ -88,7 +88,7 @@ p {
 }
 .assessment a:hover {
     color: #ffffff;
-    background:	#23718e;  
+    background:	#00a4b4;  
 }
 nav {
     display: flex;
@@ -120,7 +120,7 @@ nav a:hover {
 }
 #downloadReportBtn:hover {
   color: #ffffff;
-  background: #23718e;
+  background: #00a4b4;
 }
 
 @media screen and (max-width: 541px) {
