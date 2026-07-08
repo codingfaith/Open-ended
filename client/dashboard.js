@@ -652,7 +652,7 @@ function formatText(input) {
     line = line.trim();
 
     // Handle headings: Start new section, flush previous points
-    if (line.match(/^## (Key Insights|Strengths|Growth Areas|Recommendations)$/)) {
+    if (line.match(/^## (Key Insights|Strengths|Growth Areas|Ubuntu Assessment|Recommendations)$/)) {
       // Flush previous section's points into a <p>
       if (inSection && pointsBuffer.length > 0) {
         const paraContent = pointsBuffer.join(' '); // Join points with space for flow
