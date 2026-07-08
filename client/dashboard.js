@@ -517,49 +517,52 @@ function formatAttemptDate(timestamp) {
 
 function downloadPDF(button) {
   const element = button.closest(".report-content, .admin-report-content");
-  const originalButtonDisplay = button.style.display;
-  button.style.display = "none";
-  
   if (!element) {
-    console.error("Could not find .report-content or .admin-report-content element relative to button");
-    button.style.display = originalButtonDisplay;
+    console.error("Could not find target element");
     return;
   }
+
+  const originalButtonDisplay = button.style.display;
+  button.style.display = "none";
 
   // Save original styles
   const originalStyles = {
     visibility: element.style.visibility,
     position: element.style.position,
     overflow: element.style.overflow,
-    margin: element.style.margin
+    margin: element.style.margin,
+    width: element.style.width,
+    maxWidth: element.style.maxWidth
   };
 
-  // Make element visible and centered
-  element.style.visibility = 'visible';
-  element.style.position = 'static';
-  element.style.overflow = 'visible';
-  element.style.margin = '0 auto';
+  // A4 width in pixels at ~96 DPI ≈ 794px
+  const A4_WIDTH_PX = 794;
+
+  // Force content to fit A4 width
+  element.style.visibility = "visible";
+  element.style.position = "static";
+  element.style.overflow = "hidden";
+  element.style.margin = "0 auto";
+  element.style.width = "100%";
+  element.style.maxWidth = A4_WIDTH_PX + "px";
 
   const opt = {
-    margin: [5, 5, 15, 5], // top, left, bottom, right
-    filename: 'ubuntex-report.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { 
+    margin: [10, 10, 15, 10],
+    filename: "ubuntex-report.pdf",
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: {
       scale: 2,
       useCORS: true,
-      scrollY: 0,
-      x: 0,
-      y: 0,
-      windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight
+      scrollY: 0
     },
-    jsPDF: { 
-      unit: 'mm', 
-      format: 'a4', 
-      orientation: 'portrait'
+    jsPDF: {
+      unit: "mm",
+      format: "a4",
+      orientation: "portrait"
     },
-    pagebreak: { 
-      mode: ['avoid-all', 'h2', 'p.paragraph','span.point', '.section-content']
+    pagebreak: {
+      mode: ["css", "legacy"],
+      avoid: ["h2", "p", "span.point", ".section-content"]
     }
   };
 
@@ -568,35 +571,34 @@ function downloadPDF(button) {
       .set(opt)
       .from(element)
       .toPdf()
-      .get('pdf')
+      .get("pdf")
       .then((pdf) => {
-        console.log('PDF generated successfully');
-        
-        // Add page numbers to each page
         const pageCount = pdf.internal.getNumberOfPages();
+
         for (let i = 1; i <= pageCount; i++) {
           pdf.setPage(i);
           pdf.setFontSize(10);
           pdf.text(
             `Page ${i} of ${pageCount}`,
-            pdf.internal.pageSize.width / 2,
-            pdf.internal.pageSize.height - 10,
-            { align: 'center' }
+            pdf.internal.pageSize.getWidth() / 2,
+            pdf.internal.pageSize.getHeight() - 10,
+            { align: "center" }
           );
         }
-        
-        // Restore original styles
-        Object.assign(element.style, originalStyles);
-        
-        // Save the PDF with page numbers
-        pdf.save('ubuntex-report');
+
+        pdf.save("ubuntex-report.pdf");
       })
       .catch((error) => {
-        console.error('PDF generation failed:', error);
+        console.error("PDF generation failed:", error);
+      })
+      .finally(() => {
+        // Restore everything
         Object.assign(element.style, originalStyles);
+        button.style.display = originalButtonDisplay;
       });
-  }, 1000);
+  }, 300);
 }
+
 
 // Modified getUserAttemptsWithProfile to work with any user ID
 async function getUserAttemptsWithProfile(userId, db) {

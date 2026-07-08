@@ -857,7 +857,7 @@ class UbuntexIndex {
     - List 2-3 specific opportunities for improvement
     - Reference specific questions where scores were lower
 
-    ##Ubuntu Assessment
+    ## Ubuntu Assessment
     - Evaluate the candidate's understanding and application of Ubuntu principles
     - Highlight areas of strength and weakness in their approach to collaborative work
 
